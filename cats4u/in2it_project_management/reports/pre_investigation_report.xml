@@ -1,0 +1,206 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+  <data>
+    <record id="action_pre_investigation_report" model="ir.actions.report">
+      <field name="name">Pre Investigation Report</field>
+      <field name="model">project.project</field>
+      <field name="report_type">qweb-html</field>
+      <field name="report_name">in2it_project_management.action_pre_investigation_report_template</field>
+      <field name="report_file">in2it_project_management.pre_investigation_report</field>
+      <field name="binding_type">report</field>
+      <field name="paperformat_id" ref="in2it_forensic_services.in2it_forensic_services_case_auth_paperformat"/>
+    </record>
+
+    <template id="action_pre_investigation_report_template">
+      <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="o">
+          <t t-call="web.external_layout">
+            <style>
+              .in2it_sp1{
+              display:inline-block;
+              width:3%;
+              vertical-align:top;
+              }
+
+              .in2it_sp2{
+              display:inline-block;
+              width:95%;
+              text-align:justify;
+              }
+
+              .in2it_ml{
+                margin-left:3%;
+              }
+            </style>
+            <div class="in2it_sp1"/>
+            <div class="in2it_sp2">
+              <h5 class="text-center" style="color: navy;">Report to the Chief: Ethics and Forensic Services</h5>
+              <h5 class="text-center"><strong>Preliminary Assessment</strong></h5>
+              <h5 class="text-center"><strong><t t-out="o.name"/> : PRELIMINARY ASSESSMENT INTO ALLEGED <t t-out="o.case_id.name.upper()"/></strong></h5>
+            </div>
+            <br/>
+
+            <!--Mandate-->
+            <h6><strong>1.<span class="ps-3">Mandate</span></strong></h6>
+            <div class="oe_inline">
+              <div class="in2it_sp1">1.1</div>
+              <div class="in2it_sp2">
+                <p>
+                  This internal preliminary assessment into untested allegations was authorized on
+                  <t t-esc="o.create_date.strftime('%Y-%m-%d')"/> by the Chief: Ethics and Forensic Services to determine whether a forensic or ethics
+                  investigation is required in relation to the alleged <t t-out="o.allegation_nature_id.name or ''"/>. The purpose of this
+                  preliminary assessment is to conduct an initial review of the available information, assess juridiction
+                  and materiality, identify persons of interest, and evaluate whether the matter warrants further
+                  investigation in accordance with applicable policies, procedures, and legislative prescripts.
+                </p>
+              </div>
+            </div>
+            <br/>
+
+            <!--Background-->
+            <h6><strong>2.<span class="ps-3">Background</span></strong></h6>
+            <div class="in2it_sp2 in2it_ml">
+              <t t-out="o.case_background"/>
+              <br/>
+            </div>
+
+            <!--Findings-->
+            <h6><strong>3.<span class="ps-3">Findings</span></strong></h6>
+            <div class="in2it_sp2 in2it_ml" style="page-break-inside: auto !important;">
+              <t t-out="o.findings"/>
+              <br/>
+            </div>
+
+            <!--Conclusions-->
+            <h6><strong>4.<span class="ps-3">Conclusion</span></strong></h6>
+              <div class="in2it_sp2 in2it_ml">
+                <t t-out="o.conclusions"/>
+                <br/>
+              </div>
+
+            <!--Recommendations-->
+            <t t-if="o.recom_project_ids">
+              <h6><strong>5.<span class="ps-3">Recommendations</span></strong></h6>
+              <div class="in2it_sp2 in2it_ml">
+                <t t-set="rec_index" t-value="1"/>
+                <t t-foreach="o.recom_project_ids" t-as="recom">
+                  <p>
+                    <strong>5.<t t-esc="rec_index"/>.</strong>
+                    <span><strong><t t-esc="recom.category_id.name"/></strong></span>
+                  </p>
+
+                  <ul style="margin: 2px 0 10px 8px;">
+                      <p><t t-out="recom.category_description"/></p>
+                  </ul>
+                  <t t-set="rec_index" t-value="rec_index + 1"/>
+                </t>
+              </div>
+            </t>
+
+            <t t-if="o.physical_item_ids.filtered(lambda i: i.is_exhibit)">
+              <div style="page-break-before: always;"/>
+
+              <h6><strong>EXHIBITS</strong></h6>
+              <div class="in2it_sp1"/>
+              <div class="in2it_sp2">
+                <table class="table">
+                  <thead>
+                      <tr>
+                        <th class="bg-secondary fw-bold">EXHIBIT NO.</th>
+                        <th class="bg-secondary fw-bold">DESCRIPTION</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <t t-foreach="o.physical_item_ids.filtered(lambda i: i.is_exhibit)" t-as="item">
+                        <tr>
+                          <td><t t-esc="item_index + 1"/></td>
+                          <td><t t-esc="item.item_title"/></td>
+                        </tr>
+                      </t>
+                  </tbody>
+                </table>
+              </div>
+            </t>
+
+            <div style="page-break-before: always;"/>
+
+            <p><strong>FOR FURTHER DETAILS, CONTACT:</strong></p>
+            <div class="in2it_sp1"/>
+            <div class="in2it_sp2">
+              <table class="table table-sm table-bordered">
+                <tr>
+                  <td>
+                    <p>Manager</p>
+                  </td>
+                  <td><t t-out="o.user_id.name"/></td>
+                </tr>
+
+                <tr>
+                  <td>
+                    Contact Numbers
+                  </td>
+                  <td>
+                    <t t-out="o.user_id.partner_id.mobile"/>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>
+                    E-mail Address
+                  </td>
+                  <td>
+                    <t t-out="o.user_id.partner_id.email"/>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <br/><br/><br/><br/><br/>
+
+            <!--e-sign of manager-->
+            <div class="in2it_sp1"/>
+            <div class="in2it_sp2">
+              <t t-set="review"
+                 t-value="env['forensic.peer.review'].search([('project_id','=',o.id)], limit=1)"/>
+
+              <t t-if="review and review.signature">
+                <div style="margin-top: 30px; text-align:left;">
+
+                  <img t-att-src="image_data_uri(review.signature)"
+                       style="max-height:120px; max-width:300px;"/>
+
+                </div>
+              </t>
+
+              <p>_________________________________</p>
+              <div style="margin-top:10px;">
+                <strong>
+                  <t t-esc="o.user_id.name"/>
+                </strong>
+              </div>
+              <p>
+                <strong>Manager : Forensic Services</strong>
+              </p>
+              <br/>
+
+              <p>
+                <input type="checkbox" t-att-checked="o.recom_project_ids and 'checked' or False"/>
+                Recommendation/s adopted
+              </p>
+              <p>
+                <input type="checkbox" t-att-checked="not o.recom_project_ids and 'checked' or False"/>
+                Recommendation/s not adopted
+              </p>
+
+              <p align="right" style="margin-left:20px;">Comment:  <span class="ps-3"> ____________________________</span></p>
+              <p align="right" style="margin-left:20px;">        _____________________________ </p>
+
+              <p>_________________________________</p>
+              <p><strong>Chris Maurer</strong></p>
+              <p><strong>Chief: Ethics and Forensic Services</strong></p>
+            </div>
+          </t>
+        </t>
+      </t>
+    </template>
+  </data>
+</odoo>

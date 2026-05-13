@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="department_efs" model="hr.department">
+            <field name="name">EFS</field>
+        </record>
+
+        <record id="department_forensic_services_unit_1" model="hr.department">
+            <field name="name">Forensic Services(Unit 1)</field>
+            <field name="parent_id" ref="department_efs"/>
+        </record>
+
+        <record id="department_forensic_services_unit_2" model="hr.department">
+            <field name="name">Forensic Services(Unit 2)</field>
+            <field name="parent_id" ref="department_efs"/>
+        </record>
+
+        <record id="department_proactive_and_gov_unit_3" model="hr.department">
+            <field name="name">Proactive &amp; Gov (Unit 3)</field>
+            <field name="parent_id" ref="department_efs"/>
+        </record>
+
+        <record id="department_ethics" model="hr.department">
+            <field name="name">Ethics</field>
+            <field name="parent_id" ref="department_efs"/>
+        </record>
+        
+        <record id="department_admin_and_finance" model="hr.department">
+            <field name="name">Admin and Finance</field>
+            <field name="parent_id" ref="department_efs"/>
+        </record>
+
+
+        <!-- job position -->
+        <record id="principle_of_forensic_officer" model="hr.job">
+            <field name="name">Principle Forensic Officer</field>
+            <field name="unit_ids" eval="[Command.set([ref('department_forensic_services_unit_1'),
+                                                        ref('department_forensic_services_unit_2'),
+                                                        ref('department_proactive_and_gov_unit_3')])]"/>
+        </record>
+
+        <record id="senior_forensic_officer" model="hr.job">
+            <field name="name">Senior Forensic Officer</field>
+            <field name="unit_ids" eval="[Command.set([ref('department_forensic_services_unit_1'),
+                                                        ref('department_forensic_services_unit_2'),
+                                                        ref('department_proactive_and_gov_unit_3'),
+                                                        ref('department_ethics')])]"/>
+        </record>
+
+        <record id="forensic_officer" model="hr.job">
+            <field name="name">Forensic Officer</field>
+            <field name="unit_ids" eval="[Command.set([ref('department_forensic_services_unit_1'),
+                                                        ref('department_forensic_services_unit_2'),
+                                                        ref('department_proactive_and_gov_unit_3'),
+                                                        ref('department_ethics')])]"/>
+        </record>
+
+        <record id="specialist_clerk" model="hr.job">
+            <field name="name">Specialist Clerk</field>
+            <field name="unit_ids" eval="[Command.set([ref('department_proactive_and_gov_unit_3'),
+                                                       ref('department_admin_and_finance')])]"/>
+        </record>
+
+        <record id="admin_officer" model="hr.job">
+            <field name="name">Admin Officer</field>
+            <field name="unit_ids" eval="[Command.set([ref('department_admin_and_finance')])]"/>
+        </record>
+
+        <record id="senior_clerk" model="hr.job">
+            <field name="name">Specialist Clerk</field>
+            <field name="unit_ids" eval="[Command.set([ref('department_admin_and_finance')])]"/>
+        </record>
+
+        <record id="manager" model="hr.job">
+            <field name="name">Manager</field>
+        </record>
+
+        <record id="chief" model="hr.job">
+            <field name="name">Chief</field>
+        </record>
+
+        <record id="city_manager" model="hr.job">
+            <field name="name">City Manager</field>
+        </record>
+
+    </data>
+</odoo>

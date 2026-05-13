@@ -1,0 +1,24 @@
+<odoo>
+    <record id="view_case_unauthorized_wizard_form" model="ir.ui.view">
+        <field name="name">case.unauthorized.wizard.form</field>
+        <field name="model">case.unauthorized.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Case Unauthorized">
+                <group>
+                   <field name="case_assignment_id"
+                    options="{'no_create':True, 'no_open':True, 'no_create_edit':True}" invisible="1"/>
+                   <field name="reason" required="1"/>
+                </group>
+                <footer>
+                    <button string="Unauthorize"
+                            name="action_case_unauthorized"
+                            type="object"
+                            class="btn-primary"
+                            confirm="Are you sure want to Unauthorized ?"/>
+                            
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

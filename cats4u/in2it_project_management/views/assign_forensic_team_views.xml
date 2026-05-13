@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="form_assigned_forensic_team_view" model="ir.ui.view">
+            <field name="name">Assigned Forensic Team</field>
+            <field name="model">assigned.forensic.team</field>
+            <field name="arch" type="xml">
+                <form create="0">
+                    <header>
+                        <button
+                            name="action_open_change_request_wizard"
+                            type="object"
+                            class="btn-primary"
+                            icon="fa-edit"
+                            string="Change Request"
+                            invisible="not is_investigation_manager"
+                            />
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button
+                                name="action_team_change_request_approval"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-edit"
+                                invisible="change_request_count == 0
+                                           or change_request_count == approved_change_request_count">
+
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Change Request</span>
+                                <span class="o_stat_value">
+                                    <field name="approved_change_request_count"/> / <field name="change_request_count"/>
+                                </span>
+                            </div>
+                        </button>
+
+                        <button
+                                name="action_team_change_request_approval"
+                                type="object"
+                                class="oe_stat_button text-success"
+                                icon="fa-check text-success"
+                                invisible="change_request_count != approved_change_request_count
+                                           or change_request_count == 0">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text text-primary fw-bolder">Change Request</span>
+                                <span class="o_stat_text fw-bolder">
+                                    <field name="approved_change_request_count"/> / <field name="change_request_count"/> Completed
+                                </span>
+                            </div>
+                        </button>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="is_investigation_manager" invisible="1"/>
+                                <field name="record_access" invisible="1"/>
+                                <field name="li_domain" invisible="1"/>
+                                <label for="project_investigator_ids" string="Lead Investigators"/>
+                                <field name="project_investigator_ids"
+                                       widget="many2many_tags"
+                                       readonly="record_access == 'read' or report_review_status == 'completed'"
+                                       domain="li_domain"
+                                       required="1"
+                                       options="{'no_open':True, 'no_create':True, 'no_create_edit':True}"
+                                       nolabel="1"/>
+                            </group>
+                            <group>
+                                <field name="project_id" readonly="1" options="{'no_open':True}"/>
+                            </group>
+                        </group>
+                        <group string="Forensic Members">
+                            <field name="forensic_member_ids" colspan="4" nolabel="1" options="{'no_open': True}" readonly="record_access == 'read' or report_review_status == 'completed'">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="unit_id" required="1"
+                                           options="{'no_edit': True, 'no_create': True}"
+                                           domain="[('is_forensic_dep', '=', True)]"
+                                           />
+                                    <field name="job_id" required="1"
+                                           domain="[('unit_ids', 'in', unit_id)]"
+                                           options="{'no_edit': True, 'no_create': True}"/>
+                                    <field name="member_ids"
+                                           widget="many2many_tags"
+                                           options="{'no_open': True, 'no_edit': True, 'no_create': True}"
+                                           domain="[('employee_id.job_id','=',job_id), ('employee_id','!=',False),('employee_id.department_id', '=', unit_id)]"
+                                           required="1"
+                                    />
+                                </list>
+                            </field>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

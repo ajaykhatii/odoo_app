@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="in2it_project_management.One2ManyTagsDirectorateField">
+        <div class="d-flex align-items-baseline"
+            t-attf-class="{{ tags.length &amp;&amp; 'gap-1'}}">
+            <div class="d-inline-flex flex-wrap gap-1 mw-100">
+                <t t-foreach="tags" t-as="tag" t-key="tag.id">
+                    <span
+                    class="badge rounded-pill d-inline-flex align-items-center"
+                    t-att-style="'background-color:' + tag.color + '; color:white; max-width:100%; cursor:pointer;'"
+                    t-on-click="tag.onClick">
+                        <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex-shrink:1;">
+                        <t t-esc="tag.text"/>
+                    </span>
+                        <t t-if="tag.onDelete">
+                        <i  style="margin-top: 1px;"
+                            class="fa fa-times ms-2"
+                            t-on-click.stop="tag.onDelete"/>
+                    </t>
+                </span>
+                </t>
+            </div>
+            <button t-if="!props.readonly" t-on-click="onAdd"
+                class="btn btn-link text-action"
+                role="button"
+                style="padding: 0; line-height: 0; height: min-content;">
+                <i class="fa fa-plus text-info" />
+            </button>
+        </div>
+    </t>
+</templates>

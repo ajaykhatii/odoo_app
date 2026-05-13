@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="mail_template_case_assigned_investigation" model="mail.template">
+        <field name="name">Case Assigned for Investigation</field>
+        <field name="model_id" ref="in2it_project_management.model_project_project"/>
+        <field name="subject">Action Required: Case Assigned for Investigation</field>
+
+        <field name="body_html" type="html">
+            <div t-name="mail_template_case">
+                <p>Dear <t t-out="object.user_id.name"/> ,</p>
+
+                <p>A forensic case has been assigned to you as the Investigation Manager.</p>
+
+                <p><strong>Case Details:</strong></p>
+                <ul>
+                    <li><strong>Case ID:</strong> <t t-out="object.name"/></li>
+                    <li><strong>Case Type:</strong> <t t-out="object.assignment_type_id.name"/></li>
+                    <li><strong>Nature of Allegation:</strong> <t t-out="object.allegation_nature_id.name"/></li>
+                    <li><strong>Directorate:</strong> <t t-out="object.directorate_id.name"/></li>
+                    <li><strong>Department:</strong> <t t-out="object.department_id.name"/></li>
+                    <li><strong>Authorization Date:</strong> <t t-out="format_datetime(object.create_date.strftime('%Y-%m-%d %H:%M:%S'))"/></li>
+                    <li><strong>Investigation Status:</strong> Planning</li>
+                </ul>
+
+                <p>
+                    <strong>Confidentiality Notice:</strong>
+                    This communication contains information intended solely for official
+                    City of Cape Town business and must be handled in accordance with
+                    the City’s confidentiality and records management policies.
+                    Unauthorized use, disclosure, or distribution is prohibited.
+                </p>
+            </div>
+        </field>
+    </record>
+
+    <record id="mail_template_investigation_team_assignment" model="mail.template">
+        <field name="name">Investigation Team Formed</field>
+        <field name="model_id" ref="in2it_project_management.model_assigned_forensic_team"/>
+
+        <!-- Subject: must be plain text, precompute case_id in Python if dynamic -->
+        <field name="subject">Investigation Team Formed </field>
+
+        <!-- Body HTML using QWeb t-out -->
+        <field name="body_html" type="html">
+            <div>
+                <t t-if="ctx.get('members')">
+
+                    <p>Dear <t t-out="ctx.get('members')"/> ,</p>
+                </t>
+
+                <p>You have been assigned to the investigation team for the following case:</p>
+
+                <p><strong>Case Details:</strong></p>
+                <ul>
+                    <li><strong>Case ID:</strong> <t t-out="object.project_id.name"/></li>
+                    <t t-if="ctx.get('investigator')">
+                        <li><strong>Role Assigned:</strong> <t t-out="ctx.get('investigator')"/></li>
+                    </t>
+                    <li><strong>Investigation Manager:</strong> <t t-out="object.project_id.user_id.name"/></li>
+                    <li><strong>Case Priority:</strong> <t t-out="object.project_id.priority"/></li>
+                    <li><strong>Assigned Date:</strong> <t t-out="format_datetime(time.strftime('%Y-%m-%d %H:%M:%S'))"/></li>
+                </ul>
+
+                <p style="font-size:12px; color:gray;">
+                    <strong>Confidentiality Notice:</strong>
+                    This communication contains information intended solely for official City of Cape Town business
+                    and must be handled in accordance with the City’s confidentiality and records management policies.
+                    Unauthorized use, disclosure, or distribution is prohibited.
+                </p>
+            </div>
+        </field>
+        <field name="auto_delete" eval="False"/>
+    </record>
+
+    <record id="mail_template_investigation_plan_submitted" model="mail.template">
+        <field name="name">Investigation Plan Submitted for Review</field>
+        <field name="model_id" ref="in2it_project_management.model_project_project"/>
+        <field name="subject">Investigation Plan Submitted for Review  – Approval Pending</field>
+
+
+        <!-- Body HTML using QWeb t-out -->
+        <field name="body_html" type="html">
+            <div>
+                <p>Dear <t t-out="object.user_id.name"/> ,</p>
+                <p>
+                    The Investigation Plan for the following case has been submitted and requires your review:
+                </p>
+
+                <p><strong>Case Details:</strong></p>
+                <ul>
+                    <li><strong>Case ID:</strong> <t t-out="object.name"/></li>
+                    <li><strong>Plan Version:</strong> 1</li>
+                    <li><strong>Submitted By:</strong> <t t-out="user.name"/></li>
+                    <li><strong>Submission Date:</strong> <t t-out="format_datetime(time.strftime('%Y-%m-%d %H:%M:%S'))"/></li>
+                </ul>
+
+                <p>
+                    <strong>Note:</strong> Please review and provide feedback within 3 business days.
+                </p>
+
+                <p style="font-size:12px; color:gray;">
+                    <strong>Confidentiality Notice:</strong>
+                    This communication contains information intended solely for official City of Cape Town business
+                    and must be handled in accordance with the City’s confidentiality and records management policies.
+                    Unauthorized use, disclosure, or distribution is prohibited.
+                </p>
+
+            </div>
+        </field>
+    </record>
+
+
+    <record id="mail_template_investigation_report_submitted" model="mail.template">
+        <field name="name">Investigation Report Submitted for Review</field>
+        <field name="model_id" ref="in2it_project_management.model_project_project"/>
+
+        <!-- Subject -->
+        <field name="subject">Investigation Report Submitted for Review – {{ object.name }}</field>
+        
+
+        <field name="body_html">
+            <![CDATA[
+
+            <p>
+            The investigation report has been submitted and requires your review and approval.
+            </p>
+
+            <p><strong>Case Details:</strong></p>
+            <ul>
+                <li><strong>Case ID:</strong> {{ object.name }}</li>
+                <li><strong>Report Version:</strong> {{ object.report_version }}</li>
+                <li><strong>Submitted By:</strong> {{ object.li_user_id.name }}</li>
+                <li><strong>Submission Date:</strong> {{ format_date(ctx_today()) }}</li>
+                <li><strong>Recommendations Count:</strong>3</li>
+            </ul>
+
+            <p>
+            <strong>SLA:</strong>
+            Please review and provide feedback within 5 business days
+            (by {{ object.sla_deadline_date }}).
+            </p>
+
+            <br/>
+
+            <p style="font-size:12px; color:gray;">
+            <strong>Confidentiality Notice:</strong>
+            This communication contains information intended solely for official City of Cape Town business
+            and must be handled in accordance with the City’s confidentiality and records management policies.
+            Unauthorized use, disclosure, or distribution is prohibited.
+            </p>
+            ]]>
+        </field>
+    </record>
+
+    <record id="mail_template_investigation_report_ready_for_final_approval" model="mail.template">
+        <field name="name">Investigation Report Ready for Final Approval</field>
+        <field name="model_id" ref="in2it_project_management.model_project_project"/>
+
+        <!-- Subject -->
+        <field name="subject">Investigation Report Ready for Final Approval – {{ object.name }} – Chief Review Required
+        </field>
+
+        <field name="body_html">
+            <![CDATA[
+
+            <p>
+            The investigation report has been approved by the Manager and is now ready for your final review and signature.
+            </p>
+
+            <p><strong>Case Details:</strong></p>
+            <ul>
+                <li><strong>Case ID:</strong> {{ object.name }}</li>
+                <li><strong>Report Version:</strong> 1</li>
+                <li><strong>Approved By (Manager):</strong> {{ object.user_id.name }}</li>
+                <li><strong>Manager Approval Date:</strong> {{ format_datetime(ctx_today() }}</li>
+            </ul>
+
+            <br/>
+
+            <p>
+            <strong>Overarching Memo:</strong> Ready for dispatch upon report approval.
+            </p>
+
+            <p>
+            <strong>Letter to ED:</strong> Ready for dispatch upon report approval.
+            </p>
+
+            <br/>
+
+            <p style="font-size:12px; color:gray;">
+            <strong>Confidentiality Notice:</strong>
+            This communication contains information intended solely for official City of Cape Town business
+            and must be handled in accordance with the City’s confidentiality and records management policies.
+            Unauthorized use, disclosure, or distribution is prohibited.
+            </p>
+
+            ]]>
+        </field>
+    </record>
+
+    <record id="mail_template_line_referral_case_assigned" model="mail.template">
+        <field name="name">Line Referral Case Assigned – Investigation Required</field>
+        <field name="model_id" ref="in2it_project_management.model_project_project"/>
+
+        <!-- Subject -->
+        <field name="subject">Line Referral Case Assigned – {{ object.name }} – Investigation Required</field>
+
+        <field name="body_html">
+            <![CDATA[
+
+            <p>
+            A <strong>Line Referral</strong> case has been assigned to your directorate for investigation.
+            </p>
+
+            <p><strong>Case Details:</strong></p>
+            <ul>
+                <li><strong>Case ID:</strong> {{ object.name }}</li>
+                <li><strong>Case Type:</strong> Line Referral (LIN)</li>
+                <li><strong>Nature of Allegation:</strong> {{ object.allegation_nature_id.name }}</li>
+                <li><strong>Assigned Directorate:</strong> {{ object.directorate_id.name }}</li>
+                <li><strong>Department:</strong> {{ object.department_id.name }}</li>
+                <li><strong>Assignment Date:</strong> {{ format_datetime(ctx_today() }}</li>
+                <!-- <li><strong>Due Date for Summary:</strong> {{ format_date(object.sla_deadline_date) }}</li> -->
+            </ul>
+
+            <br/>
+
+            <p style="font-size:12px; color:gray;">
+            <strong>Confidentiality Notice:</strong>
+            This communication contains information intended solely for official City of Cape Town business
+            and must be handled in accordance with the City’s confidentiality and records management policies.
+            Unauthorized use, disclosure, or distribution is prohibited.
+            </p>
+
+            ]]>
+        </field>
+    </record>
+
+    <record id="mail_template_line_referral_summary_submitted" model="mail.template">
+        <field name="name">Line Referral Case Summary Submitted – Review Required</field>
+        <field name="model_id" ref="in2it_project_management.model_project_project"/>
+
+        <!-- Subject -->
+        <field name="subject">Line Referral Case Summary Submitted – {{ object.name }} – Review Required</field>
+
+        <field name="body_html">
+            <![CDATA[
+
+            <p>
+            An investigation summary has been <strong>submitted</strong> by the assigned Nodal for the following Line Referral case:
+            </p>
+
+            <p><strong>Case Details:</strong></p>
+            <ul>
+                <li><strong>Case ID:</strong> {{ object.name }}</li>
+                <li><strong>Submitted By (Nodal):</strong> Nodal </li>
+                <li><strong>Directorate:</strong> {{ object.directorate_id.name }}</li>
+                <li><strong>Submission Date:</strong> {{ format_datetime(ctx_today() }}</li>
+                <li><strong>Summary Brief:</strong> xyz </li>
+            </ul>
+
+            <br/>
+
+            <p>
+            <strong>Action Required:</strong><br/>
+            Please review the summary and close the case or request further action if needed.
+            </p>
+
+            <br/>
+
+            <p style="font-size:12px; color:gray;">
+            <strong>Confidentiality Notice:</strong>
+            This communication contains information intended solely for official City of Cape Town business
+            and must be handled in accordance with the City’s confidentiality and records management policies.
+            Unauthorized use, disclosure, or distribution is prohibited.
+            </p>
+
+            ]]>
+        </field>
+    </record>
+
+
+    <record id="mail_template_case_request_digital_access_city_manager" model="mail.template">
+        <field name="name">Case Request for Digital Access City Manager</field>
+        <field name="model_id" ref="in2it_project_management.model_digital_evidence"/>
+        <field name="subject">{{ ctx.get('subject') }}</field>
+        <field name="auto_delete" eval="False"/>
+        <field name="body_html">
+            <![CDATA[
+                <p>
+                    A Digital Access Permission Request has been initiated in the Case Management System.
+                </p>
+                <p>
+                    Case Reference Number: <t t-out="object.project_id.case_id.internal_coms_ref"/><br/>
+                    <t t-if="object.project_id and object.project_id.case_id">
+                        Case Title: <t t-out="object.project_id.case_id.name"/><br/>
+                    </t>
+                    Directorate: <t t-out="object.project_id.case_id.directorate_id.name"/><br/>
+                    Lead Investigator: 
+                        <t t-foreach="object.lead_investigator_ids" t-as="investigator" t-key="investigator.id">
+                            <t t-out="investigator.name"/>
+                        </t>
+                </p>
+                <p>
+                    The permission letter requesting digital access from  <t t-out="object.date_from"/> to <t t-out="object.date_to"/> has been generated in the system and requires your review .
+                </p>
+                <p>
+                    After your approval, the request will automatically be forwarded to the Chief Digital Officer for final approval.
+                </p>
+                <p>
+                    Kind regards,<br/>
+                    Ethics and Forensic Services<br/>
+                    City of Cape Town
+                </p>
+
+            ]]>
+        </field>
+    </record>
+
+    <record id="mail_template_case_request_digital_access_Chief_digital_officer" model="mail.template">
+        <field name="name">Case Request for Digital Access CDO</field>
+        <field name="model_id" ref="in2it_project_management.model_digital_evidence"/>
+        <field name="subject">{{ ctx.get('subject') }}</field>
+        <field name="auto_delete" eval="False"/>
+        <field name="body_html" type="html">
+            <div t-name="mail_template_case">
+                <p>
+                    The Digital Access Permission Request for the following case has been approved by the City Manager and requires your approval.
+                </p>
+                <p>
+                    Case Reference Number: <t t-out="object.project_id.case_id.internal_coms_ref"/><br/>
+                    <t t-if="object.project_id and object.project_id.case_id">
+                        Case Title: <t t-out="object.project_id.case_id.name"/><br/>
+                    </t>
+                    Directorate: <t t-out="object.project_id.case_id.directorate_id.name"/><br/>
+                    Lead Investigator: 
+                        <t t-foreach="object.lead_investigator_ids" t-as="investigator" t-key="investigator.id">
+                            <t t-out="investigator.name"/>
+                        </t>
+                </p>
+                <p>
+                    The permission letter signed by the City Manager is available in the system for your review.<a t-att-href="ctx.get('url')" target="_blank">Click Here</a>
+                </p>
+                <p>
+                    Please access the request and grant digital access to Lead Investigator  from <t t-out="object.date_from"/> to <t t-out="object.date_to"/>
+                </p>
+                <p>
+                    Kind regards,<br/><br/>
+                    Ethics and Forensic Services<br/>
+                    City of Cape Town 
+                </p>
+            </div>
+        </field>
+    </record>
+
+    <record id="mail_template_line_terms_of_refrence" model="mail.template">
+        <field name="name">In2it - Vendor Terms Of REFERENCE</field>
+        <field name="model_id" ref="in2it_project_management.model_investigation_vendor_line"/>
+        <field name="subject">Terms of Reference for conducting Investigation on {{ object.project_id.name}}</field>
+        <field name="body_html">
+            <![CDATA[
+
+            <p>Dear <t t-out="ctx.get('partner_name')"/>,<br/>
+            <br/>
+            TERMS OF REFERENCE – OUTSOURCED ASSIGNMENT<br/>
+            <br/>
+            The City of Cape Town (CCT), through the Office of the City Manager: Ethics and Forensic Services, hereby provides the attached    
+            <a t-att-href="ctx.get('url') or '#'" style="color: #007bff; text-decoration: none;" target="_blank">Web Link</a>
+            of Terms of Reference (ToR) in respect of the following assignment:<br/>
+            <br/>
+            Case ID: <t t-out="object.project_id.name"/><br/>
+            Case Reference Number: <t t-out="object.project_id.case_id.internal_coms_ref"/><br/>
+            Case Title: <t t-out="object.project_id.case_id.name"/><br/>
+            Directorate: <t t-out="object.project_id.directorate_id.name"/><br/>
+            Nature of Allegation: <t t-out="object.project_id.allegation_nature_id.name"/><br/>
+            Authorization Date: <t t-out="object.project_id.create_date"/><br/>
+            <br/>
+            You are requested to review the attached Terms of Reference and confirm your acceptance or rejection of this assignment in accordance with the provisions of this tender.<br/>
+            <br/>
+            In terms of the contractual requirements:<br/>
+            <br/>
+            • You are required to acknowledge receipt of this instruction.<br/>
+            • You have forty-eight (<t t-out="ctx.get('token_expire_hours')"/>) hours from the time this instruction was issued to formally accept or decline the assignment.<br/>
+            • Upon acceptance, you are required to submit a detailed project plan within seven (7) calendar days, including:<br/>
+            – Resources to be utilized<br/>
+            – Breakdown of professional skill sets and experience<br/>
+            – Detailed pricing aligned to the approved pricing schedule<br/>
+            – Milestones and timeframes<br/>
+            – Confirmation of capacity and expertise<br/>
+            <br/>
+            Please ensure that all submissions comply with the Terms of Reference and tender provisions.<br/>
+            <br/>
+            All correspondence and submissions must be sent to:<br/>
+            <br/>
+            <t t-out="object.project_id.assigned_pfo_id.email"/><br/>
+            <t t-out="object.project_id.user_id.email"/><br/>
+            <br/>
+            For technical or specification-related queries, please contact us:<br/>
+            <br/>
+            <t t-out="object.project_id.assigned_pfo_id.name"/><br/>
+            Principal Forensic Officer: Forensic Services<br/>
+            Mobile: <t t-out="object.project_id.assigned_pfo_id.phone"/><br/>
+            Email: <t t-out="object.project_id.assigned_pfo_id.email"/><br/>
+            <br/>
+            We look forward to your formal response within the stipulated timeframe.<br/>
+            <br/>
+            Kind regards,<br/>
+            <br/>
+            <t t-out="object.project_id.assigned_pfo_id.name"/><br/>
+            <br/>
+            Principal Forensic Officer<br/>
+            Ethics and Forensic Services<br/>
+            Office of the City Manager       <br/>     
+            City of Cape Town<br/>
+            <br/>
+            M: <t t-out="object.project_id.assigned_pfo_id.phone"/><br/>
+            E: <t t-out="object.project_id.assigned_pfo_id.email"/><br/>
+            </p>
+            ]]>
+        </field>
+        <field name="auto_delete">False</field>
+    </record> 
+
+    <record id="mail_template_case_overarching_memo_city_manager" model="mail.template">
+        <field name="name">Case Overarching Memo CM</field>
+        <field name="model_id" ref="in2it_project_management.model_overarching_memo"/>
+        <field name="subject">Overarching Memo for Authorization – {{ object.project_id.name }} – Electronic Issue of Forensic Report</field>
+        <field name="auto_delete" eval="False"/>
+        <field name="body_html" type="html">
+            <div t-name="mail_template_case">
+                <p>
+                    Dear City Manager
+                </p>
+
+                <p>
+                    Please find attached to this email, the letter from the Chief:EFS as well as the EFS report and exhibits. Also attached is the letter to the ED for their information/action. 
+                </p>
+                <p><strong>Case Details: </strong></p>
+                <p>    
+                    <strong>Case ID</strong>: <t t-out="object.project_id.name"/><br/>
+                    <strong>Submitted By</strong>: <t t-out="object.project_id.chief_id.name"/>, Chief of Ethics &amp; Forensics <br/>
+                    <strong> Submission Date</strong>:<t t-out="datetime.date.today()"/><br/>
+                </p>
+                <p>
+                   <strong>Confidentiality Notice</strong>: This communication contains information intended solely for official City of Cape Town business and must be handled in accordance with the City's confidentiality and records management policies. <br/>
+                </p>
+            </div>
+        </field>
+    </record>
+
+    <record id="mail_template_case_overarching_memo_approved_by_city_manager" model="mail.template">
+        <field name="name">Case Overarching Memo Approved by CM</field>
+        <field name="model_id" ref="in2it_project_management.model_overarching_memo"/>
+        <field name="subject">Overarching Memo Authorized – {{ object.project_id.name }}</field>
+        <field name="auto_delete" eval="False"/>
+        <field name="body_html" type="html">
+            <div t-name="mail_template_case">
+                <p>
+                    Dear Lead Investigator,
+                </p>
+                <p>
+                    The overarching memo has been authorized.
+                </p>
+                <p><strong>Case Details: </strong></p>
+                <p>    
+                    <strong>Case ID</strong>: <t t-out="object.project_id.name"/><br/>
+                    <strong>Memo Reference</strong>: <t t-out="object.name"/><br/>
+                    <strong>Authorization Date</strong>:<t t-out="datetime.date.today()"/><br/>
+                    <strong>Authorization By</strong>: City Manager<br/>
+                </p>
+                <p>
+                   <strong>Confidentiality Notice</strong>: This communication contains information intended solely for official City of Cape Town business and must be handled in accordance with the City's confidentiality and records management policies.<br/>
+                </p>
+            </div>
+        </field>
+    </record>
+
+    <record id="mail_template_case_overarching_memo_approved_excutive_directorate" model="mail.template">
+        <field name="name">Case Overarching Memo Executive Directorate</field>
+        <field name="model_id" ref="in2it_project_management.model_overarching_memo"/>
+        <field name="subject">Overarching Memo for Authorization – {{ object.project_id.name }}</field>
+        <field name="auto_delete" eval="False"/>
+        <field name="body_html" type="html">
+            <div t-name="mail_template_case">
+                <p>
+                    Dear ED
+                </p>
+                <p>
+                    Please find attached to this email, the letter from the Chief:EFS as well as the EFS report and exhibits. Also attached is the letter to the ED for their information/action.<a t-att-href="ctx.get('url')" target="_blank">Click Here</a> 
+                </p>
+                <p><strong>Case Details: </strong></p>
+                <p>    
+                    <strong>Case ID</strong>: <t t-out="object.project_id.name"/><br/>
+                    <strong>Submitted By</strong>: <t t-out="object.project_id.chief_id.name"/>, Chief of Ethics &amp; Forensics <br/>
+                    <strong> Submission Date</strong>:<t t-out="datetime.date.today()"/><br/>
+                </p>
+                <p>
+                   <strong>Confidentiality Notice</strong>: This communication contains information intended solely for official City of Cape Town business and must be handled in accordance with the City's confidentiality and records management policies.<br/>
+                </p>
+            </div>
+        </field>
+    </record>
+
+    <record id="mail_template_recommendation_assignment_ed_action" model="mail.template">
+        <field name="name">Case Overarching Memo Executive Directorate : Action</field>
+        <field name="model_id" ref="in2it_project_management.model_overarching_memo"/>
+        <field name="subject">Recommendations Assigned for implementation – {{ object.project_id.name }}</field>
+        <field name="auto_delete" eval="False"/>
+        <field name="body_html" type="html">
+            <div t-name="mail_template_case">
+                <p>
+                    Dear Executive Director
+                </p>
+                <p>
+                    Recommendations for the below investigation have been assigned to you for review and implementation.
+                    PFA report, memo, Annexures, Exhibits in your system and provide feedback within 30 days.
+                    <a t-att-href="ctx.get('url')" target="_blank">Click Here</a>
+                </p>
+                <p><strong>Case Details: </strong></p>
+                <p>
+                    <strong>Case ID :</strong> <t t-out="object.project_id.name"/><br/>
+                    <strong>Number of Recommendations :</strong>
+                    <t t-out="len(object.project_id.recom_project_ids.filtered(lambda r: not r.for_efs))"/><br/>
+                    <strong>Implementation Timeline :</strong>30 days<br/>
+                </p>
+                <p>
+                   <strong>Confidentiality Notice :</strong>This communication contains information intended solely for
+                    official City of Cape Town business and must be handled in accordance with the City's confidentiality
+                    and records management policies.<br/>
+                </p>
+            </div>
+        </field>
+    </record>
+
+    <record id="mail_template_recommendation_assignment_ed_info" model="mail.template">
+        <field name="name">Case Overarching Memo Executive Directorate : Information</field>
+        <field name="model_id" ref="in2it_project_management.model_overarching_memo"/>
+        <field name="subject">Recommendations Assigned for Information – {{ object.project_id.name }}</field>
+        <field name="auto_delete" eval="False"/>
+        <field name="body_html" type="html">
+            <div t-name="mail_template_case">
+                <p>
+                    Dear Executive Director
+                </p>
+                <p>
+                    Recommendations for the below investigation have been assigned to you for review and information.
+                    PFA report, memo, Annexures, Exhibits in your system. <a t-att-href="ctx.get('url')" target="_blank">Click Here</a>
+                </p>
+                <p><strong>Case Details: </strong></p>
+                <p>
+                    <strong>Case ID :</strong> <t t-out="object.project_id.name"/><br/>
+                    <strong>Number of Recommendations :</strong>
+                    <t t-out="len(object.project_id.recom_project_ids.filtered(lambda r: not r.for_efs))"/><br/>
+                </p>
+                <p>
+                   <strong>Confidentiality Notice :</strong>This communication contains information intended solely for
+                    official City of Cape Town business and must be handled in accordance with the City's confidentiality
+                    and records management policies.<br/>
+                </p>
+            </div>
+        </field>
+    </record>
+</odoo>

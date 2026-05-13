@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="view_digital_evidence_list" model="ir.ui.view">
+            <field name="name">Digital Evidence List</field>
+            <field name="model">digital.evidence</field>
+            <field name="arch" type="xml">
+                <list create="0">
+                    <field name="name"/>
+                    <field name="suspect_ids" widget="many2many_tags" readonly="1"/>
+                    <field name="date_from" required="1" widget="daterange" options="{'end_date_field': 'date_to'}"/>
+                    <field name="date_to" required="1" column_invisible="1"/>
+                    <field name="status" widget="badge" decoration-warning="status == 'pending'" decoration-success="status == 'approved'"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_digital_evidence_form" model="ir.ui.view">
+            <field name="name">Digital Evidence Form</field>
+            <field name="model">digital.evidence</field>
+            <field name="arch" type="xml">
+                <form create="0">
+                    <header>
+                        <field name="status" widget="statusbar"/>
+                        <button name="action_sign_by_city_manager" class="btn btn-primary" string="Sign Now" type="object" invisible="digital_access != 'city_manager' or uid != city_manager_id"/>
+
+                        <button name="action_submit_de_lead_investigator" class="btn btn-primary" string="Request Digital Evidence" type="object" invisible="digital_access != 'lead_investigator' or uid not in lead_investigator_ids"/>
+
+                        <button name="action_request_change_by_city_manager" class="btn btn-primary" string="Request Change" type="object"  invisible="digital_access != 'city_manager' or uid != city_manager_id"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1><field name="name"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="suspect_ids" widget="many2many_tags" options="{'no_open': True, 'no_create': True, 'no_edit': True}" readonly="1"/>
+                                <field name="date_from" required="1" widget="daterange" options="{'end_date_field': 'date_to'}" readonly="1"/>
+                                <field name="date_to" required="1" invisible="1"/>
+                                <field name="evidence" placeholder="e.g. Evidence" readonly="1"/>
+                                <field name="comment" placeholder="e.g. Comments" readonly="1"/>
+                                <field name="lead_investigator_ids" string="Lead Investigator" widget="many2many_tags" invisible="1"/>
+                                <field name="city_manager_id" string="City Manager" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="project_id" options="{'no_open': True, 'no_create': True, 'no_edit': True}" readonly="1"/>
+                                <field name="digital_access" string="Status" readonly="1" invisible="status == 'approved'"/>
+                                <field name="request_change" string="Required Change" readonly="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="City Manager Letter">
+                                <field name="attachment_ids" widget="many2many_binary" readonly="1"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="search_view_digital_evidence" model="ir.ui.view">
+            <field name="name">digital.evidence.search</field>
+            <field name="model">digital.evidence</field>
+            <field name="arch" type="xml">
+                <search string="Digital Evidence Search">
+                    <!-- Basic search fields -->
+                    <field name="name"/>
+                    <field name="city_manager_id"/>
+                    <field name="status"/>
+
+                    <!-- Filter for Pending -->
+                    <filter name="pending" string="Pending" domain="[('status','=','pending')]"/>
+
+                    <!-- Optional: other filters -->
+                    <filter name="completed" string="Completed" domain="[('status','=','done')]"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- Digital Evidence action -->
+        <record id="digital_evidence_action" model="ir.actions.act_window">
+            <field name="name">Digital Evidence</field>
+            <field name="res_model">digital.evidence</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('view_digital_evidence_list')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('view_digital_evidence_form')})]"/>
+            <field name="context">{'search_default_pending': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    There are no items pending your approval.
+                </p>
+            </field>
+        </record>
+
+        <record id="action_digital_action" model="ir.actions.server">
+          <field name="name">Digital Action</field>
+          <field name="model_id" ref="in2it_project_management.model_digital_evidence"/>
+          <field name="binding_model_id" ref="in2it_project_management.model_digital_evidence"/>
+          <field name="state">code</field>
+          <field name="code">action = model.get_digital_evidence()</field>
+        </record>
+
+        <menuitem
+                id="inv_digital_evidence_menu"
+                name="Digital Evidence"
+                parent="project.menu_main_pm"
+                action="in2it_project_management.action_digital_action"
+                groups="in2it_forensic_services.group_fcm_city_manager,base.group_system,in2it_forensic_services.group_fcm_admin"
+                sequence="5"/>
+    </data>
+</odoo>

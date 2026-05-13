@@ -1,0 +1,299 @@
+<odoo>    
+    <template id="portal_breadcrumbs_memos"
+        inherit_id="portal.portal_breadcrumbs"
+        name="Portal Breadcrumbs: Memo to Acknowledge"
+        priority="30">
+
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+
+            <!-- Parent level breadcrumb item -->
+            <li t-if="page_name == 'memos' or memo"
+                t-attf-class="breadcrumb-item #{'active ' if not memos else ''}">
+                <a t-if="not memos"
+                    t-attf-href="/my/memos">
+                    Memo to Acknowledge
+                </a>
+                <t t-else="">Memo to Acknowledge</t>
+            </li>
+            <li t-if="page_name == 'memo'" class="breadcrumb-item active">
+                <t t-out="memo.name" />
+            </li>
+
+
+        </xpath>
+    </template>
+
+    <template id="portal_my_home_sign" name="Signatures"
+                customize_show="True"
+                inherit_id="portal.portal_my_home"
+                priority="60">
+
+        <!-- Enable category -->
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
+            <t t-set="portal_live_sign_category_enable" t-value="True"/>
+        </xpath>
+
+        <!-- Insert your new block properly -->
+        <xpath expr="//div[@id='portal_client_category']" position="after">
+            <div id="portal_live_sign_category">
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="title">Overarching Memo</t>
+                    <t t-set="text">Acknowledgement for Executive Directorate</t>
+                    <t t-set="url" t-value="'/my/memos'"/>
+                    <t t-set="placeholder_count" t-value="'memo_pending_count'"/>
+                    <t t-set="show_count" t-value="True" />
+                </t>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="in2it_project_management.portal_live_signature_page" name="Live Signature Portal Page">
+        <t t-call="portal.portal_layout">
+
+            <div class="container mt-4">
+                <h2>Overarching Memo</h2>
+
+                <table class="table table-hover mt-3">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Created On</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <t t-foreach="memos" t-as="memo">
+                            <tr style="cursor: pointer;"
+                                t-att-data-href="'/my/memo/%s' % memo.id"
+                                onclick="window.location=this.getAttribute('data-href')">
+
+                                <td>
+                                    <a t-att-href="'/my/memo/%s' % memo.id">
+                                        <t t-esc="memo.name"/>
+                                    </a>
+                                </td>
+
+                                <td>
+                                    <t t-esc="memo.create_date"/>
+                                </td>
+
+                                <td>
+                                    <t t-esc="memo.status"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+
+        </t>
+    </template>
+
+    <template id="ed_navar_page">
+        <t t-call="portal.portal_layout">
+
+            <div class="container mt-4">
+
+                <h2><t t-esc="memo.name"/></h2>
+
+                <!-- NAV -->
+                <nav class="nav nav-tabs mb-4">
+
+                    <a t-att-class="'nav-link %s' % ('active' if active_tab == 'document' else '')"
+                        t-att-href="'/my/memo/%s?tab=document' % memo.id">
+                        Document
+                    </a>
+
+                    <a t-att-class="'nav-link %s' % ('active' if active_tab == 'annexure' else '')"
+                    t-att-href="'/my/memo/%s?tab=annexure' % memo.id">
+                        Annexure
+                    </a>
+
+                    <a t-att-class="'nav-link %s' % ('active' if active_tab == 'exhibit' else '')"
+                    t-att-href="'/my/memo/%s?tab=exhibit' % memo.id">
+                        Exhibit
+                    </a>
+
+                    <a t-att-class="'nav-link %s' % ('active' if active_tab == 'investigation_report' else '')"
+                    t-att-href="'/my/memo/report/%s?tab=investigation_report' % memo.id">
+                        Investigation Report
+                    </a>
+
+                </nav>
+
+                <!-- CONTENT SWITCH -->
+                <t t-if="active_tab == 'document'">
+                    <div class="card p-3">
+                        <t t-if="sign_requests">
+                            <t t-foreach="sign_requests" t-as="req">
+                                <t t-if="req.completed_document">
+                                    <div class="d-flex justify-content-between align-items-center mb-2 border-bottom pb-2">
+
+                                        <!-- Document Name -->
+                                        <div>
+                                            <strong t-esc="req.display_name or 'Signed Document'"/>
+                                        </div>
+
+                                        <!-- Buttons -->
+                                        <div>
+                                            <a t-att-href="'/web/content/sign.request/%s/completed_document?download=0' % req.id"
+                                            target="_blank"
+                                            class="btn btn-sm btn-primary me-1">
+                                                View
+                                            </a>
+
+                                            <a t-att-href="'/web/content?model=sign.request&amp;id=%s&amp;field=completed_document&amp;download=true' % req.id"
+                                            class="btn btn-sm btn-secondary">
+                                                Download
+                                            </a>
+                                            
+                                            <t t-if="memo.distribution_line_ids.filtered(lambda l: l.user_id.id == request.env.user.id and l.status == 'pending')">
+                                                <a t-att-href="'/my/memo/acknowledge/%s' % req.id"
+                                                class="btn btn-sm btn-success me-1">
+                                                    Acknowledge
+                                                </a>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </t>
+                            </t>
+
+                        </t>
+
+                        <t t-if="not sign_requests">
+                            <p>No documents found.</p>
+                        </t>
+                    </div>
+                </t>
+
+                <t t-if="active_tab == 'annexure'">
+                    <div class="card p-3">
+                        <t t-if="annexure_docs">
+                            <t t-foreach="annexure_docs" t-as="doc">
+                                <t t-if="doc.file">
+                                    <div class="d-flex justify-content-between align-items-center mb-2 border-bottom pb-2">
+
+                                        <!-- Name -->
+                                        <div>
+                                            <span t-esc="doc.file_name"/>
+                                        </div>
+
+                                        <!-- Buttons -->
+                                        <div>
+                                            <a t-att-href="'/web/content/forensic.document.line/%s/file?download=0' % doc.id"
+                                            target="_blank"
+                                            class="btn btn-sm btn-primary me-1">
+                                                View
+                                            </a>
+
+                                            <a t-att-href="'/web/content/forensic.document.line/%s/file?download=1' % doc.id"
+                                            class="btn btn-sm btn-secondary">
+                                                Download
+                                            </a>
+                                        </div>
+
+                                    </div>
+                                </t>
+                            </t>
+                        </t>
+
+                        <t t-if="not annexure_docs">
+                            <p>No annexure documents found.</p>
+                        </t>
+                    </div>
+                </t>
+
+                <t t-if="active_tab == 'exhibit'">
+                    <div class="card p-3">
+                        <t t-if="exhibit_docs">
+                            <t t-foreach="exhibit_docs" t-as="doc">
+                                <div class="d-flex justify-content-between align-items-center mb-2 border-bottom pb-2">
+
+                                    <!-- Name -->
+                                    <div>
+                                        <span t-esc="doc.name"/>
+                                    </div>
+
+                                    <!-- Buttons -->
+                                    <div>
+                                        <a t-attf-href="{{doc.get_base_url()}}/web/content/{{doc.id}}?access_token={{doc.access_token}}"
+                                        target="_blank"
+                                        class="btn btn-sm btn-primary me-1">
+                                            View
+                                        </a>
+
+                                        <a t-attf-href="{{doc.get_base_url()}}/web/content/{{doc.id}}?access_token={{doc.access_token}}&amp;download=true"
+                                        class="btn btn-sm btn-secondary">
+                                            Download
+                                        </a>
+                                    </div>
+
+                                </div>
+                            </t>
+                        </t>
+
+                        <t t-if="not exhibit_docs">
+                            <p>No exhibit documents found.</p>
+                        </t>
+                    </div>
+                </t>
+
+                <t t-if="active_tab == 'investigation_report'">
+                    <div class="card p-3">
+
+                        <t t-if="investigation_report">
+                            <t t-foreach="investigation_report" t-as="doc">
+                                <div class="d-flex justify-content-between align-items-center mb-2 border-bottom pb-2">
+
+                                    <div>
+                                        <span t-esc="doc.name"/>
+                                    </div>
+
+                                    <div>
+                                        <a t-attf-href="{{doc.get_base_url()}}/web/content/{{doc.id}}?access_token={{doc.access_token}}"
+                                        target="_blank"
+                                        class="btn btn-sm btn-primary me-1">
+                                            View
+                                        </a>
+
+                                        <a t-attf-href="{{doc.get_base_url()}}/web/content/{{doc.id}}?access_token={{doc.access_token}}&amp;download=true"
+                                        class="btn btn-sm btn-secondary">
+                                            Download
+                                        </a>
+                                    </div>
+
+                                </div>
+                            </t>
+                        </t>
+
+                        <t t-if="not investigation_report">
+                            <p>No investigation report found.</p>
+                        </t>
+
+                    </div>
+                </t>
+            </div>
+
+        </t>
+    </template>
+
+    <template id="thank_you_dialog" name="Thank You Dialog">
+        <t t-call="portal.portal_layout">
+            <div class="modal fade show" style="display:block; background:rgba(0,0,0,0.5);">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content text-center p-4">
+                        
+                        <h4>Thank You!</h4>
+                        <p>Your acknowledgement has been recorded.</p>
+
+                        <a t-att-href="'/my/memo/%s?tab=document' % memo_id"
+                        class="btn btn-primary">
+                            Confirm
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

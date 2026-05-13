@@ -1,0 +1,134 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+
+    <record id="view_forensic_peer_review_line_search" model="ir.ui.view">
+        <field name="name">forensic.peer.review.line.search</field>
+        <field name="model">forensic.peer.review.line</field>
+        <field name="arch" type="xml">
+            <search>
+
+                <filter name="pending_approved"
+                        string="Pending / Approved"
+                        domain="[('action','in',('pending','approved'))]"/>
+
+                <filter name="changes_required"
+                        string="Changes Required"
+                        domain="[('action','=','changes_required')]"/>
+
+            </search>
+        </field>
+    </record>
+
+
+    <record id="view_forensic_peer_review_list" model="ir.ui.view">
+        <field name="name">forensic.peer.review.list</field>
+        <field name="model">forensic.peer.review</field>
+        <field name="arch" type="xml">
+            <list create="0">
+                <field name="project_id" string="Investigation"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_forensic_peer_review_form" model="ir.ui.view">
+        <field name="name">forensic.peer.review.form</field>
+        <field name="model">forensic.peer.review</field>
+        <field name="arch" type="xml">
+
+            <form string="Peer Review" create="0">
+
+                <!-- HEADER BUTTONS -->
+                <header>
+                    <button name="action_preview_investigation_report" class="btn-primary" string="Preview Report" icon="fa-eye" type="object" invisible="assignment_type != 'internal' or case_type == 'pre'"/>
+                    <button name="action_preview_preliminary_report" class="btn-primary" string="Assessment Report" icon="fa-eye" type="object" invisible="case_type != 'pre'"/>
+                    <button name="action_approve" string="Approve" type="object" class="btn-primary" invisible="assignment_type != 'internal' or state == 'complete' or not is_valid_reviewers"/>
+                    <button name="action_approve" string="Approve" type="object" class="btn-primary" invisible="assignment_type != 'external' or not is_external_report_submitted or state == 'complete' or not is_valid_reviewers"/>
+                    <button name="action_changes_required" string="Send for Updates" type="object" class="btn-primary" invisible="state == 'complete' or not is_valid_reviewers"/>
+                    <button name="action_open_signoff_wizard" type="object" string="Sign Off" class="btn-primary" invisible="state == 'complete' or not is_review_complete or not is_manager"/>
+
+                    <field name="state" widget="statusbar" statusbar_visible="pending,in_progress,complete"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="project_id" readonly="1"/>
+                            <field name="is_valid_reviewers" invisible="1"/>
+                            <field name="is_manager" invisible="1"/>
+                            <field name="can_sign" invisible="1"/>
+                            <field name="is_review_complete" invisible="1"/>
+                            <field name="assignment_type" invisible="1"/>
+                            <field name="is_external_report_submitted" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="sign_off_date" readonly="1"/>
+                        </group>
+                        <group invisible="assignment_type != 'external'">
+                            <field name="attachment_ids" widget="many2many_binary" readonly="1" string="Documents"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+
+                        <page string="Approval Actions">
+                            <field name="pending_approved_line_ids" readonly="1">
+                                <list>
+                                    <field name="job_id"/>
+                                    <field name="user_id"/>
+                                    <field name="previous_reviewer_id"/>
+                                    <field name="action"
+                                           widget="badge"
+                                           decoration-success="action == 'approved'"
+                                           decoration-warning="action == 'changes_required'"
+                                           decoration-muted="action == 'pending'"/>
+                                    <field name="date"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Changes Requested">
+                            <field name="changes_line_ids" readonly="1">
+                                <list>
+                                    <field name="job_id"/>
+                                    <field name="user_id"/>
+                                    <field name="previous_reviewer_id"/>
+                                    <field name="comment"/>
+                                    <field name="action"
+                                           widget="badge"
+                                           decoration-success="action == 'approved'"
+                                           decoration-warning="action == 'changes_required'"
+                                           decoration-muted="action == 'pending'"/>
+                                    <field name="date"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Sign Off"
+                              invisible="not is_review_complete">
+                            <group>
+                                <!-- Attachments -->
+                                <field name="attachment_ids"
+                                       widget="many2many_binary"
+                                       readonly="1"/>
+
+                                <!-- Signature -->
+                                <field name="signature"
+                                       widget="signature"
+                                       readonly="1"/>
+                            </group>
+                        </page>
+
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_forensic_peer_review" model="ir.actions.act_window">
+        <field name="name">Peer Reviews</field>
+        <field name="res_model">forensic.peer.review</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

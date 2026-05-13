@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <template id="sign_portal_my_request_inherit" inherit_id="sign.sign_portal_my_request">
+
+    <!-- ❌ Hide Communication History -->
+    <xpath expr="//div[h3[text()='Communication history']]" position="attributes">
+        <attribute name="t-if">False</attribute>
+    </xpath>
+</template>
+</odoo>

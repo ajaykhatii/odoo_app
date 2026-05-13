@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="fixed_tag_historic" model="crm.tag">
+            <field name="name">Historic</field>
+            <field name="is_fixed_tag">True</field>
+            <field name="color">1</field>
+        </record>
+
+        <record id="fixed_tag_current" model="crm.tag">
+            <field name="name">Current</field>
+            <field name="is_fixed_tag">True</field>
+            <field name="color">8</field>
+        </record>
+
+        <record id="fixed_tag_ongoing" model="crm.tag">
+            <field name="name">Ongoing</field>
+            <field name="is_fixed_tag">True</field>
+            <field name="color">10</field>
+        </record>
+
+        <record id="variable_tag_repeated" model="crm.tag">
+            <field name="name">Repeated</field>
+            <field name="is_fixed_tag">False</field>
+            <field name="color">7</field>
+        </record>
+
+        <record id="variable_tag_once_off" model="crm.tag">
+            <field name="name">Once Off</field>
+            <field name="is_fixed_tag">False</field>
+            <field name="color">3</field>
+        </record>
+
+
+    </data>
+</odoo>

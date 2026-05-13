@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="cms_reports_config_list_view" model="ir.ui.view">
+        <field name="name">cms.reports.config.list</field>
+        <field name="model">cms.report.config</field>
+        <field name="arch" type="xml">
+            <list create="0" duplicate="0">
+                <field name="name"/>
+                <field name="group_ids" widget="many2many_tags"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="cms_reports_config_form_view" model="ir.ui.view">
+        <field name="name">cms.reports.config.form</field>
+        <field name="model">cms.report.config</field>
+        <field name="arch" type="xml">
+            <form create="0" duplicate="0">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" required="1" readonly="1"/>
+                            <field name="group_ids" widget="many2many_tags" options="{'no_open': True, 'no_create': True}"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_cms_config" model="ir.actions.act_window">
+        <field name="name">Reports Configuration</field>
+        <field name="res_model">cms.report.config</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem
+            id="cms_reports_menu"
+            name="Reporting"
+            parent="project.menu_project_report"
+            action="in2it_cms_reports.action_cms_reports_wizard"
+            sequence="1"/>
+
+    <menuitem
+            id="cms_reports_config_menu"
+            name="Report Configuration"
+            parent="project.menu_project_config"
+            action="in2it_cms_reports.action_cms_config"
+            sequence="2"/>
+</odoo>

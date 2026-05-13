@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="view_close_case_wizard_form" model="ir.ui.view">
+            <field name="name">forensic.case.close.wizard</field>
+            <field name="model">forensic.case.close.wizard</field>
+            <field name="arch" type="xml">
+
+
+
+                <form string="Close Case">
+                    <sheet>
+                        <group>
+                            <group><label for="response" string="Were all the allegations responded by the LIN management?"/></group>
+                            <group><field name="response" nolabel="1"/></group>
+                        </group>
+                        <group>
+                            <field name="comment"
+                                   placeholder="Provide support comment for your decision..." />
+                        </group>
+                    </sheet>
+
+                    <footer>
+                        <button name="action_confirm" type="object"
+                                string="Submit" class="btn-primary"
+                                data-hotkey="q"/>
+                        <button string="Cancel" class="btn-secondary"
+                                special="cancel" data-hotkey="x"/>
+                    </footer>
+                </form>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

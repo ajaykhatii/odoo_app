@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+        <data>
+
+            <record id="view_distribution_line_list" model="ir.ui.view">
+                <field name="name">distribution.line.list</field>
+                <field name="model">distribution.line</field>
+                <field name="arch" type="xml">
+                    <list string="Distribution List" editable="bottom">
+                        <field name="user_id" required="1"/>
+                        <field name="action" widget="radio" options="{'horizontal': true}" required="1"/>
+                        <field name="project_id" column_invisible="1"/>
+                        <field name="active" column_invisible="1"/>
+                         <field name="allowed_user_ids" widget="many2many_tags" column_invisible="1" />
+                    </list>
+                </field>
+            </record>
+
+
+
+        </data>
+</odoo>

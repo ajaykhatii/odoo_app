@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<!--    Financial Year Res Company-->
+    <record id="res_company_view_form" model="ir.ui.view">
+        <field name="name">res.company.view.form</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="generate_case_type_sequence" string="Generate Sequence" type="object" class="btn-primary"/>
+                </header>
+            </xpath>
+            <xpath expr="//page[@name='general_info']" position="inside">
+                <group name="financial_year" string="Financial Year" class="o_forensic_group">
+                    <group>
+                        <field name="fy_start_date" widget="daterange" required="1" string="Date"
+                               options="{'end_date_field': 'fy_end_date'}"/>
+                        <field name="fy_end_date" invisible="1"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+
+
+     <!-- res.group default list view -->
+    <record id="cms_team_group_list_view" model="ir.ui.view">
+        <field name="name">cms.team.group.list.view</field>
+        <field name="model">res.groups</field>
+        <field name="arch" type="xml">
+            <list string="Groups">
+                <field name="full_name" string="Group Name"/>
+            </list>
+        </field>
+    </record>
+
+
+    <!-- CMS Team Group Form View -->
+    <record id="cms_team_group_form_view" model="ir.ui.view">
+        <field name="name">cms.team.group.form.view</field>
+        <field name="model">res.groups</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <form string="Groups">
+                <sheet>
+                <group col="4">
+                    <field name="name" readonly="1"/>
+                    <field name="is_cms" invisible="1"/>
+                </group>
+                <notebook>
+                    <page string="Users" name="users">
+                        <field name="users">
+                            <list editable="bottom" create="0">
+                                <field name="name"/>
+                                <field name="login"/>
+                                <field name="lang"/>
+                                <field name="login_date"/>
+                                <field name="state"/>
+                            </list>
+                        </field>
+                    </page>
+                </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="cms_team_group_form_view_inherited" model="ir.ui.view">
+        <field name="name">cms.team.group.form.view.inherit</field>
+        <field name="model">res.groups</field>
+        <field name="inherit_id" ref="base.view_groups_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet/group/field[@name='name']" position="after">
+                <field name="is_cms"/>
+            </xpath>
+        </field>
+    </record>
+
+
+    <!-- CMS Team Group List View -->
+    <record id="cms_team_group_list_view_custom" model="ir.ui.view">
+        <field name="name">cms.team.group.list.view.custom</field>
+        <field name="model">res.groups</field>
+        <field name="arch" type="xml">
+            <list string="Groups">
+                <field name="full_name" string="Group Name"/>
+            </list>
+        </field>
+    </record>
+
+
+    <!-- cms team group action -->
+    <record id="cms_team_group_action" model="ir.actions.act_window">
+        <field name="name">Teams</field>
+        <field name="res_model">res.groups</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_cms', '=', True)]</field>
+        <field name="context">{'default_is_cms': 1, 'create':False}</field>
+        <field name="view_ids" eval="[
+            (5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('cms_team_group_list_view_custom')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('cms_team_group_form_view')})]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+            Create a new CMS Group.
+            </p>
+        </field>
+    </record>
+
+
+</odoo>

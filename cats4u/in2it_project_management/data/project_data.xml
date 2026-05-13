@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="0">
+    <!-- Project Stages -->
+    <record id="project.project_project_stage_0" model="project.project.stage">
+        <field name="sequence">10</field>
+        <field name="name">Planning</field>
+    </record>
+
+    <record id="project.project_project_stage_1" model="project.project.stage">
+        <field name="sequence">15</field>
+        <field name="name">Under Investigation</field>
+    </record>
+
+    <record id="project.project_project_stage_2" model="project.project.stage">
+        <field name="sequence">20</field>
+        <field name="name">Under Review</field>
+    </record>
+
+    <record id="project_project_stage_2_1" model="project.project.stage">
+        <field name="sequence">20</field>
+        <field name="name">Under Implementation</field>
+    </record>
+
+    <record id="project.project_project_stage_3" model="project.project.stage">
+        <field name="sequence">25</field>
+        <field name="name">Closure</field>
+    </record>
+</odoo>

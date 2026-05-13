@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        <record id="in2it_view_list_public_holidays_inherit" model="ir.ui.view">
+            <field name="name">in2it.public.holidays.list</field>
+            <field name="model">in2it.public.holidays</field>
+            <field name="arch" type="xml">
+                <list editable="bottom">
+                    <field name="name"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="calendar_id"/>
+                </list>
+            </field>
+        </record>
+    </data>
+</odoo>

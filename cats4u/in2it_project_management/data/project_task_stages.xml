@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Project Task Stages -->
+    <record id="project_task_stage_draft" model="project.task.type">
+        <field name="name">Draft</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <record id="project_task_stage_to_approve" model="project.task.type">
+        <field name="name">To Approve</field>
+        <field name="sequence">11</field>
+    </record>
+    
+    <record id="project_task_stage_approved" model="project.task.type">
+        <field name="name">Approved</field>
+        <field name="sequence">12</field>
+    </record>
+</odoo>

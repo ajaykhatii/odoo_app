@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- wizard of Assign Standard Task-->
+        <record id="assign_standard_task_form_view" model="ir.ui.view">
+            <field name="name">Assign.standard.task.form.view</field>
+            <field name="model">assign.standard.task.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Assign Standard Task">
+                    <sheet>
+                        <group>
+                            <field name="project_id" options="{'no_open': True, 'no_create': True, 'no_edit': True}" invisible="1"/>
+                            <field name="assign_standard_task_ids" nolabel="1">
+                                <list create="0">
+                                    <field name="name"/>
+                                    <field name="task_category_id"/>
+                                    <control><create name="add_a_document" string="Select tasks"/></control>
+                                </list>
+                                <form edit="0">
+                                    <group>
+                                        <group>
+                                            <field name="name"/>
+                                            <field name="task_category_id"/>
+                                            <field name="task_details"/>
+                                        </group>
+                                        <group>
+                                            <field name="is_sla"/>
+                                        </group>
+                                    </group>
+                                </form>
+                            </field>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="action_Assign_standard_task" string="Assign" type="object" class="btn-primary" data-hotkey="q"/>
+                        <button special="cancel" string="Cancel" class="btn btn-danger"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

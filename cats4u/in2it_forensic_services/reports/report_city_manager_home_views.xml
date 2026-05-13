@@ -1,0 +1,139 @@
+<odoo>
+
+    <record id="action_report_forensic_case_assignment_pdf" model="ir.actions.report">
+        <field name="name">SOC</field>
+        <field name="model">forensic.case.assignment</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">in2it_forensic_services.report_forensic_case_assignment_pdf</field>
+        <field name="report_file">in2it_forensic_services.report_forensic_case_assignment_pdf</field>
+        <field name="print_report_name">
+            "Case Authorization Details"
+        </field>
+        <field name="binding_model_id" ref="model_forensic_case_assignment"/>
+        <field name="binding_type">report</field>
+    </record>
+
+
+    <template id="report_forensic_case_assignment_pdf">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+
+                <t t-foreach="docs" t-as="doc">
+
+                    <div class="page">
+
+                        <h2 class="text-center mb16">
+                            Case Authorization Details
+                        </h2>
+
+
+                        <table class="table table-sm table-bordered">
+                            <tbody>
+
+                                <tr>
+                                    <th width="30%">Ref.</th>
+                                    <td width="70%">
+                                        <t t-esc="doc.case_ref_number"/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>Source (If Any)</th>
+                                    <td>
+                                        <t t-esc="doc.parent_case_id.allegation_source_id.name or ''"/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>Reference (If Any)</th>
+                                    <td>
+                                        <t t-esc="doc.parent_case_id.internal_coms_ref or ''"/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>Date Reported</th>
+                                    <td>
+                                        <t t-esc="doc.parent_case_id.create_date.strftime('%d-%m-%Y') if doc.parent_case_id.create_date else ''"/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>Nature of Complaints</th>
+                                    <td>
+                                        <t t-esc="doc.parent_case_id.allegation_nature_id.name or ''"/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>Subject</th>
+                                    <td>
+                                        <t t-esc="doc.parent_case_id.name or ''"/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>Directorate</th>
+                                    <td>
+                                        <t t-esc="doc.parent_case_id.directorate_id.name or ''"/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>Department</th>
+                                    <td>
+                                        <t t-esc="doc.parent_case_id.department_id.name or ''"/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>Assignment Type</th>
+                                    <td>
+                                        <t t-esc="doc.assignment_type_id.name or ''"/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>Comment</th>
+                                    <td>
+                                        <t t-esc="doc.parent_case_id.review_note or ''"/>
+                                    </td>
+                                </tr>
+ 
+
+                            </tbody>
+                        </table>
+
+
+                        <div class="mt24">
+
+                            <h4 class="mb8">
+                                Brief Description of Matter
+                            </h4>
+
+                            <div class="o_boxed">
+                                <t t-if="doc.parent_case_id.allegation_description">
+                                    <t t-raw="doc.parent_case_id.allegation_description"/>
+                                </t>
+
+                                <t t-if="not doc.parent_case_id.allegation_description">
+                                    <span class="text-muted">
+                                        No description provided.
+                                    </span>
+                                </t>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div style="page-break-after: always;"></div>
+
+                </t>
+
+            </t>
+        </t>
+    </template>
+
+
+</odoo>

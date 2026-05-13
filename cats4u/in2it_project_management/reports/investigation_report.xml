@@ -1,0 +1,494 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+        <data>
+            <record id="action_investigation_report" model="ir.actions.report">
+                <field name="name">Investigation Report</field>
+                <field name="model">project.project</field>
+                <field name="report_type">qweb-html</field>
+                <field name="report_name">in2it_project_management.action_investigation_report_template</field>
+                <field name="report_file">in2it_project_management.action_investigation_report_file</field>
+                <field name="binding_type">report</field>
+            </record>
+
+
+            <template id="action_investigation_report_template">
+                <t t-call="web.html_container">
+                    <t t-foreach="docs" t-as="o">
+                        <t t-call="web.external_layout">
+                            <style>
+                                body, div, p, span, table, th, td, h1, h2, h3, h4, h5, h6 {
+                                    font-family: 'CenturyGothic', sans-serif !important;
+                                }
+
+                                .in2it-hfs{
+                                    font-weight:700;
+                                    font-size:12px;
+                                    letter-spacing: 1px;
+                                }
+
+                                .in2it-hfs1{
+                                    font-weight:700;
+                                    font-size:14px;
+                                }
+
+                                .in2it-fs{
+                                    font-size:11px;
+                                }
+
+                                .in2it-fs1{
+                                    font-size:11px;
+                                    line-height:1.5rem;
+                                }
+
+                                .in2it-fs-align{
+                                    text-align:right;
+                                }
+
+                                .in2it-table,
+                                .in2it-table th,
+                                .in2it-table td{
+                                    font-size:10px;
+                                }
+                            </style>
+                            <!-- Header (page - 1) -->
+                            <div class="border border-3 border-dark px-2">
+                                <div class="text-center pt-2 pb-0">
+                                    <p class="in2it-hfs1" style="text-transform: uppercase;">
+                                    <b>FORENSIC REPORT</b><br/>
+                                    <b>FORENSIC INVESTIGATION INTO ALLEGED <t t-esc="o.assignment_type_id.name or ''"/>/ <t t-esc="o.allegation_nature_id.name"/> </b><br/>
+                                    <b>DATE: <t t-esc="datetime.datetime.now().strftime('%d-%m-%Y')"/></b><br/>
+                                    <b>CASE NO: <t t-esc="o.name"/></b></p>
+                                </div>
+                                
+                                <div>
+                                    <table class="table in2it-table">
+                                        <thead>
+                                            <tr>
+                                                <th class="th bg-secondary fw-bold">Distribution List</th>
+                                                <th class="th bg-secondary text-center fw-bold">For Information</th>
+                                                <th class="th bg-secondary text-center fw-bold">For Action</th>
+                                            </tr>
+                                            <t t-foreach="o.distribution_line_ids" t-as="dist">
+                                                <tr>
+                                                    <th class="th fw-bold"><span t-field="dist.user_id.name"/></th>
+                                                    <th class="th fw-bold text-center"><t t-if="dist.action == 'info'">✔️ Yes</t></th>
+                                                    <th class="th fw-bold text-center"><t t-if="dist.action == 'action'">✔️ Yes</t></th>
+                                                </tr>
+                                            </t>
+                                            
+                                        </thead>
+                                    </table>
+                                </div>
+                                <br/>
+                                <div>
+                                    <p class="in2it-fs1">
+                                        Copyright: This document is intended for the use of Ethics and Forensic Services in the City of Cape Town and those specified persons noted on the distribution list of same, 
+                                        and contains legally privileged and/or confidential information. 
+                                        Dissemination, distribution or copying of this document is prohibited, without the express prior written permission of the City Manager. 
+                                        If you have received this document in error, please notify the City Manager at telephone 021-400 1330 immediately.
+                                        <br/>
+                                        <br/>
+
+                                        Kopiereg: Hierdie dokument is bedoel vir die gebruik van die Stad Kaapstad se departement Etiek en Forensiese Dienste en daardie bepaalde persone wat op die organisasie se verspreidingslys is, 
+                                        en bevat wetlik geprivilegieerde en/of vertroulike inligting. Disseminasie, verspreiding of kopiëring van hierdie dokument word verbied sonder die uitdruklike, vooraf skriftelike magtiging van die Stadsbestuurder. 
+                                        Indien u die dokument foutiewelik ontvang het, verwittig asseblief onmiddelik die Stadsbestuurder by 021 400 1330.
+                                        <br/>
+                                        <br/>
+                                        Ilungelo elilodwa kuxwebhu: Olu xwebhu lilungiselelwe ukuba lusetyenziswe lisebe leenkonzo lendlela yokuziphatha eyamkelekileyo nezophandonzulu kulwaphul’omthetho leSixeko saseKapa kunye nabo bantu bathile abachongiweyo, 
+                                        baphawuliweyo kuluhlu lwabo bafeneleke ukuba babelwe ulwazi, kwakhona liqulathe ingcaciso eyodwa/elihlebo nesemthethweni ngokufanelekileyo. Akuvumelekanga ukwandisa, ukugqithisa okanye uzenzele eyakho ikopi yolu xwebhu, ungakhange ufumane imvume ngokubhaliweyo kuMphathi weSixeko. 
+                                        Ukuba uthe wafumana olu xwebhu ngempazamo, nceda wazise uMphathi weSixeko kwa 021 400 1330.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div style="page-break-after: always;"/>
+
+                            <!-- Index (page - 2) -->
+                            <div style="padding-right:6rem;padding-left:6rem;">
+                                <div class="row fw-bold h3 text-center w-100">
+                                    <div class="col-12 in2it-hfs1">
+                                        INDEX
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-center bg-secondary">
+                                    <div class="border border-grey p-1">
+                                        <div class="row pb-2 pt-2 in2it-hfs">
+                                            <div class="col-12">1.	MANDATE ...................................................................</div>
+                                        </div>
+                                        <div class="row pb-2 in2it-hfs">
+                                            <div class="col-12">2.	BACKGROUND ............................................................</div>
+                                        </div>
+                                        <div class="row pb-2 in2it-hfs">
+                                            <div class="col-12">3.	SCOPE AND LIMITATIONS ............................................</div>
+                                        </div>
+                                        <div class="row pb-2 in2it-fs">
+                                            <div class="col-12 fw-bold">Scope of Investigation ...............................................................................</div>
+                                        </div>
+                                        <div class="row pb-2 in2it-fs">
+                                            <div class="col-12 fw-bold">Limitations ..................................................................................................</div>
+                                        </div>
+                                        <div class="row pb-2 in2it-hfs">
+                                            <div class="col-12">4.	OBJECTIVE .................................................................</div>
+                                        </div>
+                                        <div class="row pb-2 in2it-hfs">
+                                            <div class="col-12">5.	PROCEDURES PERFORMED ......................................</div>
+                                        </div>
+                                        <div class="row pb-2 in2it-fs">
+                                            <div class="col-12 fw-bold">Interviews .................................................................................................</div>
+                                        </div>
+                                        <div class="row pb-2 in2it-fs">
+                                            <div class="col-12 fw-bold">Documents collected and reviewed .........................................................</div>
+                                        </div>
+                                        <div class="row pb-2 in2it-fs">
+                                            <div class="col-12 fw-bold">Background checks ..................................................................................</div>
+                                        </div>
+                                        <div class="row pb-2 in2it-fs">
+                                            <div class="col-12 fw-bold">Digital evidence collected and reviewed ...................................................</div>
+                                        </div>
+                                        <div class="row pb-2 in2it-hfs">
+                                            <div class="col-12">6. LEGISLATIVE PRESCRIPTS, POLICIES, PROCEDURES AND REGULATORY FRAMEWORKS ..............................</div>
+                                        </div>
+                                        <div class="row pb-2  in2it-fs">
+                                            <div class="col-12 fw-bold">Local Government: Municipal Finance Management Act 56 of 2003 ......</div>
+                                        </div>
+                                        <div class="row pb-2 in2it-hfs">
+                                            <div class="col-12">7.  INVESTIGATION FINDINGS  ........................................</div>
+                                        </div>
+                                        <div class="row pb-2 in2it-hfs">
+                                            <div class="col-12">8.  CONCLUSIONS ..........................................................</div>
+                                        </div>
+                                        <div class="row pb-2 in2it-hfs">
+                                            <div class="col-12">9.  CONTROL ISSUES ......................................................</div>
+                                        </div>
+                                        <div class="row in2it-hfs">
+                                            <div class="col-12">10. RECOMMENDATIONS ...............................................</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="page-break-after: always;"/>
+
+                            <t t-if="o.assigned_forensic_team_id.forensic_member_ids">
+                                <!-- Investigation Team (Page - 3) -->
+                                <div class="p-2">
+                                    <div class="row fw-bold h3 text-center w-100 pb-2">
+                                        <div class="col-12 in2it-hfs1">
+                                            INVESTIGATION TEAM
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <table class="table in2it-table">
+                                            <thead>
+                                                <tr>
+                                                    <th class="bg-secondary fw-bold">NAME</th>
+                                                    <th class="bg-secondary fw-bold">DESCRIPTION</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-foreach="o.assigned_forensic_team_id.forensic_member_ids" t-as="team">
+                                                    <t t-foreach="team.member_ids" t-as="member">
+                                                        <tr>
+                                                            <td><t t-esc="member.name"/></td>
+                                                            <td><t t-esc="member.employee_id.job_id.name"/></td>
+                                                        </tr>
+                                                    </t>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div style="page-break-after: always;"/>
+                            </t>
+
+                            <!-- Roleplayers and abbreviations (Page - 4) -->
+                            <t t-if="o.project_role_ids">
+                                <div class="p-2">
+                                    <div class="row fw-bold h3 text-center w-100 pb-2">
+                                        <div class="col-12 in2it-hfs1">
+                                            ROLEPLAYERS AND ABBREVIATIONS
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <table class="table in2it-table">
+                                            <thead>
+                                                <tr>
+                                                    <th class="bg-secondary fw-bold">REFERENCE</th>
+                                                    <th class="bg-secondary fw-bold">DESCRIPTION</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-foreach="o.project_role_ids" t-as="role">
+                                                    <tr>
+                                                        <td><t t-esc="role.role_id.name"/></td>
+                                                        <td><t t-esc="role.role_id.description"/></td>
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div style="page-break-after: always;"/>
+                            </t>
+
+                            <!-- Page - 5 -->
+                            <t t-if="any(o.physical_item_ids.mapped('is_exhibit'))">
+                                <div class="p-2">
+                                    <div class="row fw-bold h3 text-center w-100 pb-2">
+                                        <div class="col-12 in2it-hfs1">
+                                            EXHIBITS
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <table class="table in2it-table">
+                                            <thead>
+                                                <tr>
+                                                    <th class="bg-secondary fw-bold">DESCRIPTION</th>
+                                                    <th class="bg-secondary fw-bold">EXHIBIT NO.</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-foreach="o.physical_item_ids" t-as="item">
+                                                    <t t-if="item.is_exhibit">
+                                                        <tr>
+                                                            <td><t t-esc="item.item_title"/></td>
+                                                            <td></td>
+                                                        </tr>
+                                                    </t>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div style="page-break-after: always;"/>
+                            </t>
+
+
+                            <!-- Page - 6 -->
+
+                            <t t-if="any(o.document_line_ids.mapped('is_annexure'))">
+                                <div class="p-2">
+                                    <div class="row fw-bold h3 text-center w-100 pb-2">
+                                        <div class="col-12 in2it-hfs1">
+                                            ANNEXURES
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <table class="table in2it-table">
+                                            <thead>
+                                                <tr>
+                                                    <th class="bg-secondary fw-bold">DESCRIPTION</th>
+                                                    <th class="bg-secondary fw-bold">ANNEXURE NO.</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-foreach="o.document_line_ids" t-as="document">
+                                                    <t t-if="document.is_annexure">
+                                                        <tr>
+                                                            <td><t t-esc="document.description"/></td>
+                                                            <td><t t-esc="document.serial_no"/></td>
+                                                        </tr>
+                                                    </t>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div style="page-break-after: always;"/>
+                            </t>
+
+
+                            <!-- EXECUTIVE SUMMARY (page - 8) -->
+                            <div style="padding-top:4rem;padding-top:0">
+                                <div class="row fw-bold h3 text-center w-100 pb-2">
+                                    <div class="col-12 in2it-hfs1">
+                                        EXECUTIVE SUMMARY
+                                    </div>
+                                </div>
+                                <div class="in2it-fs1">
+                                    <p>
+                                        Ethics and Forensic Services (EFS) received a memorandum on <t t-esc="o.create_date.strftime('%d-%m-%Y')"/> from <t t-esc="o.department_id.name"/> requesting an investigation
+                                        into <t t-esc="o.allegation_nature_id.name"/> / <t t-esc="o.case_id.name"/> under reference number <t t-esc="o.name"/>.<br/><br/>
+
+                                        The objective of the investigation was to <t t-esc="o.investigation_objective or ''"/><br/>
+
+                                        The investigation was conducted between <span t-field="o.date_start"/> and <span t-field="o.date"/> and included document review, interviews, data analysis, 
+                                        and validation of supporting evidence in accordance with approved investigative procedures.<br/><br/>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div style="page-break-after: always;"/>
+
+                            <!-- Mandate Background(page - 8) -->
+                            <div style="padding-top:0rem;">
+                                <div class="h5 in2it-hfs"><b>1. Mandate</b></div>
+                                <div class="in2it-fs1">
+                                    <p>This investigation was mandated by the City Manager (CM) on <t t-esc="o.create_date.strftime('%d-%m-%Y')"/> in
+                                        accordance with the System of Delegations of the City of Cape Town (CCT),
+                                        specifically Section 9(1) of the CM’s delegated authority, which states, inter
+                                        alia, that he is empowered:
+                                        “To authorize forensic and ethics investigations in relation to any alleged
+                                        fraud, corruption or other criminal activity, maladministration and/or
+                                        negligence on the part of any employee, any municipal entity, agent,
+                                        contractor, supplier or service provider to the City of Cape Town.</p>
+                                </div>
+                           
+                            
+                                <br/>
+                                <div class="h5 in2it-hfs"><b>2. Background</b></div>
+                                <div class="in2it-fs1">
+                                    The matter originated from <t t-esc="o.partner_id.name"/> 
+                                    ,<t t-esc="o.case_id.allegation_source_id.name"/>,
+                                    and these were the witnesses and suspects involved <t t-esc="', '.join(o.witness_ids.mapped('name'))"/>,
+                                    <t t-esc="', '.join(o.suspect_ids.mapped('name'))"/> and relates to <t t-esc="o.department_id.name"/>,<t t-esc="o.directorate_id.name"/>.
+                                </div>
+
+                                <br/><br/>
+
+                                <!-- SCOPE -->
+                                <div class="h5 in2it-hfs"><b>3. Scope and Limitations</b></div>
+                                <div class="ps-3">
+                                    <div class="h6 ps-2 in2it-fs"><b>Scope Of Investigation</b></div>
+                                    <div class="in2it-fs1 ps-2">
+                                        In terms of the mandate received from the [ City Manager ], Ethics and Forensic Services (EFS) was requested to conduct an investigation in respect of the following:
+                                        <br/>
+                                        Scope and Objective : <br/>
+                                        <p><t t-out="o.investigation_scope or ''"/><br/>
+                                        <t t-out="o.investigation_objective or ''"/>
+                                        </p>
+
+                                        <br/>
+                                        The investigation covered the period from <span t-field="o.date_start"/> to <span t-field="o.date"/>.
+                                    </div>
+                                </div>
+                                <br/>
+                                <t t-if="o.limitations">
+                                    <div class="ps-3">
+                                        <div class="h6 in2it-fs"><b>Limitations</b></div>
+                                        <div class="in2it-fs1">
+                                                <t t-out="o.limitations"/>
+                                        </div>
+                                    </div>
+                                </t>
+                                <br/>
+
+
+                                <!-- Objective -->
+                                <t t-if="o.investigation_objective">
+                                    <div class="h5 in2it-hfs"><b>4. Objective</b></div>
+
+                                    <div class="in2it-fs1 ps-3">
+                                        <p>
+                                            4.1. The objective(s) of this investigation was/were to:
+                                            <br/>
+                                            <span class="ms-2">
+                                                <t t-out="o.investigation_objective"/>
+                                            </span>
+                                            
+                                        </p>
+                                    </div>
+                                </t>
+                                <br/>
+
+                                <!-- 5. Procedures performed -->
+                                <t t-if="o.procedure_performed">
+                                    <div class="h5 in2it-hfs"><b>5. Procedures Performed</b></div>
+                                    
+                                    <div class="in2it-fs1 ps-3">
+                                        <p><span t-field="o.procedure_performed"/></p>
+                                    </div>
+                                </t>
+
+                                <!-- 6. Legislative prescripts, policies, procedures and regulatory frameworks -->
+                                <t t-if="o.regulatory_operational_env">
+                                    <div class="h5 in2it-hfs"><b>6. Legislative prescripts, policies, procedures and regulatory frameworks</b></div>
+                                    
+                                    <div class="in2it-fs1 ps-3">
+                                        <p t-field="o.regulatory_operational_env"/>
+                                    </div>
+                                </t>
+
+                                <!-- 7. Investigation Findings -->
+                                <t t-if="o.findings">
+                                    <div class="h5 in2it-hfs"><b>7. Investigation Findings</b></div>
+
+                                    <div class="in2it-fs1 ps-3">
+                                        <span t-field="o.findings"/>
+                                    </div>
+                                </t>
+                            
+                                <!-- 8. Conclusions -->
+                                <t t-if="o.conclusions">
+                                    <div class="h5 in2it-hfs"><b>8. Conclusions</b></div>
+                                    <div class="in2it-fs1 ps-3">
+                                        <p t-field="o.conclusions"/>
+                                    </div>
+                                </t>
+                                
+                                <!-- 9. Control Issues -->
+                                <t t-if="o.control_issues">
+                                    <div class="h5 in2it-hfs"><b>9. Control Issues</b></div>
+
+                                    <div class="in2it-fs1 ps-3">
+                                        <t t-out="o.control_issues"/>
+                                    </div>
+                                </t>
+
+
+                                <br/>
+
+                                <!-- 10. Recommendations -->
+                                <t t-if="o.recom_project_ids">
+                                    <div class="h5 in2it-hfs"><b>10. Recommendations</b></div>
+                                    <div class="in2it-fs1 ps-3">
+                                        <t t-set="rec_index" t-value="1"/>
+                                        <t t-foreach="o.recom_project_ids" t-as="recom">
+                                            <div style="margin: 2px 0;">
+                                                <strong>
+                                                    10.<t t-esc="rec_index"/>.
+                                                    <t t-esc="recom.category_id.name"/>
+                                                </strong>
+                                            </div>
+                                            <ul style="margin: 2px 0 10px 8px;">
+                                                <t t-out="recom.category_description"/>
+                                            </ul>
+                                            <t t-set="rec_index" t-value="rec_index + 1"/>
+                                        </t>
+                                    </div>
+                                </t>
+
+<!--                                Place e-sign-->
+                                <t t-set="review"
+                                   t-value="env['forensic.peer.review'].search([('project_id','=',o.id)], limit=1)"/>
+
+                                <t t-if="review and review.signature">
+                                    <div style="margin-top: 30px; text-align:left;">
+
+                                        <div>
+                                            <b>Authorized Signature</b>
+                                        </div>
+
+                                        <img t-att-src="image_data_uri(review.signature)"
+                                             style="max-height:120px; max-width:300px;"/>
+
+                                        <div style="margin-top:10px;">
+                                            <t t-esc="o.user_id.name"/>
+                                        </div>
+
+                                    </div>
+                                </t>
+
+
+                            </div>
+                            <br/>
+                        </t>
+                    </t>
+                </t>
+            </template>
+        </data>
+</odoo>

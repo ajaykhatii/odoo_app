@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+        <data>
+            <!-- Add you code here -->
+
+            <record id="view_background_check_details_list" model="ir.ui.view">
+                <field name="name">Background Check List</field>
+                <field name="model">background.check.details</field>
+                <field name="arch" type="xml">
+                    <list>
+                        <field name="subject_name"/>
+                        <field name="subject_type"/>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <field name="investigator_id"/>
+                        <field name="status"/>
+                        <field name="subject_type"/>
+                        <field name="database_id"/>
+                        <control><create name="add_background_check_details" string="New Background Check"/></control>
+                    </list>
+                </field>
+            </record>
+
+            <record id="view_background_check_details_form" model="ir.ui.view">
+                <field name="name">Background Check Form</field>
+                <field name="model">background.check.details</field>
+                <field name="arch" type="xml">
+                    <form>
+                        <header>
+                            <button name="action_submit" string="Submit" class="btn-primary" type="object" invisible="status in ['completed','cancelled']"/> 
+                            <button name="action_cancel" string="Cancel" class="btn-danger" type="object" invisible="status in ['completed','cancelled']"/>
+                            <field name="status" required="1" widget="statusbar"/>
+                        </header>
+                        <sheet>
+                            <group>
+                                <group>
+                                    <field name="subject_name" required="1"/>
+                                    <field name="subject_type" required="1"/>
+                                    <field name="date_from" required="1"/>
+                                    <field name="date_to" required="1"/>
+                                </group>
+                                <group>
+                                    <field name="investigator_id" required="1" options="{'no_open':True}"/>
+                                    <field name="database_id" options="{'no_create':True, 'no_create_edit':True, 'no_open':True}"/>
+                                    <field name="is_other" invisible="1"/>
+                                    <field name="description" invisible="not is_other"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group>
+                                
+                                <field name="attachment_ids" widget="many2many_binary"/> 
+                                </group>
+                            </group>
+
+                            <group string="Remark" invisible="not remark">
+                                <field name="remark"/>
+                            </group>
+                        </sheet>
+                    </form>
+                </field>
+            </record>
+            
+        </data>
+</odoo>

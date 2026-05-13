@@ -1,0 +1,96 @@
+<odoo>
+    <template id="case_overarching_pre_memo_city_manager_pdf">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout_wave">
+                <t t-call-assets="web.report_assets_common" t-js="false"/>
+
+                <div class="page">
+                    <div class="main_content">
+
+                        <p>
+                            <strong>To:</strong> City Manager
+                        </p>
+
+                        <p>
+                            <strong>Attention:</strong> <t t-esc="env.context.get('city_manager')"/>
+                        </p>
+
+                        <p>
+                            <strong><t t-esc="env.context.get('subject')"/></strong>
+                        </p>
+                        <p> 
+                            <t t-out="env.context.get('template_body')"/>
+                        </p>
+
+                        <p>
+                            Regards,
+                        </p>
+
+                        <t t-if="env.context.get('signature_bin')">
+                            <img t-att-src="image_data_uri(env.context.get('signature_bin'))" 
+                                style="max-height:80px; max-width:200px;"/>
+                        </t>
+                       
+                        <p>
+                            <t t-out="env.context.get('sender_name')"/><br/>
+                            <t t-out="env.context.get('sender_job_position')"/>: Ethics and Forensic Services
+                        </p>
+                    </div>
+                </div>
+
+            </t>
+        </t>
+    </template>
+
+    <record id="overarching_pre_memo_city_manager_pdf_report" model="ir.actions.report">
+        <field name="name">City Manager: Overarching Pre Memo PDF</field>
+        <field name="model">project.project</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">in2it_project_management.case_overarching_pre_memo_city_manager_pdf</field>
+        <field name="print_report_name">"overarching_memo_letter"</field>
+        <field name="paperformat_id" ref="in2it_forensic_services.in2it_forensic_services_case_auth_paperformat"/>
+    </record>
+
+
+
+    <template id="case_overarching_pre_memo_ed_pdf">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout_wave">
+                <t t-call-assets="web.report_assets_common" t-js="false"/>
+
+                <div class="page">
+                    <div class="main_content">
+
+                        <p>
+                            <strong>To:</strong> Executive Directorate
+                        </p>
+
+                        <p>
+                            <strong><t t-esc="env.context.get('subject')"/></strong>
+                        </p>
+                        <p> 
+                            <t t-out="env.context.get('template_body')"/>
+                        </p>
+                        <br/><br/><br/><br/><br/>
+                        <p> 
+                            <t t-out="env.context.get('sender_name')"/><br/>
+                            <t t-out="env.context.get('sender_job_position')"/>
+                        </p>
+                    </div>
+                </div>
+
+            </t>
+        </t>
+    </template>
+
+    <record id="overarching_pre_memo_ed_pdf_report" model="ir.actions.report">
+        <field name="name">Executive Officer: Overarching Pre Memo PDF</field>
+        <field name="model">project.project</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">in2it_project_management.case_overarching_pre_memo_ed_pdf</field>
+        <field name="print_report_name">"overarching_memo_letter"</field>
+        <field name="paperformat_id" ref="in2it_forensic_services.in2it_forensic_services_case_auth_paperformat"/>
+    </record>
+    
+
+</odoo>

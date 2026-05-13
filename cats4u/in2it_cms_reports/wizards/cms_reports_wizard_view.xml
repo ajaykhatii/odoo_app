@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+        <!-- forensic case assignment type -->
+  <record id="cms_reports_wizard_form_view" model="ir.ui.view">
+    <field name="name">cms.reports.wizards.form</field>
+    <field name="model">cms.reports.wizards</field>
+    <field name="arch" type="xml">
+      <form>
+        <group>
+          <group>
+            <field name="report_type_id" options="{'no_create':True, 'no_open':True}"/>
+          </group>
+        </group>
+        <group>
+          <group>
+            <field name="financial_year" invisible="not report_type_id or not is_hide_fy"/>
+            <field name="half" invisible="report_type not in ['half_yearly']" required="report_type in ['half_yearly']"/>
+            <field name="quarter" invisible="report_type not in ['quarterly']" required="report_type in ['quarterly']"/>
+            <field name="start_date" invisible="1"/>
+            <field name="end_date" invisible="1"/>
+          </group>
+          <group>
+            <field name="is_hide_fyq" invisible="1"/>
+            <field name="is_hide_fy" invisible="1"/>
+          </group>
+        </group>
+
+        <footer>
+          <button
+                  name="print_xlsx_reports"
+                  type="object"
+                  string="Print Excel"
+                  class="btn-primary"
+                  data-hotkey="Y"
+          />
+          <button
+                  string="Cancel"
+                  class="btn btn-secondary"
+                  special="cancel"
+                  data-hotkey="X"
+          />
+        </footer>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_cms_reports_wizard" model="ir.actions.act_window">
+    <field name="name">Reports</field>
+    <field name="res_model">cms.reports.wizards</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+  </record>
+</odoo>

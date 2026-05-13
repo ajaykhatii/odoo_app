@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_forensic_case_assignment_city_manager_list" model="ir.ui.view">
+        <field name="name">forensic.case.assignment.city.manager.list</field>
+        <field name="model">forensic.case.assignment</field>
+        <field name="arch" type="xml">
+            <list string="Forensic Case Assignments City Manager" create="0">
+                <field name="parent_case_ref" optional="hide"/>
+                <field name="case_ref_number"/>
+                <field name="create_date"/>
+                <field name="directorate_id"/>
+                <field name="department_id"/>
+                <field name="parent_case_id" optional="hide"/>
+                <field name="assignment_type_id" optional="hide"/>
+                <field name="stage_id"/>
+
+                <button name="preview_schedule_of_complaints"
+                    class="btn btn-primary"
+                    type="object"
+                    string="SOC"
+                    icon="fa-eye"
+                />
+
+                <button name="send_authorisation_details_with_attachment"
+                    class="btn btn-primary"
+                    type="object"
+                    string="Request Authorization"
+                    invisible="not context.get('send_auth', False) or not is_authorise or auth_html_content or button_visibility != 'under_auth'"
+                    groups="in2it_forensic_services.group_fcm_review_access,in2it_forensic_services.group_fcm_admin,base.group_system"
+                />
+
+                <button name="send_authorisation_details_with_attachment"
+                    class="btn btn-primary"
+                    type="object"
+                    string="Resend Authorisation"
+                    invisible="not context.get('send_auth', False) or not auth_html_content or button_visibility in ['under_auth','download'] or is_unauthorized"
+                    confirm="Are you sure you want to resend it ?"
+                    groups="in2it_forensic_services.group_fcm_review_access,in2it_forensic_services.group_fcm_admin,base.group_system"
+                />
+
+
+                <button name="sign_authorize"
+                    class="btn btn-primary"
+                    type="object"
+                    string="Sign &amp; Authorize"
+                    invisible="
+                                not context.get('sign_auth', False)
+                                or button_visibility in ['under_auth','download']
+                                or assignment_type_ids
+                                or is_unauthorized"
+                    groups="in2it_forensic_services.group_fcm_city_manager,in2it_forensic_services.group_fcm_case_chief_access,in2it_forensic_services.group_fcm_admin,base.group_system"
+                />
+
+                <button name="get_completed_document"
+                    class="btn btn-primary"
+                    type="object"
+                    string="Download"
+                    invisible="button_visibility in ['under_auth','sign_auth']"
+                />
+            </list>
+        </field>
+    </record>
+
+    <record id="view_forensic_case_assignment_form" model="ir.ui.view">
+        <field name="name">forensic.case.assignment.form</field>
+        <field name="model">forensic.case.assignment</field>
+        <field name="arch" type="xml">
+            <form string="Forensic Case Assignment">
+                <header>
+                    <!-- Status Bar for Forensic Workflow -->
+                    <field name="stage_id" widget="statusbar"
+                        domain="[('id', 'in', associated_stage_ids)]"/>
+                    <button name="send_authorisation_details_with_attachment"
+                        class="btn btn-primary"
+                        type="object"
+                        string="Request Authorization"
+                        invisible="not context.get('send_auth', False) or not is_authorise or auth_html_content or button_visibility != 'under_auth'"
+                        groups="in2it_forensic_services.group_fcm_review_access,in2it_forensic_services.group_fcm_admin,base.group_system"
+                    />
+
+                    <button name="send_authorisation_details_with_attachment"
+                        class="btn btn-primary"
+                        type="object"
+                        string="Resend Authorisation"
+                        invisible="not context.get('send_auth', False) or not auth_html_content or button_visibility in ['under_auth','download'] or is_unauthorized"
+                        confirm="Are you sure you want to resend it ?"
+                        groups="in2it_forensic_services.group_fcm_review_access,in2it_forensic_services.group_fcm_admin,base.group_system"
+                    />
+
+                    <!-- Esign -->
+
+                    <button name="sign_authorize"
+                        class="btn btn-primary"
+                        type="object"
+                        string="Sign &amp; Authorize"
+                        invisible="
+                                not context.get('sign_auth', False)
+                                or button_visibility in ['under_auth','download']
+                                or assignment_type_ids
+                                or is_unauthorized"
+                        groups="in2it_forensic_services.group_fcm_city_manager,in2it_forensic_services.group_fcm_case_chief_access,in2it_forensic_services.group_fcm_admin,base.group_system"
+                    />
+
+                    <button name="preview_schedule_of_complaints"
+                        class="btn btn-primary"
+                        type="object"
+                        string="SOC"
+                        icon="fa-eye"
+                    />
+
+                    <button name="get_completed_document"
+                        class="btn btn-primary"
+                        type="object"
+                        string="Download"
+                        invisible="button_visibility in ['under_auth','sign_auth']"
+                    />
+
+                    <button name="action_change_request"
+                        class="btn btn-primary"
+                        type="object"
+                        string="Change Request"
+                        invisible="
+                                record_link
+                                or is_new_request
+                                or context.get('forensic_case_authorization')
+                                or is_unauthorized
+                                or button_visibility in ['download']"
+                        groups="in2it_forensic_services.group_fcm_city_manager,base.group_system"
+                    />
+
+                    <button name="action_case_unauthorize"
+                        class="btn btn-primary"
+                        type="object"
+                        string="Unauthorize"
+                        invisible="
+                            record_link
+                            or not is_authorise
+                            or not auth_html_content
+                            or is_unauthorized
+                            or button_visibility in ['download']"
+                        groups="in2it_forensic_services.group_fcm_city_manager,in2it_forensic_services.group_fcm_case_chief_access,in2it_forensic_services.group_fcm_admin,base.group_system"/>
+                </header>
+                <sheet>
+
+                    <!-- Case Alert Banner -->
+                    <div class="alert alert-info o_forensic_banner" role="alert">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong class="me-3">📝 CASE REFERENCE NUMBER -</strong>
+                                <field name="case_ref_number" class="fw-bold" readonly="1"/>
+                            </div>
+                            <div class="col-md-6" invisible="not assignment_type_id">
+                                <strong class="me-3">🏷️ ASSIGNMENT TYPE - </strong>
+                                <field name="assignment_type_id" readonly="1"
+                                    options="{'no_open': True, 'no_edit': True, 'no_create': True}" class="fw-bold"/>
+
+                            </div>
+                        </div>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="parent_case_id" string="Internal Case Title" readonly="1"/>
+                            <field name="parent_case_ref"/>
+                            <field name="case_age" invisible="1"/>
+                            <field name="assignment_type_id" readonly="1"  options="{'no_open': True}"/>
+                            <field name="allegation_nature_id" options="{'no_open': True}"/>
+                            <field name="is_inv_last_stage" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="reporting_date"/>
+                            <field name="department_id" options="{'no_open': True}"/>
+                            <field name="directorate_id" options="{'no_open': True}"/>
+                            <field name="is_unauthorized" invisible="1"/>
+
+                            <!--                            <field name="investigation_manager_id" options="{'no_edit': True, 'no_create': True}"/>-->
+                            <field name="associated_stage_ids" widget="many2many_tags" invisible="1"/>
+                            <field name="button_visibility" invisible="1"/>
+                            <field name="reason" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <!--                        View to show which documents is sent-->
+                        <field name="sign_request_ids" nolabel="1" invisible="1">
+                            <list multi_edit="1" sample="1" js_class="sign_list" decoration-info="state in ('shared', 'sent')" decoration-muted="state == 'canceled'">
+                                <header>
+                                    <button type="object" name="send_signature_accesses" class="btn btn-secondary" string="Resend"/>
+                                    <button type="object" name="get_completed_document" class="btn btn-secondary" string="Download"/>
+                                </header>
+                                <field name="reference" readonly="1"/>
+                                <field name="template_id" readonly="1" optional="hide"/>
+                                <field name="state" readonly="1"/>
+                                <field name="request_item_ids" string="Contacts" widget="many2many_tags" readonly="1" options="{'color_field': 'color'}"/>
+                                <field name="progress" readonly="1"/>
+                                <field name="template_tags" string="Tags" widget="many2many_tags"/>
+                                <field name="create_date" string="Create date" readonly="1"/>
+                                <field name="need_my_signature" readonly="1" column_invisible="True"/>
+                                <field name="create_uid" readonly="1" column_invisible="True"/>
+                                <field name="activity_exception_decoration" widget="activity_exception" readonly="1"/>
+                                <button name="unlink" invisible="state != 'shared'" string="Stop Sharing" type="object"/>
+                                <button name="get_completed_document" invisible="state != 'signed'" string="Download" type="object"/>
+                                <button name="go_to_signable_document" string="sign" type="object" invisible="not need_my_signature or state != 'sent'"/>
+                                <button name="send_signature_accesses" string="Resend" type="object" groups="sign.group_sign_user" invisible="state != 'sent' or create_uid != uid"/>
+                                <button name="send_signature_accesses" string="Resend" type="object" groups="sign.group_sign_manager" invisible="state != 'sent' or create_uid == uid"/>
+                            </list>
+                        </field>
+                    </group>
+                    <notebook>
+                        <page string="Changes Request" name="members" invisible="not record_link or not assignment_type_ids or not comment or context.get('forensic_case_authorization')">
+                            <group>
+                                <group>
+                                    <field name="record_link" widget="html"/>
+                                </group>
+                                <group>
+                                    <field name="assignment_type_ids" readonly="1" widget="many2many_tags"/>
+                                    <field name="comment" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="🔎 Evidence" name="evidence" invisible="not assignment_is_lin">
+                            <div class="row">
+                                <group string="Physical Items Received">
+                                    <field name="physical_item_ids" nolabel="1">
+                                        <list>
+                                            <field name="id" optional="hide"/>
+                                            <field name="item_title" required="1"/>
+                                            <field name="item_category" optional="show" required="1"/>
+                                            <field name="quantity" optional="show" required="1"/>
+                                            <field name="uom_id" optional="show" options="{'no_edit': True, 'no_create': True}"/>
+                                            <field name="create_date" optional="hide" string="Date &amp; Time Received"/>
+                                            <field name="source" optional="hide"/>
+                                            <field name="associated_with" optional="hide"/>
+                                            <field name="current_custodian" optional="hide"/>
+                                            <field name="attachment_ids" widget="many2many_tags"
+                                                optional="hide"/>
+                                            <field name="status" optional="show"/>
+                                            <field name="last_movement_date" optional="hide" force_save="1"/>
+                                        </list>
+                                        <form>
+                                            <group>
+                                                <group>
+                                                    <field name="item_title"/>
+                                                    <field name="item_category"/>
+                                                    <field name="quantity"/>
+                                                    <field name="uom_id" options="{'no_edit': True, 'no_create': True}"/>
+                                                    <field name="source"/>
+                                                    <field name="attachment_ids" widget="many2many_binary"/>
+                                                    <field name="create_date" string="Date &amp; Time Received"/>
+                                                </group>
+                                                <group>
+                                                    <field name="recovery_location"/>
+                                                    <field name="associated_with"/>
+                                                    <field name="storage_location"/>
+                                                    <field name="current_custodian"/>
+                                                    <field name="status"/>
+                                                    <field name="last_movement_date"/>
+                                                </group>
+                                            </group>
+                                        </form>
+                                    </field>
+                                </group>
+                            </div>
+                        </page>
+
+
+                        <page string="📁 Documents" name="evidence_docs_line" invisible="not assignment_is_lin">
+                            <field name="document_line_ids">
+                                <list>
+                                    <field name="serial_no"/>
+                                    <field name="document_type_id"/>
+                                    <field name="file_name"/>
+                                    <field name="uploaded_date"/>
+                                    <field name="uploaded_by" options="{'no_open':True  }"/>
+                                </list>
+                                <form>
+                                    <sheet>
+                                        <group>
+                                            <group>
+                                                <field name="file" filename="file_name" widget="binary"/>
+                                                <field name="file_name" invisible="1"/>
+                                                <field name="document_type_id" options="{'no_create':True, 'no_edit':True, 'no_open':True}"/>
+                                                <field name="document_stores"/>
+                                                <field name="document_stores_location" invisible="not document_stores"/>
+                                            </group>
+                                            <group>
+                                                <field name="description"/>
+                                                <field name="uploaded_by" options="{'no_open':True}"/>
+                                                <field name="uploaded_date"/>
+                                            </group>
+                                        </group>
+                                    </sheet>
+                                </form>
+                            </field>
+                        </page>
+
+                        <page string="📁 Report" name="line_ed_report"
+                            invisible="not assignment_is_lin">
+                            <group string="Latest Report">
+                                <field name="file_data" filename="file_name" readonly="1" />
+                                <field name="file_name" invisible="1" />
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="forensic_case_assignment_search_view" model="ir.ui.view">
+        <field name="name">forensic.case.assignment.search</field>
+        <field name="model">forensic.case.assignment</field>
+        <field name="arch" type="xml">
+            <search string="Case Assignments Search">
+
+                <!-- Quick Search Fields          -->
+                <field name="parent_case_id"/>
+                <field name="case_ref_number"/>
+                <field name="assignment_type_id"/>
+                <field name="stage_id"/>
+                <field name="department_id"/>
+                <field name="directorate_id"/>
+                <field name="allegation_nature_id"/>
+
+                <!-- Filters Section              -->
+                <filter name="filter_active"
+                    string="Active"
+                    domain="[('active','=',True)]"/>
+
+                <filter name="filter_inactive"
+                    string="Inactive"
+                    domain="[('active','=',False)]"/>
+
+                <filter name="pending_stage"
+                    string="Pending Authorization"
+                    domain="[('button_visibility','in', ['sign_auth']),('is_unauthorized','=',False)]"/>
+
+                <filter name="filter_authorised"
+                    string="Authorized Assignments"
+                    domain="[('is_authorise','=',True)]"/>
+
+                <filter name="filter_unauthorised"
+                    string="Unauthorized Assignments"
+                    domain="[('is_authorise','=',False)]"/>
+
+
+                <!-- Group By Section             -->
+                <group expand="0" string="Group By">
+
+                    <filter name="group_by_parent"
+                        string="Case"
+                        context="{'group_by':'parent_case_id'}"/>
+
+                    <filter name="group_by_assignment_type"
+                        string="Assignment Type"
+                        context="{'group_by':'assignment_type_id'}"/>
+
+                    <filter name="group_by_stage"
+                        string="Stage"
+                        context="{'group_by':'stage_id'}"/>
+
+                    <filter name="group_by_department"
+                        string="Department"
+                        context="{'group_by':'department_id'}"/>
+
+                    <filter name="group_by_directorate"
+                        string="Directorate"
+                        context="{'group_by':'directorate_id'}"/>
+
+                    <filter name="group_by_nature"
+                        string="Nature of Allegations"
+                        context="{'group_by':'allegation_nature_id'}"/>
+
+                    <filter name="group_by_create_date"
+                        string="Reporting Date"
+                        context="{'group_by':'reporting_date'}"/>
+
+                </group>
+            </search>
+
+        </field>
+    </record>
+
+
+    <record id="action_forensic_case_assignment" model="ir.actions.act_window">
+        <field name="name">Case Assignments</field>
+        <field name="res_model">forensic.case.assignment</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="forensic_case_assignment_search_view"/>
+        <field name="context">{'create': False,'forensic_case_authorization':True, 'send_auth': True}</field>
+    </record>
+
+
+    <record id="action_forensic_case_authorization" model="ir.actions.act_window">
+        <field name="name">Case Authorization</field>
+        <field name="res_model">forensic.case.assignment</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="forensic_case_assignment_search_view"/>
+        <field name="view_ids" eval="[
+            (5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_forensic_case_assignment_city_manager_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_forensic_case_assignment_form')})
+        ]"/>
+        <field name="domain">[('button_visibility', 'in', ['sign_auth', 'download'])]</field>
+        <field name="context">
+            {
+            'create': False,
+            'search_default_pending_stage': 1,
+            'sign_auth': True
+            }
+        </field>
+    </record>
+
+    <record id="action_filtered_case_authorization" model="ir.actions.server">
+        <field name="name">Case Authorization</field>
+        <field name="model_id" ref="in2it_forensic_services.model_forensic_case_assignment"/>
+        <field name="binding_model_id" ref="in2it_forensic_services.model_forensic_case_assignment"/>
+        <field name="state">code</field>
+        <field name="code">action = model.filtered_case_authorization()</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,377 @@
+<odoo>
+    <data>
+
+        <!-- Header Template -->
+        <template id="in2it_vendor_wave_custom_header">
+            <t t-set="header_shape_height" t-value="'230'"/>
+            <t t-set="company" t-value="res_company"/>
+            <div class="pt-3">
+                <div t-attf-class="header o_company_#{company.id}_layout {{report_type != 'pdf'}} mb-3">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <img t-if="company.logo" class="o_company_logo mb-2" t-att-src="image_data_uri(company.logo)" alt="Logo"/>
+                            <div t-if="company.report_header" t-field="company.report_header" class="o_company_tagline fw-bold">Company tagline</div>
+                        </div>
+                        <div name="company_address" class="w-50 text-end">
+                            <ul class="list-unstyled" name="company_address_list">
+                                <li t-if="company.is_company_details_empty"><span t-field="company.partner_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'>
+                                    <div class="d-flex flex-column align-items-center justify-content-center border-1 rounded p-4 h-100 w-100 bg-light opacity-75 text-muted text-center">
+                                        <strong>Company address block</strong>
+                                        <div>Contains the company address.</div>
+                                    </div>
+                                </span></li>
+                                <li t-else="">
+                                    <span t-field="company.company_details">
+                                        <div class="d-flex flex-column align-items-center justify-content-center border-1 rounded p-4 h-100 w-100 bg-light opacity-75 text-muted text-center">
+                                            <strong>Company details block</strong>
+                                            <div>Contains the company details.</div>
+                                        </div>
+                                    </span>
+                                </li>
+                                <li t-if="not forced_vat"/>
+                                <li t-else="">
+                                    <t t-esc="company.country_id.vat_label or 'Tax ID'">Tax ID</t>:
+                                    <span t-esc="forced_vat">US12345671</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- Submission Sucessfull -->
+        <template id="form_verification_thank_you" name="Thank You">
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+            <section class="bg-light">
+                <div class="vh-100 d-flex justify-content-center align-items-center">
+                    <div class="col-md-4">
+                        <div class="card  bg-white shadow p-5">
+                            <div class="mb-4 text-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="text-success bi bi-check-circle" width="75" height="75"
+                                    fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                                    <path
+                                        d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z" />
+                                </svg>
+                            </div>
+                            <div class="text-center">
+                                <h1>Submission Successful</h1>
+                                <p>We’ve received your details. Our team will review your submission and get back to you soon.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </template>
+
+        <!-- Invalid Token Message -->
+        <template id="form_invalid_token" name="Invalid Token">
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+            <section class="bg-light">
+                <div class="vh-100 d-flex justify-content-center align-items-center">
+                    <div class="col-md-4">
+                        <div class="card bg-white shadow p-5">
+                            <div class="mb-4 text-center">
+                                <!-- Red error icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="text-danger bi bi-x-circle" width="75" height="75"
+                                    fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                                </svg>
+                            </div>
+                            <div class="text-center">
+                                <h1 class="text-danger"><t t-esc="name"/></h1>
+                                <p class="text-muted">
+                                    The token you provided is <t t-esc="name"/>. <br/>
+                                    Please check your link or contact support for further assistance.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </template>
+        
+        <!-- Vendor Tor Template -->
+        <template id="in2it_vendor_tor_approval" name="In2it Vendor TOR Approval">
+            <t t-call="web.html_container">
+                <div>
+                    <div class="shadow-lg p-5 pt-0 bg-white rounded">
+                        <t t-call="in2it_project_management.in2it_vendor_wave_custom_header"/>
+                        <div>
+                            <t t-call-assets="web.report_assets_common" t-js="false"/>
+                            <style>
+                                .in2it_fs{
+                                    font-size:18px;
+                                }
+                            </style>
+
+                            <div>
+                                <div class="row">
+                                    <div class="col"><p class="text-danger fw-bold">Strictly Confidential</p></div>
+                                    <div class="col" style="text-align:right">
+                                        <t t-if="vendor and vendor.status=='reject'"><p class="text-danger fw-bold">Rejected</p></t>
+                                        <t t-if="vendor and vendor.status=='accept'"><p class="text-success fw-bold">Accepted</p></t>
+                                    </div>
+                                </div> <br/>
+                                <p class="h5 fw-bold text-uppercase">INDIVIDUAL ASSIGNMENT: TERMS OF REFERENCE FOR <span t-field="tor.project_id.name"/></p>
+                                <p class="h5"><b>Background</b></p>
+
+                                <p class="pt-2">The City of Cape Town (CCT) Executive Mayor, Alderman <span t-field="tor.project_id.directorate_id.ed_officer_id.name"/> has requested that a <span t-field="tor.project_id.case_id.name"/> member who has been appointed in terms of section 60(2) of the Local Government: Municipal Structures Act 117 of 1998 which refers that the Mayoral Committee must consist of the deputy and executive mayor and as many Councillors may be necessary for an effective and efficient government.  TO BE ADAPTED BASED ON THE BACKGROUND OF THE PROJECT</p><br/>
+                                <br/>
+
+                                <p class="fw-bolder"><b>1. Terms of Reference/Expected Deliverables</b></p>
+                                <p><t t-out="tor.terms_of_reference"/></p>
+                                
+                                <p>All interviews must be recorded and the audio recordings must be provided to Ethics and Forensic Services in electronic format for filing purposes as well as any contemporaneous notes.</p>
+                                <p>Report, in the appropriate format, on your findings and make the appropriate recommendations. The format of the report must be in line with the format provided for by the City.</p>
+                                <p>Please note that the report submitted by the Consultant at the conclusion of this assignment must comply, inter alia, with the following:
+                                    <p class="m-0">
+                                        1.
+                                        <span class="ps-4 in2it-fs">
+                                            The deliverables contained in the terms of reference must be specifically addressed seriatim in the Consultant’s report;
+                                        </span>
+                                    </p>
+                                    <p class="m-0">
+                                        2.
+                                        <span class="ps-4 in2it-fs">
+                                            Reports must be formatted with 1.5 spacing;
+                                        </span>
+                                    </p>
+                                    <p class="m-0">
+                                        3.
+                                        <span class="ps-4 in2it-fs">
+                                        Pages must be numbered;
+                                        </span>
+                                    </p>
+                                    <p class="m-0">
+                                        4.
+                                        <span class="ps-4 in2it-fs">
+                                            Paragraphs in the report must be numbered; and
+                                        </span>
+                                    </p>
+                                    <p class="m-0">
+                                        5.
+                                        <span class="ps-4 in2it-fs">
+                                            Quote the SPK reference number on all correspondence and reports.
+                                        </span>
+                                    </p>
+                                </p>
+                                <br/>
+                                <p class="in2it-fs">Please note that interviews with the member should be dealt with the necessary dignity and no aggressive behaviour by the interviewer must be allowed during the interview. Interviews with the member should be arranged via Ethics and Forensic Services. <br/>
+                                Consultant may be required to conduct two presentations (if the CCT Executive Mayor so requires) detailing the final report and the outcomes of their investigation and these presentations must be factored into the total project cost.</p>
+
+                                <p class="fw-bolder in2it-fs"><b>2. Engagement Work Programme</b></p>
+                                <p class="in2it-fs"><t t-out="tor.engage_work_programme"/></p>
+
+                                <p class="fw-bolder in2it-fs"><b>3. Engagement Time frame</b></p>
+                                <p class="in2it-fs"><t t-out="tor.engage_time_frame"/></p>
+
+                                <p class="fw-bolder in2it-fs"><b>4. Team Delivering Service</b></p>
+                                <p class="in2it-fs"><t t-out="tor.team_delivering_service"/></p>
+
+                                <p class="fw-bolder in2it-fs"><b>5. Submission Requirements and Closure Date and Time </b></p>
+                                <p class="in2it-fs"><t t-out="tor.submission_req_closure_date_time"/></p>
+                                <p class="in2it-fs">5.4 The following pricing schedule has been included as guidance that can be used in respect of 5.3 in line with pricing as quoted in the tender.</p>
+                                <div>
+                                    <table class="table border border-black">
+                                        <thead>
+                                            <tr>
+                                                <th class="th bg-secondary fw-bold border border-black">ITEM</th>
+                                                <th class="th bg-secondary text-center fw-bold border border-black">DESCRIPTION </th>
+                                                <th class="th bg-secondary text-center fw-bold border border-black">HOURLY RATE (EXCL. VAT)RATES</th>
+                                                <th class="th bg-secondary text-center fw-bold border border-black">ESTIMATED HOURS HRS</th>
+                                                <th class="th bg-secondary text-center fw-bold border border-black">TOTAL(RATES x HRS)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            
+                                            <t t-foreach="tor.pricing_schedule_ids" t-as="price">
+                                                <tr>
+                                                    <th class="th fw-bold border border-black"><span t-field="price.item"/></th>
+                                                    <th class="th fw-bold border border-black text-center"><span t-field="price.description"/></th>
+                                                    <th class="th fw-bold border border-black text-center"><span t-field="price.hourly_rate"/></th>
+                                                    <th class="th fw-bold border border-black text-center"><span t-field="price.estimated_rate"/></th>
+                                                    <th class="th fw-bold border border-black text-center"><span t-field="price.total"/></th>
+                                                </tr>
+                                            </t>
+                                            <tr>
+                                                <th class="th fw-bold border border-black" colspan="3"></th>
+                                                <th class="th fw-bold border border-black text-center">Subtotal</th>
+                                                <th class="th fw-bold border border-black text-center"><span t-field="tor.price_subtotal1"/></th>
+                                            </tr>
+                                            <t t-foreach="tor.pricing_schedule_item_ids" t-as="price1">
+                                                <tr>
+                                                    <th class="th fw-bold border border-black"><span t-field="price1.item"/></th>
+                                                    <th class="th fw-bold border border-black text-center"><span t-field="price1.description"/></th>
+                                                    <th class="th fw-bold border border-black text-center"><span t-field="price1.hourly_rate"/></th>
+                                                    <th class="th fw-bold border border-black text-center"><span t-field="price1.estimated_rate"/></th>
+                                                    <th class="th fw-bold border border-black text-center"><span t-field="price1.total"/></th>
+                                                </tr>
+                                            </t>
+
+                                            <!-- Sub Total -->
+                                            <tr>
+                                                <td colspan="4" class="border border-black" style="white-space:nowrap;">
+                                                    <strong>Sub Total</strong>
+                                                </td>
+                                                <td class="border border-black" style="text-align:center;">
+                                                    <strong><span t-field="tor.price_subtotal"/></strong>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td colspan="4" class="border border-black" style="white-space:nowrap;">
+                                                    <strong>VAT (15%)</strong>
+                                                </td>
+                                                <td class="border border-black" style="text-align:center;">
+                                                    <strong><span t-field="tor.vat_amount"/></strong>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td colspan="4" class="border border-black" style="white-space:nowrap;">
+                                                    <strong>TOTAL PRICE (INCLUDING VAT)</strong>
+                                                </td>
+                                                <td class="border border-black" style="text-align:center; font-weight:bold;">
+                                                    <strong><span t-field="tor.total_amount"/></strong>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <t t-set="data" t-value="tor.get_signature_and_timestamp()"/>
+                                <t t-if="data">
+                                    <t t-set="roles" t-value="[
+                                        ('RECOMMENDED BY:', 'Manager: Forensic Services', 'im'),
+                                        ('APPROVED BY:', 'Chief: Ethics and Forensic Services', 'chief'),
+                                        ('APPROVED BY:', 'Executive Director', 'ed')
+                                    ]"/>
+
+                                    <t t-foreach="roles" t-as="role">
+                                        <t t-if="data.get(role[2])">
+
+                                            <p><b><t t-out="role[0]"/></b></p>
+
+                                            <table class="table border border-black">
+
+                                                <!-- NAME ROW -->
+                                                <tr>
+                                                    <th class="border border-black bg-secondary fw-bold" style="width:30%">
+                                                        NAME:
+                                                    </th>
+                                                    <th class="fw-bold">
+                                                        <div class="row">
+                                                            <div class="col"><t t-out="role[1]"/></div>
+                                                           <div class="col text-end" t-out="data[role[2]]['name']"/>
+                                                        </div>
+                                                    </th>
+                                                </tr>
+
+                                                <!-- SIGNATURE ROW -->
+                                                <tr>
+                                                    <th class="border border-black bg-secondary fw-bold">
+                                                        SIGNATURE AND DATE
+                                                    </th>
+                                                    <th>
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <img t-if="data[role[2]]['sign']"
+                                                                    t-att-src="'data:image/png;base64,%s' % data[role[2]]['sign']"
+                                                                    style="max-height:60px;"/>
+                                                            </div>
+                                                           <div class="col text-end" t-out="data[role[2]]['date'].strftime('%d-%m-%Y')"/>
+                                                        </div>
+
+                                                    </th>
+                                                </tr>
+                                            </table>
+                                            <br/>
+                                        </t>
+                                    </t>
+                                </t>
+                                
+                            </div>                   
+                        </div>
+                    </div>
+                    <t t-if="not is_submit">
+                        <t t-if="vendor">
+                            <hr class="mb-0 mt-4"/>
+                            <form t-att-action="'/vendor/tor/%s/%s' % (vendor.project_id.id, token)" method="post">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                                <div class="d-flex gap-2 justify-content-center" style="padding-top:1rem;padding-bottom:1rem;">
+                                    
+                                    <div class="text-center">
+                                        <button 
+                                            type="button" 
+                                            class="btn bg-danger text-light btn-lg btn-gradient px-5 shadow"  
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#rejectConfirmModal">
+                                            <i class="bi bi-send-fill me-2"></i> Reject
+                                        </button>
+                                    </div>
+
+                                    <div class="text-center">
+                                        <button
+                                            type="button" 
+                                            class="btn bg-primary text-light btn-lg btn-gradient px-5 shadow"  
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#acceptConfirmModal">
+                                            <i class="bi bi-send-fill me-2"></i> Accept
+                                        </button>
+                                    </div>
+                                </div>
+
+
+                                <!-- Accept Confirmation popup -->
+                                <div class="modal fade" id="acceptConfirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                        <div class="modal-content shadow-lg border-0 rounded">
+                                        <div class="modal-header bg-secondary text-dark">
+                                            <h5 class="modal-title" id="confirmModalLabel">⚠️ Confirm Submission</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to submit this form?
+                                        </div>
+                                        <div class="modal-footer justify-content-end">
+                                            <button type="button" class="btn bg-danger text-light"  data-bs-dismiss="modal">Cancel</button>
+                                            <button name="action" id="confirmSubmit" type="submit" class="btn bg-success text-light" value="accept">Yes, Accept</button>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Reject Confirmation popup -->
+                                <div class="modal fade" id="rejectConfirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                        <div class="modal-content shadow-lg border-0 rounded">
+                                        <div class="modal-header bg-secondary text-dark">
+                                            <h5 class="modal-title" id="confirmModalLabel">⚠️ Confirm Rejection</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to reject this form?
+                                        </div>
+                                        <div class="modal-footer justify-content-end">
+                                            <button type="button" class="btn bg-danger text-light"  data-bs-dismiss="modal">Cancel</button>
+                                            <button name="action" id="confirmSubmit" type="submit" class="btn bg-success text-light" value="reject">Yes, Reject</button>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </t>
+                    </t>
+                </div>
+
+
+
+                <!-- </t> -->
+            </t>
+        </template>
+    </data>
+</odoo>

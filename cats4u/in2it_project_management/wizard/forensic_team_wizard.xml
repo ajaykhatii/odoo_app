@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+
+         <record id="view_forensic_team_form_wizard" model="ir.ui.view">
+            <field name="name">Forensic Team Wizard</field>
+            <field name="model">forensic.team.wizard</field>
+            <field name="arch" type="xml"> 
+                <form>
+                    <sheet>
+                         <group string="Forensic Team">
+                            <field name="forensic_member_ids" colspan="4" nolabel="1" options="{'no_open': True}">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="unit_id" required="1"
+                                            options="{'no_edit': True, 'no_create': True}"
+                                            domain="[('is_forensic_dep', '=', True)]"/>
+                                    <field name="job_id" required="1"
+                                            domain="[('unit_ids', 'in', unit_id)]"
+                                            options="{'no_edit': True, 'no_create': True}"/>
+                                    <field name="member_ids"
+                                            widget="many2many_tags"
+                                            options="{'no_open': True, 'no_edit': True, 'no_create': True}"
+                                            domain="[('employee_id.job_id','=',job_id), ('employee_id','!=',False),('employee_id.department_id', '=', unit_id)]"
+                                            required="1"/>
+                                </list>
+                            </field>
+                            <group>
+                                <label for="project_investigator_ids" string="Lead Investigators" invisible="not forensic_member_ids"/>
+                                <field name="project_investigator_ids"
+                                        widget="many2many_tags"
+                                        options="{'no_edit': True, 'no_create': True, 'no_open': True}"
+                                        domain="li_domain"
+                                        invisible="not forensic_member_ids"
+                                        required="1"
+                                        nolabel="1"/>
+                                <field name="li_domain" invisible="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="action_create_forensic_team" string="Create" type="object" class="btn-primary" data-hotkey="q"/>
+                        <button special="cancel" string="Cancel" class="btn btn-danger" data-hotkey="c"/>
+                    </footer>
+                </form>
+            </field>
+
+        </record>  
+
+
+
+    </data>
+</odoo>

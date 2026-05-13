@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="in2it_forensic_services.HideSignButtons"
+       t-inherit="sign.SignSignableRequestControlPanel"
+       t-inherit-mode="extension">
+ 
+        <!-- Refuse button -->
+        <xpath expr="//button[contains(@class, 'o_sign_refuse_document_button')]"
+               position="attributes">
+            <attribute name="t-if">false</attribute>
+        </xpath>
+ 
+        <!-- Edit button -->
+        <xpath expr="//button[contains(@class, 'o_sign_edit_button')]"
+               position="attributes">
+            <attribute name="t-if">false</attribute>
+        </xpath>
+ 
+    </t>
+</templates>
+ 

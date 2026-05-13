@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--New Governance Group-->
+    <record id="group_cms_governance" model="res.groups">
+        <field name="name">Governance</field>
+        <field name="category_id" ref="base.module_category_services_project"/>
+        <field name="implied_ids" eval="[(4, ref('project.group_project_user'))]"/>
+    </record>
+
+    <record id="project.group_project_manager" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_cms_governance'))]"/>
+    </record>
+
+    <!--Modify record rule to access project-->
+    <function model="ir.model.data" name="write">
+        <function model="ir.model.data" name="search">
+          <value eval="[('module','=','project'),('name','=','project_public_members_rule')]"/>
+        </function>
+        <value eval="{'noupdate': False}"/>
+    </function>
+
+        <!-- update rule's domain -->
+    <record id="project.project_public_members_rule" model="ir.rule">
+        <field name="domain_force">
+            ['&amp;',
+                '|','|',
+                    ('user_id', '=', user.id),
+                    ('assigned_forensic_team_id.project_investigator_ids', 'in', [user.id]),
+                    ('assigned_forensic_team_id.forensic_member_ids.member_ids', 'in', [user.id]),
+                '|',
+                    ('privacy_visibility', '!=', 'followers'),
+                    ('message_partner_ids', 'in', [user.partner_id.id])
+            ]
+        </field>
+    </record>
+
+    <function model="ir.model.data" name="write">
+      <function model="ir.model.data" name="search">
+        <value eval="[('module', '=', 'project'), ('name', '=', 'project_public_members_rule')]" />
+      </function>
+      <value eval="{'noupdate': True}" />
+    </function>
+
+
+    <!--Governance Team will access all projects-->
+    <record model="ir.rule" id="project_project_governance_rule">
+      <field name="name">Governance: governance team: see all</field>
+      <field name="model_id" ref="model_project_project"/>
+      <field name="domain_force">[(1, '=', 1)]</field>
+      <field name="groups" eval="[(4,ref('in2it_project_management.group_cms_governance'))]"/>
+    </record>
+
+    <record id="project_project_city_manager_read_rule" model="ir.rule">
+        <field name="name">Project Read Access for City Manager</field>
+        <field name="model_id" ref="project.model_project_project"/>
+        <field name="groups" eval="[(4, ref('in2it_forensic_services.group_fcm_city_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+
+
+    <record id="distribution_line_read_rule" model="ir.rule">
+        <field name="name">Distribution List Read</field>
+        <field name="model_id" ref="model_distribution_line"/>
+        <field name="domain_force">[(1,'=',1)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <record id="distribution_line_read_rule" model="ir.rule">
+        <field name="name">Distribution Line Read</field>
+        <field name="model_id" ref="model_distribution_line"/>
+        <field name="domain_force">[(1,'=',1)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+
+
+
+</odoo>

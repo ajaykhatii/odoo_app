@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <record id="module_category_case_management" model="ir.module.category">
+            <field name="name">Case Management</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="group_fcm_case_pfo_access" model="res.groups">
+            <field name="name">Principle Forensic Officer</field>
+            <field name="category_id" ref="module_category_case_management"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">The user will be able to assign investigation manager and tor.</field>
+        </record>
+
+
+        <record id="group_fcm_review_access" model="res.groups">
+            <field name="name">Specialist Clerk</field>
+            <field name="category_id" ref="module_category_case_management"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">The user will be able to submit to under review.</field>
+        </record>
+
+        <record id="group_fcm_case_fo_access" model="res.groups">
+            <field name="name">Forensic Officer</field>
+            <field name="category_id" ref="module_category_case_management"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">The user will be able to confirm and request for changes.</field>
+        </record>
+
+        <record id="group_fcm_case_sfo_access" model="res.groups">
+            <field name="name">Senior Forensic Officer</field>
+            <field name="category_id" ref="module_category_case_management"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">The user will be able to confirm and request for changes.</field>
+        </record>
+        
+
+        <record id="group_fcm_case_chief_access" model="res.groups">
+            <field name="name">Chief</field>
+            <field name="category_id" ref="module_category_case_management"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">The user will be highest authority.</field>
+        </record>
+
+        <record id="group_fcm_city_manager" model="res.groups">
+            <field name="name">City Manager</field>
+            <field name="category_id" ref="module_category_case_management"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">The user will be able to do authorization of recommendation action (Review authorize and Reject).</field>
+        </record>
+
+        <record id="project_project_city_manager_read_rule" model="ir.rule">
+            <field name="name">Project Read Access for City Manager</field>
+            <field name="model_id" ref="project.model_project_project"/>
+            <field name="groups" eval="[(4, ref('in2it_forensic_services.group_fcm_city_manager'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+
+        <record id="group_fcm_admin" model="res.groups">
+            <field name="name">Admin</field>
+            <field name="category_id" ref="module_category_case_management"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">The user will be admin and have all the rights.</field>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
+
+    </data>
+</odoo>

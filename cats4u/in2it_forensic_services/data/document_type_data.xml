@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+        <data noupdate="0">
+            <record id="document_type_email" model="forensic.document.type">
+                <field name="name">Email</field>
+            </record>
+
+            <record id="document_type_contact" model="forensic.document.type">
+                <field name="name">Contact</field>
+            </record>
+
+            <record id="document_type_invoice" model="forensic.document.type">
+                <field name="name">Invoice</field>
+            </record>            
+
+            <record id="document_type_statement" model="forensic.document.type">
+                <field name="name">Statement</field>
+            </record>
+
+            <record id="document_type_screenshot" model="forensic.document.type">
+                <field name="name">Screenshot</field>
+            </record>
+
+            <record id="document_type_log" model="forensic.document.type">
+                <field name="name">Log</field>
+            </record>
+
+            <record id="document_type_report" model="forensic.document.type">
+                <field name="name">Report</field>
+            </record>
+            
+            <record id="document_type_other" model="forensic.document.type">
+                <field name="name">Other</field>
+            </record>
+        </data>
+</odoo>

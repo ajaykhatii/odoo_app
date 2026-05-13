@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="project_calendar_inherited_view" model="ir.ui.view">
+            <field name="name">Project Calendar Form View</field>
+            <field name="model">calendar.event</field>
+            <field name="inherit_id" ref="calendar.view_calendar_event_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='alarm_ids']" position="before">
+                    <field name="project_id" options="{'no_open': True, 'no_create': True}" invisible="1"/>
+                    <field name="case_id" options="{'no_open': True, 'no_create': True}" readonly="1"/>
+                </xpath>
+
+                <xpath expr="//field[@name='videocall_location']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//button[@name='set_discuss_videocall_location']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//button[@name='clear_videocall_location']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='partner_ids']" position="after">
+                    <field name="available_time" invisible="not partner_ids" string="Available Time" class="text-success fw-bold fs-5" readonly="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="project_calendar_form_quick_create_inherited_view" model="ir.ui.view">
+            <field name="name">Project Calendar Quick Create Form View</field>
+            <field name="model">calendar.event</field>
+            <field name="inherit_id" ref="calendar.view_calendar_event_form_quick_create"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_ids']" position="before">
+                    <field name="project_id" options="{'no_open': True, 'no_create': True}" invisible="1"/>
+                    <field name="case_id" options="{'no_open': True, 'no_create': True}" readonly="1"/>
+                </xpath>
+
+                <xpath expr="//field[@name='videocall_location']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//button[@name='set_discuss_videocall_location']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//button[@name='clear_videocall_location']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='partner_ids']" position="after">
+                    <field name="available_time" invisible="not partner_ids" string="Available Time" class="text-success fw-bold fs-5" readonly="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="project_calendar_search_inherited_view" model="ir.ui.view">
+            <field name="name">Project Calendar Search View</field>
+            <field name="model">calendar.event</field>
+            <field name="inherit_id" ref="calendar.view_calendar_event_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='mymeetings']" position="after">
+                    <filter string="Future Meetings" help="Future Meetings" name="futuremeetings" 
+                    domain="['|', ('start', '>=', context.get('today_datetime')), ('start_date', '>=', context.get('today_date'))]"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

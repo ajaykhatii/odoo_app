@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+        <data>
+            <!-- Add you code here -->
+            <record id="view_assign_vendor_wizard_form" model="ir.ui.view">
+                <field name="name">Assign Vendor View Form View</field>
+                <field name="model">assign.vendor.wizard</field>
+                <field name="arch" type="xml">
+                    <form>
+                        <sheet>
+                            <group>
+                                <group>
+                                    <field name="project_id" invisible="1"/>
+                                    <field name="partner_id"
+                                        domain="[('is_vendor', '=', True),('vendor_status','=','active'),('id','not in', context.get('rejected_partner_domain'))]"
+                                        context="{'is_partner_vendor':True, 
+                                            'res_partner_search_mode': 'supplier', 
+                                            'default_is_company': True, 
+                                            'default_supplier_rank': 1, 
+                                            'default_is_vendor': 1,
+                                            'form_view_ref': 'in2it_forensic_services.res_partner_view_form',
+                                            'tree_view_ref': 'in2it_forensic_services.res_partner_view_tree'
+                                            }"
+                                        options="{'no_quick_create':True}"
+                                    />
+                                </group>
+                            </group>
+                        </sheet>
+                        <footer>
+                            <button name="action_add_vendor" string="Add" type="object" invisible="context.get('another_vendor')" class="btn-primary" data-hotkey="q"/>
+                            <button name="action_add_vendor" string="Send Link" type="object" invisible="not context.get('another_vendor')" class="btn-primary" data-hotkey="q"/>
+
+                            <button special="cancel" string="Cancel" class="btn-danger" data-hotkey="c"/>
+                        </footer>
+                    </form>
+                </field>
+            </record>
+        </data>
+</odoo>

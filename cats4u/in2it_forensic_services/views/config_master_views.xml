@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Nature of Allegation-->
+    <record id="view_forensic_allegation_nature_tree" model="ir.ui.view">
+        <field name="name">forensic.allegation.nature.list</field>
+        <field name="model">forensic.allegation.nature</field>
+        <field name="arch" type="xml">
+            <list string="Nature of Allegations">
+                <field name="name"/>
+                <field name="create_date"/>
+                <field name="create_uid"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_forensic_allegation_nature_form" model="ir.ui.view">
+        <field name="name">forensic.allegation.nature.form</field>
+        <field name="model">forensic.allegation.nature</field>
+        <field name="arch" type="xml">
+            <form string="Nature of Allegation">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. Allegations"/>
+                        </h1>
+                    </div>
+                    <group string="👤 User Tracking" class="o_forensic_group">
+                        <field name="create_date"/>
+                        <field name="create_uid" options='{"no_open": True, "no_create": True}'/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_forensic_allegation_nature" model="ir.actions.act_window">
+        <field name="name">Nature of Allegations</field>
+        <field name="res_model">forensic.allegation.nature</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create the first Nature of Allegation
+            </p>
+        </field>
+    </record>
+
+
+        <!-- Directorate-->
+    <record id="view_forensic_directorate_tree" model="ir.ui.view">
+        <field name="name">forensic.directorate.list</field>
+        <field name="model">forensic.directorate</field>
+        <field name="arch" type="xml">
+            <list string="Directorate">
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_forensic_directorate_form" model="ir.ui.view">
+        <field name="name">forensic.directorate.form</field>
+        <field name="model">forensic.directorate</field>
+        <field name="arch" type="xml">
+            <form string="Directorate">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. Directorate"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <field name="department_ids" widget="many2many_tags" nolabel="0"/>
+                        <field name="ed_officer_id" string="ED Officers" options='{"no_open": True, "no_create": True}' domain="[('directorate_id','=',id),('position','=','ed')]"/>
+                        <field name="nodal_officer_ids" string="Nodal Officers" widget="many2many_tags" options='{"no_open": True, "no_create": True}' domain="[('directorate_id','=',id),('position','=','nodal')]"/>
+                        <field name="color" widget="color"/>
+                    </group>
+                    <group string="👤 User Tracking" class="o_forensic_group">
+                        <field name="create_date"/>
+                        <field name="create_uid" options='{"no_open": True, "no_create": True}'/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_forensic_directorate" model="ir.actions.act_window">
+        <field name="name">Directorate</field>
+        <field name="res_model">forensic.directorate</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create the first Directorate
+            </p>
+        </field>
+    </record>
+
+
+
+           <!-- Department-->
+    <record id="view_forensic_department_tree" model="ir.ui.view">
+        <field name="name">forensic.department.list</field>
+        <field name="model">forensic.department</field>
+        <field name="arch" type="xml">
+            <list string="Department">
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_forensic_department_form" model="ir.ui.view">
+        <field name="name">forensic.department.form</field>
+        <field name="model">forensic.department</field>
+        <field name="arch" type="xml">
+            <form string="Department">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. Forensic Department"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <field name="directorate_ids" widget="many2many_tags" nolabel="0"/>
+                    </group>
+                    <group string="👤 User Tracking" class="o_forensic_group">
+                        <field name="create_date"/>
+                        <field name="create_uid" options='{"no_open": True, "no_create": True}'/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_forensic_department" model="ir.actions.act_window">
+        <field name="name">Department</field>
+        <field name="res_model">forensic.department</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create the first Department
+            </p>
+        </field>
+    </record>
+
+            <!-- Case Assignment Type-->
+    <record id="view_forensic_assignment_type_tree" model="ir.ui.view">
+        <field name="name">forensic.assignment.type.list</field>
+        <field name="model">forensic.assignment.type</field>
+        <field name="arch" type="xml">
+            <list string="Case Assignment Type">
+                <field name="complete_name"/>
+                <field name="name"/>
+                <field name="stage_ids" widget="many2many_tags"/>
+                <field name="authority_id" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_forensic_assignment_type_form" model="ir.ui.view">
+        <field name="name">forensic.assignment.type.form</field>
+        <field name="model">forensic.assignment.type</field>
+        <field name="arch" type="xml">
+            <form string="Assignment Type">
+                <header>
+                    <button name="generate_case_type_sequence" string="Generate Sequence" class="btn-primary" type="object" invisible="sequence_id"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="complete_name" required="1"/>
+                        </h1>
+                    </div>
+
+                    <!-- Main Information -->
+                    <group>
+                        <group>
+                            <field name="name" placeholder="e.g. LIN" readonly="create_date"/>
+                            <field name="authority_id" options="{'no_open': True, 'no_edit': True, 'no_create': True}" domain="['|', ('name', 'ilike', 'chief'), ('name', 'ilike', 'city manager')]" required="is_authorize"/>
+                        </group>
+                        <group>
+                            <field name="is_authorize" widget="boolean_toggle"/>
+                            <field name="auth_template_id" domain="[('name','ilike','auth_letter')]" required="is_authorize"/>
+                            <field name="sequence_id" invisible="1"/>
+                        </group>
+                    </group>
+
+                    <!-- Notebook -->
+                    <notebook>
+                        <page string="Assignment Journey">
+                            <field name="stage_ids" nolabel="1"
+                                   domain="[('is_common_stage', '=', False)]"
+                                   context="{'edit': False}">
+                                <list editable="bottom" default_order="sequence" create="0" edit="0">
+                                    <field name="sequence" widget="handle" optional="hide"/>
+                                    <field name="id" optional="hide"/>
+                                    <field name="name" string="Stage"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_forensic_assignment_type" model="ir.actions.act_window">
+        <field name="name">Case Type</field>
+        <field name="res_model">forensic.assignment.type</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create the first Case Assignment Type
+            </p>
+        </field>
+    </record>
+
+
+            <!-- Forensic Case Assignment Stages-->
+    <record id="view_forensic_assignment_stage_list" model="ir.ui.view">
+        <field name="name">forensic.assignment.stage.list</field>
+        <field name="model">forensic.assignment.stage</field>
+        <field name="arch" type="xml">
+            <list string="Case Assignement Stage">
+                <field name="sequence" widget="handle" optional="show"/>
+                <field name="name"/>
+                <field name="is_common_stage" optional="show"/>
+                <field name="is_under_review" optional="hide"/>
+                <field name="is_last"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_forensic_assignment_stage_form" model="ir.ui.view">
+        <field name="name">forensic.assignment.stage.form</field>
+        <field name="model">forensic.assignment.stage</field>
+        <field name="arch" type="xml">
+            <form string="Assignment Stage">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_assignment_types" type="object"
+                                class="oe_stat_button" icon="fa-sitemap"
+                                string="Assignment Types"/>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. Draft"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="sequence"/>
+                            <field name="is_common_stage"/>
+                            <field name="is_under_review" invisible="not is_common_stage"/>
+                            <field name="type_ids" widget="many2many_tags" invisible="1"/>
+                            <field name="is_last"/>
+                        </group>
+                        <group/>
+                    </group>
+                    <notebook>
+                        <!-- ===== Summary TAB ===== -->
+                        <page string="📝 Description" name="desc">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <group name="description" class="o_forensic_group">
+                                        <field name="description" nolabel="1"
+                                               placeholder="This stage is used for..."/>
+                                    </group>
+                                </div>
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_forensic_assignment_stage" model="ir.actions.act_window">
+        <field name="name">Assignment Stage</field>
+        <field name="res_model">forensic.assignment.stage</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create the first Case Assignment Stage
+            </p>
+        </field>
+    </record>
+
+
+<!--Allegation Source-->
+
+    <record id="view_forensic_allegation_source_list" model="ir.ui.view">
+        <field name="name">forensic.allegation.source.list</field>
+        <field name="model">forensic.allegation.source</field>
+        <field name="arch" type="xml">
+            <list string="Allegation Source">
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_forensic_allegation_source_form" model="ir.ui.view">
+        <field name="name">forensic.allegation.source.form</field>
+        <field name="model">forensic.allegation.source</field>
+        <field name="arch" type="xml">
+            <form string="Allegation Source">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. Internal Audit"/>
+                        </h1>
+                    </div>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_forensic_allegation_source" model="ir.actions.act_window">
+        <field name="name">Allegation Source</field>
+        <field name="res_model">forensic.allegation.source</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create the first Allegation Source
+            </p>
+        </field>
+    </record>
+
+      <!-- Directoralte level action and view -->
+    <record id="directorate_officer_view_form" model="ir.ui.view">
+        <field name="name">directorate.form.inherit</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='login']" position="after">
+                <group>
+                    <field name="phone" invisible="not directorateofficer"/>
+                    <field name="directorate_id" invisible="not directorateofficer"/>
+                    <field name="position" invisible="not directorateofficer" required="1"/>
+                </group>
+            </xpath>
+
+            <xpath expr="//form/sheet/notebook/page[@name='access_rights']" position="attributes">
+                <attribute name="invisible">directorateofficer</attribute>
+            </xpath>
+        </field>
+    </record>
+    
+    <record id="action_directorate_level_office_users" model="ir.actions.act_window">
+        <field name="name">Directorate Officers</field>
+        <field name="res_model">res.users</field>
+        <field name="view_mode">list,form</field>
+        <field name="context" eval="{
+            'default_directorateofficer':True,
+            'default_groups_id': [(6, 0, [ref('base.group_portal')])]}"/>
+        <field name="domain">[('directorateofficer','=',True)]</field>
+         <field name="view_ids" eval="[
+        (5, 0, 0),
+        (0, 0, {'view_mode': 'list', 'view_id': ref('base.view_users_tree')}),
+        (0, 0, {'view_mode': 'form', 'view_id': ref('base.view_users_form')})
+
+        ]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create Directorate Officers
+            </p><p>
+                Use Teams to organize your workflow and approval actions.
+            </p>
+        </field>
+    </record>
+
+    <!-- Document Type -->
+    <record id="forensic_document_type" model="ir.ui.view">
+        <field name="name">Forensic Document Type</field>
+        <field name="model">forensic.document.type</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name" required="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- forensic_document_type action window -->
+    <record id="forensic_document_type_action" model="ir.actions.act_window">
+        <field name="name">Document Type</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">forensic.document.type</field>
+        <field name="view_mode">list</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,258 @@
+<odoo>
+
+    <template id="city_manager_overarching_pre_memo_letter">
+        <div style="font-family: Arial; font-size: 15px; line-height: 1.5;">
+
+            <p>
+               Ethics and Forensic Services (EFS) was instructed xxxxx. A preliminary enquiry was authorised by the Chief: EFS in order to give effect to this instruction.
+            </p>
+
+            <p>
+                EFS has completed the preliminary enquiry and in accordance with the xxxx, EFS recommends that the report xxxxx
+            </p>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th><strong>Name</strong></th>
+                        <th><strong>Description</strong></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Investigation Name</td>
+                        <td><t t-esc="object.name"/></td>
+                    </tr>
+                    <tr>
+                        <td>Related Case</td>
+                        <td><t t-esc="object.case_id.name"/></td>
+                    </tr>
+                    <tr>
+                        <td>Directorate</td>
+                        <td><t t-esc="object.directorate_id.name"/></td>
+                    </tr>
+
+                    <tr>
+                        <td>Approval Date</td>
+                        <td>
+                            <t t-if="approval_date">
+                                <t t-out="approval_date"/><br/>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Nature of Allegation</td>
+                        <td><t t-esc="object.allegation_nature_id.name"/></td>
+                    </tr>
+                    <tr>
+                        <td>Investigator Name and Designation</td>
+                        <td><t t-esc="object.user_id.name"/> (<t t-esc="object.user_id.employee_id.job_id.name"/>)</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>
+                Kindly find under cover of this memorandum an electronic copy of the preliminary enquiry and exhibits in the above regard and a letter for your signature addressed to the Executive Director /  Director. Standard Paragraph
+            </p>
+
+            <p>
+                It is recommended that an electronic copy of the preliminary enquiry and exhibits be forwarded to the Executive Director/Director for her further action. Standard Paragraph
+            </p>
+            
+            <p>
+                Feel free to contact me with any related comments/queries. 
+            </p>
+            
+            
+        </div>
+    </template>
+
+    <template id="city_manager_overarching_for_lsa_dfo_eth_memo_letter">
+        <div style="font-family: Arial; font-size: 15px; line-height: 1.5;">
+
+            <p>
+               Please find under cover of this memorandum an electronic copy of the forensic report and exhibits regarding the above mentioned matter and a letter for your signature addressed to the Executive Director (ED) of Urban Mobility.
+            </p>
+
+            <p>
+                It is recommended that an electronic copy of the forensic report and the exhibits be forwarded to the ED for her information and action.
+            </p>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th><strong>Name</strong></th>
+                        <th><strong>Description</strong></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Investigation Name</td>
+                        <td><t t-esc="object.name"/></td>
+                    </tr>
+                    <tr>
+                        <td>Related Case</td>
+                        <td><t t-esc="object.case_id.name"/></td>
+                    </tr>
+                    <tr>
+                        <td>Directorate</td>
+                        <td><t t-esc="object.directorate_id.name"/></td>
+                    </tr>
+
+                    <tr>
+                        <td>Approval Date</td>
+                        <td>
+                            <t t-if="approval_date">
+                                <t t-out="approval_date"/><br/>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Nature of Allegation</td>
+                        <td><t t-esc="object.allegation_nature_id.name"/></td>
+                    </tr>
+                    <tr>
+                        <td>Investigator Name and Designation</td>
+                        <td><t t-esc="object.user_id.name"/> (<t t-esc="object.user_id.employee_id.job_id.name"/>)</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <p>
+                In accordance with the <i>Deloitte Proposed Framework for Close-Out Engagements with the City</i>, dated 26 June 2024:
+            </p>
+
+            <ul>
+                <li><p>EFS sent a presentation with a summary of our findings to the ED, Urban Mobility and met with her on 26 March 2025.  The ED accepted the recommendations made as presented to her.</p></li>
+            </ul>
+            
+            <p>
+                Feel free to contact me with any related comments/queries.
+            </p>
+
+        </div>
+    </template>
+
+    <template id="executive_officer_overarching_pre_memo_letter">
+        <div style="font-family: Arial; font-size: 15px; line-height: 1.5;">
+
+            <p>
+               Please find under cover of this letter an electronic copy of a preliminary enquiry and exhibits regarding the above matter.
+            </p>
+
+            <p>
+                It is recommended that an electronic copy of the preliminary enquiry and exhibits be forwarded to XXXXX
+            </p>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th><strong>Name</strong></th>
+                        <th><strong>Description</strong></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Investigation Name</td>
+                        <td><t t-esc="object.name"/></td>
+                    </tr>
+                    <tr>
+                        <td>Related Case</td>
+                        <td><t t-esc="object.case_id.name"/></td>
+                    </tr>
+                    <tr>
+                        <td>Directorate</td>
+                        <td><t t-esc="object.directorate_id.name"/></td>
+                    </tr>
+
+                    <tr>
+                        <td>Approval Date</td>
+                        <td>
+                            <t t-if="approval_date">
+                                <t t-out="approval_date"/><br/>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Nature of Allegation</td>
+                        <td><t t-esc="object.allegation_nature_id.name"/></td>
+                    </tr>
+                    <tr>
+                        <td>Investigator Name and Designation</td>
+                        <td><t t-esc="object.user_id.name"/> (<t t-esc="object.user_id.employee_id.job_id.name"/>)</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>
+                Please do not hesitate to contact Ethics and Forensic Services should you have any questions in this regard.
+            </p>
+        </div>
+    </template>
+
+    <template id="executive_officer_overarching_for_lsa_dfo_eth_memo_letter">
+        <div style="font-family: Arial; font-size: 15px; line-height: 1.5;">
+
+            <p>
+               Please find under cover of this memorandum an electronic copy of the forensic report and the exhibits regarding the above mentioned matter for your action. (This could also be for information or for information/action)
+            </p>
+
+            <p>
+                Your attention is drawn to the recommendation referred to in paragraph 801 of the said report and you are required to implement the recommendation set out therein. 
+            </p>
+
+            <p>
+                Recommendation 901 requires engagement with Legal Services, and authority is hereby granted for the distribution of the report in compliance with this recommendation. (This information changes based on the content of the report.)
+            </p>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th><strong>Name</strong></th>
+                        <th><strong>Description</strong></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Investigation Name</td>
+                        <td><t t-esc="object.name"/></td>
+                    </tr>
+                    <tr>
+                        <td>Related Case</td>
+                        <td><t t-esc="object.case_id.name"/></td>
+                    </tr>
+                    <tr>
+                        <td>Directorate</td>
+                        <td><t t-esc="object.directorate_id.name"/></td>
+                    </tr>
+
+                    <tr>
+                        <td>Approval Date</td>
+                        <td>
+                            <t t-if="approval_date">
+                                <t t-out="approval_date"/><br/>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Nature of Allegation</td>
+                        <td><t t-esc="object.allegation_nature_id.name"/></td>
+                    </tr>
+                    <tr>
+                        <td>Investigator Name and Designation</td>
+                        <td><t t-esc="object.user_id.name"/> (<t t-esc="object.user_id.employee_id.job_id.name"/>)</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>
+                Kindly, within 30 days from date of my signature, provide Ethics and Forensic Services (EFS) with your written confirmation that you have initiated the implementation of the recommendation, as referred to in the above mentioned paragraphs.  (Standard paragraph)
+            </p>
+
+            <p>
+                Where disciplinary action is required, this must be finalised within 90 days after the date of signature hereof.  (Standard paragraph and will be deleted if there is no recommendations of disciplinary or corrective action)
+            </p>
+
+            <p>
+                Kindly note that the EFS recommendations, upon my review, is binding and if you have any changes or queries that it be submitted directly to my office for review.
+            </p>
+
+            <p>
+                Please do not hesitate to contact EFS should you have any questions in this regard.
+            </p>
+        </div>
+    </template>
+</odoo>

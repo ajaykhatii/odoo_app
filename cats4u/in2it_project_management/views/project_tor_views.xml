@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="investigation_vendor_tor_view_form" model="ir.ui.view">
+        <field name="name">investigation.vendor.tor.view.form</field>
+        <field name="model">investigation.vendor.tor</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="send_tor_for_approval" 
+                        string="Send TOR for Approval" 
+                        type="object" 
+                        class="btn btn-primary"
+                        invisible="approval_action or uid != pfo_id"
+                        />
+
+                    <button name="action_send_for_update" 
+                        string="Send for Update" 
+                        class="btn-primary" 
+                        type="object" 
+                        invisible="user_id != uid or not approval_action"
+                    />
+
+                    <button name="action_approve_tor"
+                        string="Approve"
+                        class="btn-primary"
+                        type="object"
+                        invisible="user_id != uid or not approval_action"
+                    />
+
+                    <field name="status" widget="statusbar" options="{'clickable':False}"/>
+
+                    <button name="action_print_vendor_report"
+                        type="object"
+                        string="Print TOR Report"
+                        class="btn-primary"
+                        invisible="status != 'approved'"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="project_id" invisible="0" readonly="1"/>
+                            <field name="approval_action" invisible="1"/>
+                            <field name="user_id" invisible="1"/>
+                            <field name="pfo_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="case_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Details of Terms of Reference" name="details_terms_of_reference">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="accordion" id="torAccordionLeft">
+                                        <!-- Terms of Reference -->
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header">
+                                                <button name="terms_of_reference"
+                                                        class="accordion-button collapsed"
+                                                        type="button"
+                                                        data-bs-toggle="collapse"
+                                                        data-bs-target="#tor_collapse1">
+                                                    Terms of Reference
+                                                </button>
+                                            </h2>
+
+                                            <div id="tor_collapse1"
+                                                class="accordion-collapse collapse"
+                                                >
+
+                                                <div class="accordion-body">
+                                                    <field name="terms_of_reference" nolabel="1" readonly="approval_action"/>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <!-- Engagement Work Programme -->
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header">
+                                                <button name="engagement_work_programme"
+                                                        class="accordion-button collapsed"
+                                                        type="button"
+                                                        data-bs-toggle="collapse"
+                                                        data-bs-target="#tor_collapse2">
+                                                    Engagement Work Programme
+                                                </button>
+                                            </h2>
+
+                                            <div id="tor_collapse2"
+                                                class="accordion-collapse collapse"
+                                                >
+
+                                                <div class="accordion-body">
+                                                    <field name="engage_work_programme" nolabel="1" readonly="approval_action"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Engagement Time Frame -->
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header">
+                                                <button name="engagement_time_programme"
+                                                        class="accordion-button collapsed"
+                                                        type="button"
+                                                        data-bs-toggle="collapse"
+                                                        data-bs-target="#tor_collapse3">
+                                                    Engagement Time Frame
+                                                </button>
+                                            </h2>
+
+                                            <div id="tor_collapse3"
+                                                class="accordion-collapse collapse">
+
+                                                <div class="accordion-body">
+                                                    <field name="engage_time_frame" nolabel="1" readonly="approval_action"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>                                       
+                                </div>
+
+                                <div class="col">
+                                    <div class="accordion accordion-flush" id="torAccordionRight">
+                                        <!-- Team Delivering Service -->
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header">
+                                                <button name="team_delivering_service"
+                                                        class="accordion-button collapsed"
+                                                        type="button"
+                                                        data-bs-toggle="collapse"
+                                                        data-bs-target="#tor_collapse4">
+                                                    Team Delivering Service
+                                                </button>
+                                            </h2>
+
+                                            <div id="tor_collapse4"
+                                                class="accordion-collapse collapse">
+                                                <div class="accordion-body">
+                                                    <field name="team_delivering_service" nolabel="1" readonly="approval_action"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Submission Requirements -->
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header">
+                                                <button name="submission_requirements"
+                                                        class="accordion-button collapsed"
+                                                        type="button"
+                                                        data-bs-toggle="collapse"
+                                                        data-bs-target="#tor_collapse5">
+                                                    Submission Requirements and Closure Date and Time
+                                                </button>
+                                            </h2>
+
+                                            <div id="tor_collapse5"
+                                                class="accordion-collapse collapse">
+
+                                                <div class="accordion-body">
+                                                    <field name="submission_req_closure_date_time" nolabel="1" readonly="approval_action"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </page>
+
+                        <page string="Pricing Schedule" name="pricing_schedule">
+                            <field name="pricing_schedule_ids" readonly="approval_action">
+                                <list editable="bottom" create="false" delete="false">
+                                    <field name="item" readonly="1" force_save="1"/>
+                                    <field name="description" readonly="1" force_save="1"/>
+                                    <field name="hourly_rate"/>
+                                    <field name="estimated_rate"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <field name="total"/>
+                                </list>
+                            </field>
+                            <group col="12">
+                                <group colspan="8"/>
+                                <group class="oe_subtotal_footer oe_right fw-bold" colspan="4">
+                                    <field name="price_subtotal1" widget="monetary"/>
+                                </group>
+                            </group>
+
+                            <field name="pricing_schedule_item_ids" readonly="approval_action">
+                                <list editable="bottom">
+                                    <field name="item" nolabel="1"/>
+                                    <field name="description" nolabel="1"/>
+                                    <field name="hourly_rate" nolabel="1"/>
+                                    <field name="estimated_rate" nolabel="1"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <field name="total" nolabel="1"/>
+                                </list>
+                            </field>
+                            <field name="currency_id" invisible="1"/>
+                            <group name="note_group" col="12" class="mt-2 mt-md-0">
+                                <group colspan="8">
+                                </group>
+
+                                <group class="oe_subtotal_footer oe_right fw-bold" name="price_subtotal" colspan="4">
+                                    <field name="price_subtotal" widget="monetary"/>
+                                    <field name="vat_amount" widget="monetary"/>
+                                    <field name="total_amount" widget="monetary"/>
+                                </group>
+                                <div class="clearfix"/>
+                            </group>
+                        </page>
+                        <page name="tor_comments" string="TOR Comment(s)">
+                            <field name="tor_line_ids" readonly="1" delete="1">
+                                <list editable="bottom">
+                                    <field name="sender_id"/>
+                                    <field name="recipient_id"/>
+                                    <field name="sent_date"/>
+                                    <field name="remark"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page name="approvers" string="Approver(s)">
+                            <field name="approver_line_ids" readonly="1" delete="1">
+                                <list editable="bottom">
+                                    <field name="user_id"/>
+                                    <field name="job_id"/>
+                                    <field name="date"/>
+                                    <field name="remark"/>
+                                    <field name="status"/>
+                                </list>
+                            </field>
+                        </page>
+
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data noupdate="0">
+
+        <record id="improve_controls_sop_policies" model="recommendation.category">
+            <field name="name">Improve Controls / SOP / Policies</field>
+        </record>
+
+        <record id="forensic_ethics_investigation" model="recommendation.category">
+            <field name="name">Converted to Forensic / Ethics Investigation</field>
+        </record>
+
+        <record id="recom_mpac" model="recommendation.category">
+            <field name="name">MPAC</field>
+        </record>
+
+        <record id="uifw_register" model="recommendation.category">
+            <field name="name">UIFW Register</field>
+        </record>
+
+        <record id="awarenss_drives_training_interventions" model="recommendation.category">
+            <field name="name">Awareness Drives / Training Interventions</field>
+        </record>
+
+        <record id="recom_saps" model="recommendation.category">
+            <field name="name">SAPS</field>
+        </record>
+
+        <record id="compcom_bbee" model="recommendation.category">
+            <field name="name">CompCom – BBEE</field>
+        </record>
+
+        <record id="recom_legal" model="recommendation.category">
+            <field name="name">Legal (Restriction / Blacklist / Recovery / Opinion)</field>
+        </record>
+
+        <record id="disciplinary_corrective_action" model="recommendation.category">
+            <field name="name">Disciplinary / Corrective Action</field>
+        </record>
+
+        <record id="line_management_specific_action" model="recommendation.category">
+            <field name="name">Referred to Line Management for Specific Action</field>
+        </record>
+
+        <record id="closed_no_further_action" model="recommendation.category">
+            <field name="name">Closed – No Further Action</field>
+        </record>
+
+    </data>
+</odoo>

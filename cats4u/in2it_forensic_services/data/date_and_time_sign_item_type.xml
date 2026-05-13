@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record model="sign.item.type" id="sign_item_type_datetime">
+        <field name="name">Date &amp; Time</field>
+        <field name="placeholder">Date &amp; Time</field>
+        <field name="icon">fa-calendar</field>
+    </record>
+
+</odoo>

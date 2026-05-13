@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+        <data noupdate="0">
+            <record id="database_public_records" model="background.database">
+                <field name="name">Public Records</field>
+            </record>
+
+            <record id="database_criminal_database" model="background.database">
+                <field name="name">Criminal Database</field>
+            </record>
+
+            <record id="database_financical_records" model="background.database">
+                <field name="name">Financial Records</field>
+            </record>
+
+            <record id="database_property_records" model="background.database">
+                <field name="name">Property Records</field>
+            </record>
+
+            <record id="database_business_registry_records" model="background.database">
+                <field name="name">Business Registry</field>
+            </record>
+
+            <record id="database_other_records" model="background.database">
+                <field name="name">Other</field>
+            </record>
+        </data>
+</odoo>

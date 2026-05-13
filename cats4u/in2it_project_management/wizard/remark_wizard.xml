@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="remark_wizard_view_form" model="ir.ui.view">
+            <field name="name">remark.wizard.form</field>
+            <field name="model">remark.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="background_check_id" options="{'no_open': True, 'no_create': True, 'no_edit': True}" invisible="1"/>
+                            <field name="remark"/>
+                               
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="action_submit" string="Submit" type="object" class="btn-primary" data-hotkey="q"/>
+                        <button special="cancel" string="Cancel" class="btn btn-danger"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="digital_evidence_confirm_view_form" model="ir.ui.view">
+            <field name="name">digital.evidence.confirm.form</field>
+            <field name="model">digital.evidence.confirm</field>
+            <field name="arch" type="xml">
+                <form string="Confirmation">
+                    <field name="name" readonly="1" no_label="1"/>
+                    <footer>
+                        <button string="Ok" class="btn-primary" name="action_redirect_to_case_investigation" type="object"/>
+                    </footer>
+                </form>
+            </field>
+    </record>
+
+         <record id="request_memo_change_view_form" model="ir.ui.view">
+            <field name="name">request.memo.change.form</field>
+            <field name="model">request.memo.change</field>
+            <field name="arch" type="xml">
+                <form string="Change">
+                    <sheet>
+                        <group>
+                            <field name="name" string="Remark"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Request Change" class="btn-primary" name="action_request_memo_change" invisible="not context.get('request_change_memo')" type="object"/>
+                        <button string="Request Change" class="btn-primary" name="action_de_request_change" invisible="not context.get('is_de_request_change_cm')" type="object"/>
+                    </footer>
+                </form>
+            </field>
+    </record>
+
+        <record id="outsource_review_docs_view_form" model="ir.ui.view">
+            <field name="name">outsource.review.docs.form</field>
+            <field name="model">outsource.review.docs</field>
+            <field name="arch" type="xml">
+                <form string="Outsource Document">
+                    <group>
+                        <field name="attachment_ids" widget="many2many_binary" required="1"/>
+                    </group>
+                    <footer>
+                        <button string="Ok" class="btn-primary" name="action_confirm" type="object"/>
+                        <button special="cancel" string="Cancel" class="btn btn-danger"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

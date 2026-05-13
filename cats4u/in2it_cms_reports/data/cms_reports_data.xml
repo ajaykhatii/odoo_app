@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="list_of_active_cases" model="cms.report.config">
+            <field name="name">List of Active Cases</field>
+        </record>
+
+        <record id="list_of_contracted_cases" model="cms.report.config">
+            <field name="name">List of Contracted Cases</field>
+        </record>
+
+        <record id="list_of_control_issues_reports" model="cms.report.config">
+            <field name="name">Control Issues Reports</field>
+        </record>
+
+        <record id="saps_bee_register_report" model="cms.report.config">
+            <field name="name">SAPS/BEE Register Reports</field>
+        </record>
+
+        <record id="list_of_evidence_report_register" model="cms.report.config">
+            <field name="name">List of Evidence Register</field>
+        </record>
+
+        <record id="investigation_report_register" model="cms.report.config">
+            <field name="name">Investigation Report Register</field>
+        </record>
+
+        <record id="mfma_inv_report" model="cms.report.config">
+            <field name="name">MFMA Investigation Report</field>
+        </record>
+
+        <record id="case_register_per_fy" model="cms.report.config">
+            <field name="name">Financial year Case register</field>
+        </record>
+
+        <record id="rec_implementation" model="cms.report.config">
+            <field name="name">Recommendation Implementation</field>
+        </record>
+    </data>
+</odoo>

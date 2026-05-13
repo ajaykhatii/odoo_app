@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_assign_pm_wizard_form" model="ir.ui.view">
+        <field name="name">assign.pm.wizard.form</field>
+        <field name="model">assign.project.manager.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Assign Project Manager" create="0">
+                <group>
+                    <field name="manager_ids" widget="many2many_tags" invisible="1"/>
+                    <field name="user_id"
+                           domain="[('id', 'in', manager_ids)]"
+                           options="{'no_create':True, 'no_edit':True}"/>
+                </group>
+                <footer>
+                    <button string="Assign"
+                            type="object"
+                            name="action_assign_pm"
+                            class="btn-primary"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

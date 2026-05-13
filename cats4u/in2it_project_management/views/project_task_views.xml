@@ -1,0 +1,235 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        <record id="views_project_task_form_inherit" model="ir.ui.view">
+            <field name="name">project.task.form.inherit</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_form2"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='stage_id']" position="attributes">
+                    <attribute name="options">{'clickable': False}</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='priority']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                
+                <xpath expr="//field[@name='tag_ids']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//div/field[@name='state']" position="replace">
+                    <field name="stage" widget="radio" style="font-size:1rem;" readonly="approval_status != 'approved'"/>
+                </xpath>
+                
+                <xpath expr="//page[@name='extra_info']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='sub_tasks_page']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                
+                <xpath expr="//field[@name='user_ids']" position="before">
+                    <field name="related_user_ids" widget="many2many_tags" invisible="1"/>
+                    <field name="task_category_id"/>
+                </xpath>
+                
+                <xpath expr="//field[@name='user_ids']" position="attributes">
+                    <attribute name="string">Investigator</attribute>
+                    <attribute name="domain">[('id', 'in',related_user_ids)]</attribute>
+                    <attribute name="options">{'no_create':True,'no_open': True}</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='user_ids']" position="after">
+                    <field name="task_details"/>
+                    <field name="priority"
+                                   decoration-success="priority == '0'"
+                                   decoration-warning="priority == '1'"
+                                   decoration-danger="priority == '2'"
+                            />
+                    <field name="approval_status" invisible="1"/>
+                    <field name="approved_by_id"/>
+                    <field name="approved_date"/>
+                </xpath>
+
+                <xpath expr="//page[@name='description_page']" position="attributes">
+                    <attribute name="string">Notes</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='description']" position="attributes">
+                    <attribute name="placeholder">Add notes about this task...</attribute>
+                    <attribute name="readonly">approval_status != 'approved'</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='partner_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//group/group[1]" position="attributes">
+                    <attribute name="string">Assignment Details</attribute>
+                </xpath>
+
+                <xpath expr="//group/group[2]" position="attributes">
+                    <attribute name="string">SLA &amp; Timeline Details</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='partner_id']" position="before">
+                    <field name="is_sla" widget="radio" options="{'horizontal':True}"/>
+                    <field name="sla_days" invisible="is_sla == 'no'"/>
+                </xpath>
+
+                <xpath expr="//label[@for='date_deadline']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//label[@for='date_deadline'][2]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//div[@id='date_deadline_and_recurring_task']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//label[@for='allocated_hours']" position="before">
+                    <field name="planned_date_begin" string="Start Date"/>
+                    <field name="date_deadline" string="Completion Date"/>
+                    <field name="actual_completion_date" readonly="1"/>
+                </xpath>
+
+            </field>
+        </record>
+
+
+        <record id="view_task_approval_search" model="ir.ui.view">
+            <field name="name">project.task.approval.search</field>
+            <field name="model">project.task</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter name="my_tasks"
+                            string="Pending Approval"
+                            domain="[('project_id.user_id', '=', uid),
+                            ('approval_status', '!=', 'approved')]"/>
+
+                    <!-- Optional: Approved filter -->
+                    <filter name="approved"
+                            string="Approved"
+                            domain="[('approval_status', '=', 'approved')]"/>
+
+                    <group expand="0" string="Group By">
+                        <filter string="Project"
+                                name="group_project"
+                                context="{'group_by': 'project_id'}"/>
+                    </group>
+
+                </search>
+            </field>
+        </record>
+
+
+        <record id="view_investigation_task_approval_list" model="ir.ui.view">
+            <field name="name">project.task..approval.list</field>
+            <field name="model">project.task</field>
+            <field name="arch" type="xml">
+                <list>
+                    <header>
+                        <button name="action_approve_task"
+                            type="object"
+                            class="btn-secondary"
+                            string="Approve Plan"/>
+                    </header>
+                    <field name="priority" widget="priority"/>
+                    <field name="name"/>
+                    <field name="project_id"/>
+                    <field name="task_category_id"/>
+                    <field name="user_ids" widget="many2many_tags"/>
+                    <field name="stage_id"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="project_task_view_tree_main_base_inherit" model="ir.ui.view">
+            <field name="name">project.task.view.list.main.base.inherit</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.project_task_view_tree_main_base"/>
+            <field name="arch" type="xml">
+                <xpath expr="//list/field[@name='priority']" position="attributes">
+                    <attribute name="nolabel">0</attribute>
+                    <attribute name="width">70px;</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!--Remove list editable in multi selection mode from My Task & All Task list view.-->
+        <record id="project_task_view_tree_base_inherit" model="ir.ui.view">
+            <field name="name">project.task.view.list.base.inherit</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.project_task_view_tree_base"/>
+            <field name="arch" type="xml">
+                <xpath expr="//list" position="attributes">
+                    <attribute name="multi_edit">0</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_task_kanban_inherit" model="ir.ui.view">
+            <field name="name">project.task.kanban.inherit</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_kanban"/>
+            <field name="arch" type="xml">
+                <!-- Disable drag & drop -->
+                <xpath expr="//kanban" position="attributes">
+                    <attribute name="records_draggable">false</attribute>
+                </xpath>
+                <!-- Disable new stage creation -->
+                <xpath expr="//kanban" position="attributes">
+                    <attribute name="group_create">false</attribute>
+                </xpath>
+
+                <!-- Disable quick task creation -->
+                <xpath expr="//kanban" position="attributes">
+                    <attribute name="quick_create">false</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='priority']" position="replace">
+                    <div>
+                        <strong>Priority:</strong>
+                        <field name="priority"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="server_action_approve_task" model="ir.actions.server">
+            <field name="name">Approve Plan</field>
+            <field name="model_id" ref="project.model_project_task"/>
+            <field name="binding_model_id" ref="project.model_project_task"/>
+            <field name="binding_view_types">list,form</field>
+            <field name="state">code</field>
+            <field name="code">
+                records.action_approve_task()
+            </field>
+        </record>
+
+        <record id="project_task_view_form_hide_timer_start" model="ir.ui.view">
+            <field name="name">project.task.view.form.hide.timer.start</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="timesheet_grid.project_task_view_form"/>
+            <field name="arch" type="xml">
+
+               <xpath expr="//button[@name='action_timer_start' and contains(@class, 'btn-primary')]" position="attributes">
+                 <attribute name="invisible">approval_status != 'approved'</attribute>
+               </xpath>
+
+               <xpath expr="//button[@name='action_timer_start' and contains(@class, 'btn-secondary')]" position="attributes">
+                 <attribute name="invisible">1</attribute>
+               </xpath>
+
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

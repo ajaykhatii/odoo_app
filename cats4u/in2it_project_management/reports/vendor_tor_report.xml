@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        
+        <record id="vendor_accept_tor_report_action" model="ir.actions.report">
+            <field name="name">TOR Report</field>
+            <field name="model">investigation.vendor.tor</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">in2it_project_management.vendor_accept_tor_report</field>
+            <field name="report_file">in2it_project_management.vendor_accept_tor_report_file</field>
+        </record>
+
+         <template id="vendor_accept_tor_report">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="tor">
+                    <t t-call="web.external_layout">
+                        <t t-call="in2it_project_management.in2it_vendor_tor_approval"/>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

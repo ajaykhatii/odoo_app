@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="in2it_forensic_services.mail.ActivityViewHeader.inherit" t-inherit="mail.ActivityViewHeader" t-inherit-mode="extension">
+        <xpath expr="//thead/tr/th[1]" position="replace">
+            <th class="position-relative text-center align-middle bg-light" style="background: linear-gradient(to top right, transparent 49.6%, grey 50%, transparent 50.40%);">
+                <span class="position-absolute top-0 end-0 mt-3 me-3 fs-4">Activities</span>
+	            <span class="position-absolute bottom-0 start-0 mb-2 ms-2 fs-4" t-esc="props.archInfo.title"/>
+            </th>
+        </xpath>
+    </t>
+</templates>

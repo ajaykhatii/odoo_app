@@ -1,0 +1,1060 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+    
+        <record id="in2it_view_form_project_project_inherit" model="ir.ui.view">
+            <field name="name">in2it.project.project.form.inherit</field>
+            <field name="model">project.project</field>
+            <field name="inherit_id" ref="project.edit_project"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="attributes">
+                    <attribute name="create">0</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='is_favorite']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='stage_id']" position="attributes">
+                    <attribute name="options">{'clickable': False}</attribute>
+                </xpath>
+                <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                    <button
+                            name="action_open_background_check_details"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-puzzle-piece"
+                            invisible="
+                                    not is_lead_investigator and user_id != uid
+                                    or assignment_type != 'internal'
+                                    or (background_completed_count == background_count and background_count > 0)
+                                    or assigned_forensic_team_count == 0">
+
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Background Check</span>
+                                <span class="o_stat_value">
+                                    <field name="background_completed_count"/> / <field name="background_count"/>
+                                </span>
+                            </div>
+                        </button>
+
+                        <button
+                                name="action_open_background_check_details"
+                                type="object"
+                                class="oe_stat_button text-success"
+                                icon="fa-check text-success"
+                                invisible="
+                                        not is_lead_investigator and user_id != uid
+                                        or assignment_type != 'internal'
+                                        or background_completed_count != background_count
+                                        or background_count == 0
+                                        or assigned_forensic_team_count == 0
+                                        ">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text text-primary fw-bolder">Background Check</span>
+                                <span class="o_stat_text fw-bolder">
+                                    <field name="background_completed_count"/> / <field name="background_count"/> Completed
+                                </span>
+                            </div>
+                        </button>
+                    
+                    <button name="action_open_assigned_forensic_team"
+                            type="object"
+                            class="oe_stat_button text-success"
+                            icon="fa-users"
+                            invisible="
+                                assigned_forensic_team_count == 0
+                                or assignment_type != 'internal'"
+                            >
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_text text-primary fw-bolder">Investigation Team</span>
+                            <span class="o_stat_text fw-bolder">Created</span>
+                        </div>
+                    </button>
+
+                    <button name="action_open_peer_reviews"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-eye"
+                            string="Report Review"
+                            invisible="
+                                not peer_review_count
+                                or report_review_status == 'completed'">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_text text-primary fw-bolder">Report Review</span>
+                            <span class="o_stat_text fw-bolder">
+                                <field name="report_review_status"/>
+                            </span>
+                        </div>
+                    </button>
+
+                    <button name="action_open_peer_reviews"
+                            type="object"
+                            class="oe_stat_button text-success"
+                            icon="fa-check text-success"
+                            invisible="
+                                not peer_review_count
+                                or report_review_status != 'completed'">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_text text-primary fw-bolder">Report Review</span>
+                            <span class="o_stat_text fw-bolder">
+                                <field name="report_review_status"/>
+                            </span>
+                        </div>
+
+                    </button>
+
+                    <button name="action_open_outsources"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-users"
+                            invisible="
+                                assignment_type != 'external'
+                                or not partner_line_ids or outsource_status not in ['new', 'pending','reject']" >
+
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_text text-primary fw-bolder">Outsources</span>
+                            <span class="o_stat_text fw-bolder">                      
+                                <span class="text-primary" invisible="outsource_status != 'new'"><field name="outsource_count"/></span>
+                                <span class="text-danger" invisible="outsource_status != 'reject'"><field name="outsource_count"/> Rejected</span>
+                                <span class="text-warning" invisible="outsource_status != 'pending'"> Pending (1/<field name="outsource_count"/>)</span>
+                            </span>
+                        </div>
+                    </button>
+
+                    <button name="action_open_outsources"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-check text-success"
+                            invisible="
+                                assignment_type != 'external'
+                                or not partner_line_ids or outsource_status in ['new','reject', 'pending']">
+
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_text text-primary fw-bolder">Outsources</span>
+                            <span class="o_stat_text fw-bolder">
+                                <span class="text-success"> Accepted (1/<field name="outsource_count"/>)</span>
+                            </span>
+                        </div>
+                    </button>
+
+                    <button name="action_open_tor"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-file-text"
+                            invisible="
+                                assignment_type != 'external'
+                                or not partner_line_ids
+                                or tor_status == 'approved'">
+
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_text text-primary fw-bolder">TOR</span>
+                            <span class="o_stat_text fw-bolder">
+                                <field name="tor_status"/>
+                            </span>
+                        </div>
+                    </button>
+
+                    <button name="action_open_tor"
+                            type="object"
+                            class="oe_stat_button text-success"
+                            icon="fa-check text-success"
+                            invisible="
+                                assignment_type != 'external'
+                                or not partner_line_ids
+                                or tor_status != 'approved'"
+                            >
+
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_text text-primary fw-bolder">TOR</span>
+                            <span class="o_stat_text fw-bolder">
+                                <field name="tor_status"/>
+                            </span>
+                        </div>
+                    </button>
+
+                    <button name="action_open_distribution_lines"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-users"
+                            invisible="assignment_type == 'internal' and not assigned_forensic_team_count or assignment_type == 'external' and not assigned_pfo_id">
+<!--                            invisible="not distribution_count or report_review_status == 'completed'">-->
+
+                        <field name="distribution_count"
+                               widget="statinfo"
+                               string="Distribution List"/>
+
+                    </button>
+
+                </xpath>
+                <xpath expr="//button[@name='action_open_share_project_wizard']" position="after">
+                    <button name="action_add_another_vendor" class="btn-primary" type="object" string="Add Another Vendor" invisible="outsource_status in ['new','pending','accept', False]"/>
+                    <button name="action_generate_investigation_report" class="btn-primary" string="Report Review" type="object" invisible="not show_report or report_review_status == 'completed' or assignment_type != 'internal' or case_type == 'pre' or not distribution_count"/>
+                    <button name="action_generate_investigation_report" class="btn-primary" string="Generate Investigation Report" type="object" invisible="not show_report or report_review_status != 'completed' or assignment_type != 'internal' or case_type == 'pre'"/>
+                    <button name="action_request_investigation_plan" class="btn btn-primary" string="Request Approval" type="object" invisible="approval_status != 'draft' or not task_ids or not is_lead_investigator"/>
+                    <button name="action_approve_investigation_plan" class="btn btn-primary" string="Approve" type="object" invisible="approval_status != 'pending' or user_id != uid"/>
+                    <button name="action_preview_investigation_plan" class="btn btn-primary" string="Plan" type="object" icon="fa-eye" invisible="not task_ids or assignment_type != 'internal'"/>
+                    <button name="action_open_forensic_team_wiazrd" class="btn-primary" string="Create Investigation Team" type="object" invisible="assignment_type != 'internal' or assigned_forensic_team_count >= 1 or show_report or user_id != uid"/>
+<!--                    <button name="action_create_peer_review" type="object" string="Start Peer Review" class="btn-primary" invisible="not assigned_forensic_team_count or peer_review_count or not is_lead_investigator or approval_status != 'approved' or not distribution_count"/>-->
+                    <button name="action_create_peer_review" type="object" string="Start Peer Review" class="btn-primary" invisible="evidence_count == 0 or complete_evidence_count != evidence_count or assignment_type != 'internal' or not assigned_forensic_team_count or peer_review_count or not is_lead_investigator or approval_status != 'approved'"/>
+
+                    <button
+                            name="generate_preliminary_assessment_report"
+                            class="btn btn-primary"
+                            string="Assessment Report"
+                            type="object"
+                            icon="fa-file"
+                            invisible="
+                                case_type != 'pre'
+                                or not user_id
+                                or assigned_forensic_team_count == 0
+                                or not show_report"
+                    />
+                    <button name="action_add_vendor_attachment"
+                            type="object"
+                            string="Add Report Attachment"
+                            class="btn-primary"
+                            groups="in2it_forensic_services.group_fcm_case_pfo_access,in2it_forensic_services.group_fcm_admin,base.group_system"
+                            invisible="is_external_report_submitted or assignment_type != 'external' or outsource_status != 'accept'"/>                
+                </xpath>
+
+                <xpath expr="//page[@name='settings']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+
+
+                <xpath expr="//sheet/group" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='description']" position="attributes">
+                    <attribute name="readonly">record_access == 'read'</attribute>
+                </xpath>
+
+                <xpath expr="//notebook" position="before">
+                    <group>
+                        <group string="Investigation Plan">
+                            <field name="outsource_status" invisible="1"/>
+                            <field name="assigned_forensic_team_id" invisible="1"/>
+                            <field name="show_report" invisible="1"/>
+                            <field name="is_lead_investigator" invisible="1"/>
+                            <field name="record_access" invisible="1"/>
+                            <field name="can_edit_manager" invisible="1"/>
+                            <field name="manager_domain" invisible="1"/>
+                            <div class="row w-100" invisible="case_type == 'pre'">
+                                <div class="col-3">
+                                    <strong><label for="assignment_type"/></strong>
+                                </div>
+                                <div class="col-5">
+                                    <field name="assignment_type" readonly="record_access == 'read' or partner_line_ids" widget="radio" options="{'horizontal': true}" required="1"/>
+                                </div>
+                                <div class="col-4" invisible="assignment_type != 'external' or partner_line_ids or not assigned_pfo_id or not user_id">
+                                    <button name="action_assign_vendor_wizard" string="Add Vendor" class="btn-primary" type="object"/>
+                                </div>
+                            </div>
+                            <field name="user_id" domain="manager_domain"  widget="many2one_avatar_user" readonly="record_access == 'read' or not can_edit_manager or partner_line_ids or report_review_status == 'completed'" string="Investigation Manager" options="{'no_open':True, 'no_create':True}"/>
+                            <field name="assigned_pfo_id" options="{'no_open':True,'no_create':True}" readonly="record_access == 'read' or partner_line_ids" invisible="assignment_type != 'external'" domain="pfo_domain"/>
+                            <field name="chief_id" readonly="1" widget="many2one_avatar_user" options="{'no_open':True}"/>
+                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" readonly="record_access == 'read'" invisible="assignment_type != 'internal'"/>
+                            <field name="date_start" string="Planned Date" widget="daterange" options="{'end_date_field': 'date', 'always_range': True}" required="date_start or date"  readonly="record_access == 'read' or report_review_status == 'completed'"/>
+                            <field name="date" invisible="1" required="date_start" readonly="record_access == 'read' or report_review_status == 'completed'"/>
+                             
+                            <field name="approval_status"
+                                   widget="badge"
+                                   decoration-success="approval_status == 'approved'"
+                                   decoration-warning="approval_status == 'pending'"
+                                   decoration-muted="approval_status == 'draft'"
+                                   invisible="assignment_type != 'internal'"
+                            />
+                            <field name="priority"
+                                   decoration-success="priority == 'low'"
+                                   decoration-warning="priority == 'medium'"
+                                   decoration-danger="priority == 'high'"
+                                   readonly="record_access == 'read'"
+                            />
+                            <label for="investigation_directorates_ids" string="Investigation Directorate"
+                                invisible="not show_report"/>
+                            <div class="oe_inline">
+                                <field name="investigation_directorates_ids" widget="many2one_tags_directorate"
+                                    options="{'no_open':True, 'no_create':True}" invisible="not show_report"
+                                    context="{'default_job_id': id}" readonly="report_review_status == 'completed'">
+                                    <list>
+                                        <field name="display_name"/>
+                                        <field name="color"/>
+                                    </list>
+                                </field>
+                            </div>
+                        </group>
+                        <group string="Case Details">
+                            <field name="case_id" options="{'no_create':True, 'no_create_edit':True}" readonly="1"/>
+                            <field name="directorate_id" options="{'no_open':True}"/>
+                            <field name="department_id" options="{'no_open':True}"/>
+                            <field name="partner_id" string="Complainant" readonly="1" options="{'no_open':True}"/>
+                            <field name="create_date" string="Authorization Date" invisible="not case_id"/>
+                            <field name="assignment_id" options="{'no_open': True}" readonly="1" invisible="1"/>
+                            <field name="assignment_type_id" options="{'no_open': True}"/>
+                            <field name="case_type" invisible="1"/>
+                            <field name="allegation_nature_id"  options="{'no_open':True}"/>
+                            <field name="record_access" invisible="1"/>
+                            <field name="is_create_task" invisible="1"/>
+                            <field name="pfo_domain" invisible="1"/>
+                            <field name="tor_status" invisible="1"/>
+                            <field name="report_review_status" invisible="1"/>
+                            <field name="is_project_stage" invisible="1"/>
+                            <field name="is_external_report_submitted" invisible="1"/>
+                        </group>
+                        
+                    </group>
+                </xpath>
+
+                <xpath expr="//page[@name='settings']" position="before">
+                    <page string="👥 Outsources" name="vendors" invisible="1">
+                        <field name="partner_line_ids" mode="list" readonly="1" delete="0"/>
+                    </page>
+
+                    <page name="witnesses" string="👥 Witnesses">
+                        <field name="witness_ids" nolabel="1" readonly="record_access == 'read' or report_review_status == 'completed'">
+                            <list editable="bottom">
+                                <field name="name" required="True"/>
+                                <field name="phone" optional="show"/>
+                                <field name="email" optional="show"/>
+                            </list>
+
+                        </field>
+                    </page>
+
+
+
+                    <page name="suspects" string="👥 Suspects">
+                        <field name="suspect_ids" nolabel="1" readonly="record_access == 'read' or report_review_status == 'completed'">
+                            <list editable="bottom">
+                                <field name="name" required="True"/>
+                                <field name="phone" optional="show"/>
+                                <field name="email" optional="show"/>
+                                <field name="company_name" optional="show"/>
+                                <field name="type" widget="radio" options="{'horizontal': true}" nolabel="0"
+                                       optional="show"/>
+                                <field name="vendor_emp" optional="show"/>
+                            </list>
+                        </field>
+                    </page>
+
+                    
+                    <page string="🔎 Evidence" name="evidence">
+                        <div class="row">
+                            <group string="Physical Items Received">
+                                <field name="physical_item_ids" nolabel="1" readonly="record_access == 'read' or report_review_status == 'completed'">
+                                    <list>
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="id" optional="hide"/>
+                                        <field name="item_title" required="1"/>
+                                        <field name="item_category" optional="show" required="1"/>
+                                        <field name="quantity" optional="show" required="1"/>
+                                        <field name="uom_id" optional="show" required="1"
+                                                options="{'no_edit': True, 'no_create': True}"/>
+                                        <field name="create_date" optional="hide"
+                                                string="Date &amp; Time Received"/>
+                                        <field name="source" optional="hide"/>
+                                        <field name="recovery_location" optional="hide" required="1"/>
+                                        <field name="associated_with" optional="hide" required="1"/>
+                                        <field name="storage_location" optional="hide" required="1"/>
+                                        <field name="current_custodian" optional="hide"/>
+                                        <field name="status" optional="show" required="1"/>
+                                        <field name="last_movement_date" optional="hide" force_save="1"/>
+                                        <field name="doc_type_id" optional="show"  options="{'no_edit': True, 'no_create': True}"/>
+                                        <field name="attachment_ids" optional="hide" widget="many2many_binary"/>
+                                        <field name="is_exhibit"/>
+                                    </list>
+                                    <form>
+                                        <group>
+                                            <group>
+                                                <field name="item_title"/>
+                                                <field name="item_category"/>
+                                                <field name="quantity"/>
+                                                <field name="uom_id"
+                                                        options="{'no_edit': True, 'no_create': True}"/>
+                                                <field name="source"/>
+                                                <field name="doc_type_id"  invisible="item_category != 'document'" options="{'no_edit': True, 'no_create': True}"/>
+                                                <field name="attachment_ids" widget="many2many_binary" invisible="not is_exhibit"/>
+                                                <field name="create_date" string="Date &amp; Time Received"/>
+                                            </group>
+                                            <group>
+                                                <field name="recovery_location"/>
+                                                <field name="associated_with"/>
+                                                <field name="storage_location"/>
+                                                <field name="current_custodian"/>
+                                                <field name="status"/>
+                                                <field name="is_exhibit"/>
+                                                <field name="last_movement_date"/>
+                                            </group>
+                                        </group>
+                                    </form>
+                                </field>
+                            </group>
+                        </div>
+                    </page>
+
+                    <!-- ===== DOCUMENTATION TAB ===== -->
+                    <page string="📁 Documentation" name="evidence_docs_line">
+                        <field name="document_line_ids" readonly="not is_lead_investigator or record_access == 'read' or report_review_status == 'completed'">
+                            <list>
+                                <field name="serial_no"/>
+                                <field name="description" optional="hide"/>
+                                <field name="document_type_id"/>
+                                <field name="file_name"/>
+                                <field name="uploaded_by"/>
+                                <field name="uploaded_date"/>
+                                <field name="document_stores"/>
+                                <field name="document_stores_location" optional="hide"/>
+                                <field name="is_annexure"/>
+                                <control><create name="add_a_document" string="Add a document"/></control>
+                            </list>
+                            <form>
+                                <sheet>
+                                    <group>
+                                        <group>
+                                            <field name="serial_no"/>
+                                            <field name="file" filename="file_name" widget="binary"/>
+                                            <field name="file_name" invisible="1"/>
+                                            <field name="document_type_id" options="{'no_create':True, 'no_edit':True, 'no_open':True}"/>
+                                            <field name="is_annexure"/>
+                                            <field name="document_stores"/>
+                                            <field name="document_stores_location" invisible="not document_stores"/>
+                                        </group>
+                                        <group>
+                                            <field name="description"/>
+                                            <field name="obtained_by"/>
+                                            <field name="obtained_from" options="{'no_create':True, 'no_edit':True, 'no_open':True}"/>
+                                            <field name="obtained_date"/>
+                                            <field name="uploaded_by"  options="{'no_create':True, 'no_edit':True, 'no_open':True}"/>
+                                            <field name="uploaded_date"/>
+                                        </group>
+                                    </group>
+                                </sheet>
+                            </form>
+                        </field>
+                    </page>
+
+                    <page string="Roles &amp; Abbreviations" invisible="case_type == 'pre' or assignment_type != 'internal' or not show_report">
+                        <group>
+                            <field name="project_role_ids" nolabel="1" readonly="record_access == 'read' or report_review_status == 'completed'">
+                                <list editable="bottom">
+                                    <field name="role_id" options="{'no_quick_create': True}"/>
+                                    <field name="description"/>
+                                </list>
+                                <form>
+                                    <sheet>
+                                        <group>
+                                            <field name="role_id"/>
+                                            <field name="description"/>
+                                        </group>
+                                    </sheet>
+                                </form>
+                            </field>
+                        </group>
+                    </page>
+
+                    <page name="project_details" string="ℹ️ Investigation Details" invisible="assignment_type != 'internal'">
+                        <div class="row">
+                            <div class="col">
+                                <div class="accordion" id="torAccordionLeft">
+                                    <!-- Case Objective -->
+                                    <div class="accordion-item" invisible="case_type == 'pre'">
+                                        <h2 class="accordion-header">
+                                            <button name="case_objective"
+                                                    class="accordion-button collapsed"
+                                                    type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#inv_details_collapse1">
+                                                Case Objective
+                                            </button>
+                                        </h2>
+
+                                        <div id="inv_details_collapse1"
+                                            class="accordion-collapse collapse"
+                                            >
+                                            <div class="accordion-body">
+                                                <field name="investigation_objective" nolabel="1" placeholder="Enter the primary goal or purpose of this case."
+                                                       readonly="not is_lead_investigator or record_access == 'read' or report_review_status == 'completed'"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Case Background -->
+                                    <div class="accordion-item" invisible="case_type == 'pre'">
+                                        <h2 class="accordion-header">
+                                            <button name="case_background"
+                                                    class="accordion-button collapsed"
+                                                    type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#inv_details_collapse2">
+                                                Case Background
+                                            </button>
+                                        </h2>
+
+                                        <div id="inv_details_collapse2"
+                                            class="accordion-collapse collapse"
+                                            >
+                                            <div class="accordion-body">
+                                                <field name="case_background" readonly="not is_lead_investigator or record_access == 'read'"
+                                                       placeholder="Provide relevant context, history, and key details leading to this case." nolabel="1"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Regulation and Operational Environment -->
+                                    <div class="accordion-item" invisible="case_type == 'pre' or not show_report">
+                                        <h2 class="accordion-header">
+                                            <button name="regulatory_and_operational_environment"
+                                                    class="accordion-button collapsed"
+                                                    type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#inv_details_collapse3">
+                                                Regulation and Operational Environment
+                                            </button>
+                                        </h2>
+
+                                        <div id="inv_details_collapse3"
+                                            class="accordion-collapse collapse"
+                                            >
+                                            <div class="accordion-body">
+                                                <field name="regulatory_operational_env" readonly="not is_lead_investigator or record_access == 'read' or report_review_status == 'completed'"
+                                                       placeholder="Describe applicable regulations, policies, and the operational setting." nolabel="1"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Limitations -->
+                                    <div class="accordion-item" invisible="case_type == 'pre' or not show_report">
+                                        <h2 class="accordion-header">
+                                            <button name="limitations"
+                                                    class="accordion-button collapsed"
+                                                    type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#inv_details_collapse4">
+                                                Limitations
+                                            </button>
+                                        </h2>
+
+                                        <div id="inv_details_collapse4"
+                                            class="accordion-collapse collapse"
+                                            >
+                                            <div class="accordion-body">
+                                                <field name="limitations" readonly="not is_lead_investigator or record_access == 'read' or report_review_status == 'completed'"
+                                                       placeholder="Outline any constraints, assumptions, or limitations affecting this case." nolabel="1"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Conclusions -->
+                                    <div class="accordion-item" invisible="case_type == 'pre' or not show_report">
+                                        <h2 class="accordion-header">
+                                            <button name="conclusions"
+                                                    class="accordion-button collapsed"
+                                                    type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#inv_details_collapse5">
+                                                Conclusions
+                                            </button>
+                                        </h2>
+
+                                        <div id="inv_details_collapse5"
+                                            class="accordion-collapse collapse"
+                                            >
+                                            <div class="accordion-body">
+                                                <field name="conclusions" readonly="not is_lead_investigator or record_access == 'read' or report_review_status == 'completed'"
+                                                       placeholder="Summarize the overall outcomes and key conclusions drawn from the analysis." nolabel="1"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="accordion accordion-flush" id="torAccordionRight">
+                                    <!-- Case Scope -->
+                                    <div class="accordion-item" invisible="case_type == 'pre'">
+                                        <h2 class="accordion-header">
+                                            <button name="case_scope"
+                                                    class="accordion-button collapsed"
+                                                    type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#inv_details_collapse6">
+                                                Case Scope
+                                            </button>
+                                        </h2>
+
+                                        <div id="inv_details_collapse6"
+                                            class="accordion-collapse collapse">
+                                            <div class="accordion-body">
+                                                <field name="investigation_scope" readonly="not is_lead_investigator or record_access == 'read' or report_review_status == 'completed'"
+                                                       placeholder="Define the boundaries, coverage, and extent of the case review." nolabel="1"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Operational Risks -->
+                                    <div class="accordion-item" invisible="case_type == 'pre'">
+                                        <h2 class="accordion-header">
+                                            <button name="submission_requirements"
+                                                    class="accordion-button collapsed"
+                                                    type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#inv_details_collapse7">
+                                                Operational Risks
+                                            </button>
+                                        </h2>
+
+                                        <div id="inv_details_collapse7"
+                                            class="accordion-collapse collapse">
+                                            <div class="accordion-body">
+                                                <field name="operational_risks" readonly="not is_lead_investigator or record_access == 'read'"
+                                                       placeholder="Identify and describe potential risks related to operations." nolabel="1"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Procedure Performed -->
+                                    <div class="accordion-item" invisible="case_type == 'pre' or not show_report">
+                                        <h2 class="accordion-header">
+                                            <button name="procedure_performed"
+                                                    class="accordion-button collapsed"
+                                                    type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#inv_details_collapse8">
+                                                Procedure Performed
+                                            </button>
+                                        </h2>
+
+                                        <div id="inv_details_collapse8"
+                                            class="accordion-collapse collapse">
+                                            <div class="accordion-body">
+                                                <field name="procedure_performed" readonly="not is_lead_investigator or record_access == 'read' or report_review_status == 'completed'"
+                                                       placeholder="Detail the procedures, steps, and methods carried out during the case." nolabel="1"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Control Issues -->
+                                    <div class="accordion-item" invisible="case_type == 'pre' or not show_report">
+                                        <h2 class="accordion-header">
+                                            <button name="procedure_performed"
+                                                    class="accordion-button collapsed"
+                                                    type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#inv_details_collapse9">
+                                                Control Issues
+                                            </button>
+                                        </h2>
+
+                                        <div id="inv_details_collapse9"
+                                            class="accordion-collapse collapse">
+                                            <div class="accordion-body">
+                                                <field name="control_issues" readonly="not is_lead_investigator or record_access == 'read' or report_review_status == 'completed'"
+                                                       placeholder="Highlight any weaknesses or gaps in controls identified." nolabel="1"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <div class="accordion" id="torAccordionLeft">
+                                    <!--PRE Case Objective-->
+                                    <div class="accordion-item" invisible="case_type != 'pre'">
+                                        <h2 class="accordion-header">
+                                            <button name="investigation_objective"
+                                                    class="accordion-button collapsed"
+                                                    type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#inv_pre_details_collapse1">
+                                                Case Objective
+                                            </button>
+                                        </h2>
+
+                                        <div id="inv_pre_details_collapse1"
+                                            class="accordion-collapse collapse"
+                                            >
+                                            <div class="accordion-body">
+                                                <field name="investigation_objective" nolabel="1" readonly="not is_lead_investigator or record_access == 'read' or report_review_status == 'completed'"
+                                                    placeholder="Enter the primary goal or purpose of this case."/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!--PRE Case Background-->
+                                    <div class="accordion-item" invisible="case_type != 'pre'">
+                                        <h2 class="accordion-header">
+                                            <button name="case_background"
+                                                    class="accordion-button collapsed"
+                                                    type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#inv_pre_details_collapse2">
+                                                Case Background
+                                            </button>
+                                        </h2>
+
+                                        <div id="inv_pre_details_collapse2"
+                                            class="accordion-collapse collapse"
+                                            >
+                                            <div class="accordion-body">
+                                                <field name="case_background" nolabel="1" readonly="not is_lead_investigator or record_access == 'read'"
+                                                    placeholder="Provide relevant context, history, and key details leading to this case."/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!--PRE Case Conclusions-->
+                                    <div class="accordion-item" invisible="case_type != 'pre' or not show_report">
+                                        <h2 class="accordion-header">
+                                            <button name="conclusions"
+                                                    class="accordion-button collapsed"
+                                                    type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#inv_pre_details_collapse3">
+                                                Conclusions
+                                            </button>
+                                        </h2>
+
+                                        <div id="inv_pre_details_collapse3"
+                                            class="accordion-collapse collapse"
+                                            >
+                                            <div class="accordion-body">
+                                                <field name="conclusions" nolabel="1" readonly="not is_lead_investigator or record_access == 'read'"
+                                                    placeholder="Summarize the overall outcomes and key conclusions drawn from the analysis."/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </page>
+
+                    <page string="🔍 Findings" name="findings" invisible="assignment_type != 'internal' or not show_report">
+                        <field name="findings" readonly="not is_lead_investigator or record_access == 'read' or report_review_status == 'completed'"
+                            placeholder="Document key observations, results, and evidence discovered."/>
+                    </page>
+
+
+                    <page string="💡 Recommendations" name="recommendations" invisible="not show_report">
+                        <field name="recom_project_ids" mode="kanban" class="w-100" readonly="not is_lead_investigator or record_access == 'read' or report_review_status == 'completed'">
+                            <kanban>
+                                <field name="category_id"/>
+                                <field name="category_description"/>
+                                <templates>
+                                    <t t-name="card">
+                                        <div class="o_kanban_card">
+                                             <strong>
+                                                <field name="name"/>
+                                            </strong>
+                                            <br/>
+                                            <strong>
+                                                <field name="category_id" required="1"/>
+                                            </strong>
+                                            <div class="row">
+                                                <div class="col-3 fw-bold">For EFS: </div>
+                                                <div class="col"><field name="for_efs" widget="boolean_toggle"/></div>
+                                            </div>
+                                            <div>
+                                                <field name="category_description"/>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </templates>
+                            </kanban>
+                            <form>
+                                <group>
+                                    <field name="category_id" options="{'no_create':True, 'no_create_edit':True, 'no_open':True}"/>
+                                    <field name="category_description"/>
+                                    <field name="for_efs" widget="boolean_toggle"/>
+                                </group>
+                            </form>
+                        </field>
+                    </page>
+
+                </xpath>
+                
+                <xpath expr="//button[@name='action_open_share_project_wizard']" position="after">
+                    <button name="action_assign_standard_task" class="btn btn-primary" string="Assign Standard Tasks" type="object" invisible="is_create_task or not is_lead_investigator or assignment_type != 'internal' or not assigned_forensic_team_id"/>
+
+                    <button name="action_request_digital_access_by_lead_investigator" class="btn btn-primary" string="Request Digital Evidence" type="object" invisible="assignment_type != 'internal' or is_project_stage != 'under_investigation' or not is_lead_investigator"/>
+
+                    <button name="action_generate_overarching_memo" class="btn btn-primary" string="Generate Memo" type="object" invisible="report_review_status != 'completed' or overarching_memo_count or case_type not in ['pre','for','lsa','dfo','eth'] or assignment_type != 'external' or uid != assigned_pfo_id"/>
+
+                    <button name="action_generate_overarching_memo" class="btn btn-primary" string="Generate Memo" type="object" invisible="report_review_status != 'completed' or overarching_memo_count or case_type not in ['pre','for','lsa','dfo','eth'] or assignment_type != 'internal' or not is_lead_investigator"/>
+                </xpath>
+
+                <xpath expr="//div/button[@name='action_view_tasks']" position="attributes">
+                    <attribute name="invisible">assignment_type != 'internal' or not assigned_forensic_team_id</attribute>
+                </xpath>
+
+                <!--Hide Dashboard button on Investigation form view-->
+                <xpath expr="//button[@name='project_update_all_action']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//button[@name='project_update_all_action']" position="after">
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_scheduled_meeting" type="object" icon="fa-calendar" invisible="not is_lead_investigator or approval_status != 'approved'">
+                            <div class="o_stat_info">
+                                <field name="scheduled_meeting_count" class="o_stat_value"/>
+                                <span class="o_stat_text">Schedule Meeting</span>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <div class="oe_button_box" name="button_box">
+                        <button
+                                name="action_digital_evidence"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-desktop"
+                                invisible="assignment_type != 'internal' or
+                                    is_project_stage != 'under_investigation'
+                                    or (complete_evidence_count == evidence_count and evidence_count > 0)"
+                                >
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Digital Evidence</span>
+                                <span class="o_stat_value">
+                                    <field name="complete_evidence_count"/> / <field name="evidence_count"/>
+                                </span>
+                            </div>
+                        </button>
+
+                        <button
+                                name="action_digital_evidence"
+                                type="object"
+                                class="oe_stat_button text-success"
+                                icon="fa-check text-success"
+                                invisible="assignment_type != 'internal' or
+                                    is_project_stage != 'under_investigation'
+                                    or complete_evidence_count != evidence_count
+                                    or evidence_count == 0"
+                                >
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text text-primary fw-bolder">Digital Evidence</span>
+                                <span class="o_stat_text fw-bolder">
+                                    <field name="complete_evidence_count"/> / <field name="evidence_count"/> Approved
+                                </span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_overarching_memo" type="object" icon="fa-sticky-note" invisible="not overarching_memo_count or o_memo_status == 'approved'">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text text-primary fw-bolder">Memo</span>
+                                <span class="o_stat_text fw-bolder">
+                                    <field name="o_memo_status"/>
+                                </span>
+                            </div>
+                        </button>
+
+                        <button name="action_overarching_memo"
+                                type="object"
+                                class="oe_stat_button text-success"
+                                icon="fa-check text-success"
+                                invisible="o_memo_status == 'pending'"
+                                >
+                            <div class="o_stat_info">
+                                <span class="o_stat_text text-primary fw-bolder">Memo</span>
+                                <span class="o_stat_text fw-bolder">
+                                    <field name="o_memo_status"/>
+                                </span>
+                            </div>
+                        </button>
+                    </div>
+                </xpath>
+            </field>
+        </record>       
+
+        <record id="in2it_view_list_project_project_inherit" model="ir.ui.view">
+            <field name="name">in2it.project.project.list.inherit</field>
+            <field name="model">project.project</field>
+            <field name="inherit_id" ref="project.project_list_view_group_stage"/>
+            <field name="arch" type="xml">
+                <xpath expr="//list" position="attributes">
+                    <attribute name="create">false</attribute>
+                    <attribute name="default_order">id desc</attribute>
+                    <attribute name="multi_edit">0</attribute>
+                </xpath>
+            </field>
+        </record>   
+
+        <record id="in2it_view_list2_project_project_inherit" model="ir.ui.view">
+            <field name="name">in2it.project.project.list2.inherit</field>
+            <field name="model">project.project</field>
+            <field name="inherit_id" ref="project.view_project"/>
+            <field name="arch" type="xml">
+                <xpath expr="//list" position="attributes">
+                    <attribute name="create">false</attribute>
+                    <attribute name="default_order">id desc</attribute>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="before">
+
+                    <field name="priority"
+                                   decoration-success="priority == 'low'"
+                                   decoration-warning="priority == 'medium'"
+                                   decoration-danger="priority == 'high'"
+                                   readonly="record_access == 'read'"
+                            />
+                </xpath>
+                <xpath expr="//field[@name='display_name']" position="after">
+                    <field name="case_id"/>
+                    <field name="directorate_id"/>
+                    <field name="department_id"/>
+                    <field name="assignment_id"/>
+                </xpath>
+                <xpath expr="//field[@name='user_id']" position="attributes">
+                    <attribute name="string">Investigation Manager</attribute>
+                </xpath>
+            </field>
+        </record>   
+
+        <record id="in2it_project_kanban_view_group_stage_inherit" model="ir.ui.view">
+            <field name="name">in2it.project.kanban.view.group.stage.inherit</field>
+            <field name="model">project.project</field>
+            <field name="inherit_id" ref="project.project_kanban_view_group_stage"/>
+            <field name="arch" type="xml">
+                <xpath expr="//kanban" position="attributes">
+                    <attribute name="default_order">id desc</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="in2it_view_kanban_project_project_inherit" model="ir.ui.view">
+            <field name="name">in2it.project.project.kanban.inherit</field>
+            <field name="model">project.project</field>
+            <field name="inherit_id" ref="project.view_project_kanban"/>
+            <field name="arch" type="xml">
+                <xpath expr="//kanban" position="attributes">
+                    <attribute name="create">false</attribute>
+                    <attribute name="group_create">false</attribute>
+                    <attribute name="action"/>
+                    <attribute name="type"/>
+                    <attribute name="open_form_view">1</attribute>
+                    <attribute name="default_order">id desc</attribute>
+                </xpath>
+
+                <xpath expr="//t[@t-name='card']//field[@name='activity_ids']" position="after">
+                    <button type="object"
+                            name="action_open_assign_pm_wizard"
+                            class="btn btn-link p-0 ms-2"
+                            title="Assign Investigation Manager"
+                            invisible="user_id">
+                        <i class="fa fa-user-plus"/>
+                    </button>
+                </xpath>
+                <xpath expr="//t[@t-name='card']//field[@name='user_id']" position="replace"/>
+
+                <xpath expr="//t[@t-name='card']/div" position="before">
+                    <widget name="web_ribbon" class="d-flex" title="New" bg_color="text-bg-success" invisible="user_id"/>
+                </xpath>
+
+                <xpath expr="//kanban" position="attributes">
+                    <attribute name="records_draggable">false</attribute>
+                </xpath>
+
+                <xpath expr="//t[@t-name='card']//field[@name='is_favorite']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//a[hasclass('dropdown-item') and @name='copy' and @type='object']" position="replace"/>
+                <xpath expr="//field[@name='tag_ids']" position="before">
+                    <div>
+                        <strong>Case: </strong>
+                        <field name="case_id"/>
+                    </div>
+                    <div>
+                        <strong>Priority: </strong>
+                        <field name="priority"
+                               decoration-success="priority == 'low'"
+                               decoration-warning="priority == 'medium'"
+                               decoration-danger="priority == 'high'"
+                               readonly="record_access == 'read'"
+                        />
+                    </div>
+
+                    <div>
+                        <strong>Directorate: </strong>
+                        <field name="directorate_id"/>
+                    </div>
+
+                    <div>
+                        <strong>Department: </strong>
+                        <field name="department_id"/>
+                    </div>
+                    <div>
+                        <strong>Investigation Manager: </strong>
+                        <field name="user_id"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_mass_assign_pm" model="ir.actions.server">
+            <field name="name">Assign Investigation Manager</field>
+            <field name="model_id" ref="project.model_project_project"/>
+            <field name="binding_model_id" ref="project.model_project_project"/>
+            <field name="binding_view_types">list</field>
+            <field name="state">code</field>
+            <field name="code">
+                action = {
+                "type": "ir.actions.act_window",
+                "res_model": "assign.project.manager.wizard",
+                "view_mode": "form",
+                "target": "new",
+                "context": {"active_ids": records.ids},
+                }
+            </field>
+        </record>
+
+
+        <!-- timesheet view for allocated hours -->
+        <record id="in2it_project_management_timesheet" model="ir.ui.view">
+            <field name="name">in2it.timesheet.view</field>
+            <field name="model">project.project</field>
+            <field name="inherit_id" ref="hr_timesheet.project_invoice_form"/>
+            <field name="arch" type="xml">
+                <field name="allocated_hours" position="attributes">
+                    <attribute name="readonly">record_access == 'read'</attribute>
+                </field>
+            </field>
+        </record>
+        
+        <record id="view_forensic_case_suspects_list" model="ir.ui.view">
+        <field name="name">view.forensic.case.suspects.list</field>
+        <field name="model">forensic.case.suspects</field>
+        <field name="arch" type="xml">
+            <list create="0">
+                <field name="name" required="True"/>
+                <field name="email"/>
+            </list>
+        </field>
+    </record>
+
+
+        <record id="project_project_view_search_inherit" model="ir.ui.view">
+            <field name="name">project.project.view.search.inherit</field>
+            <field name="model">project.project</field>
+            <field name="inherit_id" ref="project.view_project_project_filter"/>
+            <field name="priority">10</field>
+            <field name="arch" type="xml">
+                <filter name="Manager" position="attributes">
+                    <attribute name="string">Investigation Manager</attribute>
+                </filter>
+            </field>
+        </record>
+        
+        <record id="project.open_view_project_all_group_stage" model="ir.actions.act_window">
+            <field name="name">Investigation</field>
+        </record>
+
+
+    </data>
+</odoo>

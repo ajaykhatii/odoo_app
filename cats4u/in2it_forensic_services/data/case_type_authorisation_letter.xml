@@ -1,0 +1,114 @@
+<odoo>
+
+    <template id="line_auth_letter">
+        <div style="font-family: Arial; font-size: 15px; line-height: 1.5;">
+
+            <p>
+                The schedule contains allegations received by the Ethics and Forensic Services department and our 
+                recommendations in respect thereof, which is submitted for your approval to be referred to the relevant 
+                line directorates in accordance with the sections 8.11.4 and 8.11.5 of the Fraud Prevention Policy and 
+                Response Plan as well as the applicable Executive Directors delegations.
+            </p>
+
+            <p>
+                These allegations are untested and the following matters are herewith forwarded to you for your 
+                consideration and approval for onward submission to the relevant line directorates:
+            </p>
+
+            <p>
+                1. <t t-esc="line_refrence"/>
+            </p>
+
+            <p>
+                Feel free to contact me with any related comments/queries.
+            </p>
+
+           
+
+        </div>
+    </template>
+
+    <template id="forensic_auth_letter">
+        <div style="font-family: Arial; font-size: 15px; line-height: 1.5;">
+
+            <p>
+               The schedule contains allegations received by the Ethics and Forensic Services department 
+               and our recommendations in respect thereof, which is submitted for authorisation in terms 
+               of section 9(1) of your delegated authority as read in the City’s System of Council Delegations. 
+
+ 
+            </p>
+
+            <p>
+                These allegations are untested and the following forensic matter is herewith 
+                forwarded to you for further consideration and authorisation. 
+
+            </p>
+
+            <p>
+                1. <t t-esc="line_refrence"/>
+            </p>
+
+            <p>
+                Feel free to contact me with any related comments/queries.
+            </p>
+
+
+
+
+        </div>
+    </template>
+
+    <template id="preliminary_auth_letter">
+        <div style="font-family: Arial; font-size: 15px; line-height: 1.5;">
+
+        
+            <p>
+                As per the schedule meeting dated 3 March 2025, 
+                a request for preliminary assessment has been 
+                recommended by the Ethics and Forensic Services Recommendation Committee.
+                These allegations are untested and a preliminary assessment is necessary 
+                to determine whether a full forensic investigation is required: 
+
+ 
+            </p>
+
+            <p>
+                1. <t t-esc="line_refrence"/>
+            </p>
+
+        
+
+        </div>
+    </template>
+
+    <template id="lifestyle_auth_letter">
+        <div style="font-family: Arial; font-size: 15px; line-height: 1.5;">
+
+            <p>
+                The City Manager is vested with an implied power to authorise lifestyle
+                reviews to mitigate and detect risks associated with fraud, corruption, 
+                maladministration and / or unethical conduct.
+ 
+            </p>
+            <p>
+                In the annual Strategic Management Framework (SMF) it was recommended 
+                in the Finance Directorate section that lifestyle audits should be completed 
+                for all officials who are involved in SCM processes. The implementation and 
+                roll out is also tracked and monitored on the CCT Corporate Risk Register 
+                (CCTCRR) with a project end date of 31 December 2026.
+            </p>
+
+            <p>
+                Authority is hereby requested to conduct 
+                lifestyle reviews on the newly appointed 
+                SCM Managers and Heads within Supply Chain Management, Finance directorate.
+            </p>
+
+            <p>
+                Feel free to contact me with any related comments/queries.
+            </p>
+
+        </div>
+    </template>
+</odoo>

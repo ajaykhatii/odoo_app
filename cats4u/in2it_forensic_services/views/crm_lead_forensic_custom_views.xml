@@ -1,0 +1,683 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ===== CUSTOM FORENSIC CASE FORM VIEW ===== -->
+    <record id="view_crm_lead_forensic_form_custom" model="ir.ui.view">
+        <field name="name">crm.lead.forensic.form.custom</field>
+        <field name="model">crm.lead</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <form string="Forensic Case Management" class="o_forensic_case_form" duplicate="false">
+                <!-- Custom Header for Forensic Cases -->
+
+                <header>
+                    <!-- Status Bar for Forensic Workflow -->
+                    <field name="com_stage_id" widget="statusbar"/>
+                    <button name="move_to_under_review"
+                            type="object"
+                            class="btn-primary"
+                            string="Submit To Review"
+                            icon="fa-eye"
+                            invisible="review_state not in ('draft', 'change_requested') or not id or not active"
+                            groups="in2it_forensic_services.group_fcm_review_access,in2it_forensic_services.group_fcm_admin,base.group_system"/>
+
+                    <button name="action_confirmed_case"
+                            type="object"
+                            class="btn-primary"
+                            string="Confirm"
+                            icon="fa-check"
+                            invisible="not is_stage_under_review or review_state in ('draft', 'change_requested')"
+                            groups="in2it_forensic_services.group_fcm_case_fo_access,in2it_forensic_services.group_fcm_case_sfo_access,in2it_forensic_services.group_fcm_admin,base.group_system"/>
+
+                    <button name="action_revised_case"
+                            type="object"
+                            class="btn-secondary"
+                            string="Request Changes"
+                            icon="fa-undo"
+                            invisible="is_stage_case_intake or is_stage_reviewed or not active or review_state in ('draft', 'change_requested')"
+                            context="{'from_reviewed_officer': True}"
+                            groups="in2it_forensic_services.group_fcm_case_fo_access,in2it_forensic_services.group_fcm_case_sfo_access,in2it_forensic_services.group_fcm_admin,base.group_system"/>
+
+                    <button name="action_open_case_assignment_wizard"
+                            type="object"
+                            class="btn-primary"
+                            string="Review Action"
+                            icon="fa-share"
+                            invisible="not classification_done or all_assignment_created"
+                            context="{'assign_case': True}"
+                            groups="in2it_forensic_services.group_fcm_review_access,in2it_forensic_services.group_fcm_admin,base.group_system"/>
+
+                    <button name="action_open_case_assignment_wizard"
+                            type="object"
+                            class="btn-primary"
+                            string="Request for Classification"
+                            icon="fa-share"
+                            context="{'classification_request': True}"
+                            groups="in2it_forensic_services.group_fcm_case_chief_access,in2it_forensic_services.group_fcm_admin,base.group_system"
+                            invisible="not is_stage_reviewed or not active or classification_done or review_state in ['change_requested']"/>
+
+                    <!-- <button name="action_open_case_assignment_wizard"
+                            type="object"
+                            class="btn-secondary"
+                            string="Reject"
+                            icon="fa-ban"
+                            invisible="is_stage_case_intake or is_stage_under_review or assignment_type_ids or not active"
+                            context="{'reject_case': True}"
+                            groups="in2it_forensic_services.group_fcm_review_access,in2it_forensic_services.group_fcm_admin,base.group_system"/> -->
+
+<!--                    Change button for chief only visible on recom reviewed stage with below conditions-->
+                    <button name="action_revised_case"
+                            type="object"
+                            class="btn-secondary"
+                            string="Request Changes"
+                            icon="fa-undo"
+                            invisible="not is_stage_reviewed or not active or review_state in ('draft', 'change_requested') or classification_done"
+                            context="{'from_reviewed_officer': True}"
+                            groups="in2it_forensic_services.group_fcm_case_chief_access,in2it_forensic_services.group_fcm_admin,base.group_system"/>
+                </header>
+
+                <!-- Main Sheet Content -->
+                <sheet>
+                    <!-- Ribbon -->
+                    <widget name="web_ribbon" title="Reject" bg_color="text-bg-danger" invisible="active"/>
+                    <widget name="web_ribbon" title="Request Changed" bg_color="text-bg-warning" invisible="review_state != 'change_requested'"/>
+                    <widget name="web_ribbon" title="Classified" bg_color="text-bg-success" invisible="not classification_done"/>
+
+
+
+                    <!-- Smart Buttons Section -->
+                    <div class="oe_button_box" name="button_box">
+                        <button type="object"
+                                name="action_open_case_assignments"
+                                class="oe_stat_button"
+                                icon="fa-tasks"
+                                context="{'forensic_case_authorization':True}"
+                                invisible="all_assignment_created
+                                           or (case_assignment_count == case_classification_count and case_classification_count > 0)">
+
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Assignments</span>
+                                <span class="o_stat_value">
+                                    <field name="case_assignment_count"/> / <field name="case_classification_count"/>
+                                </span>
+                            </div>
+                        </button>
+
+                        <button type="object"
+                                name="action_open_case_assignments"
+                                class="oe_stat_button text-success"
+                                icon="fa-check text-success"
+                                context="{'forensic_case_authorization':True}"
+                                invisible="case_assignment_count != case_classification_count
+                                           or case_classification_count == 0">
+
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text text-primary fw-bolder">Assignment</span>
+                                <span class="o_stat_text fw-bolder">
+                                    <field name="case_assignment_count"/> / <field name="case_classification_count"/> Completed
+                                </span>
+                            </div>
+                        </button>
+
+                        <button name="action_open_child_leads"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-share-alt"
+                                invisible="not child_lead_ids">
+                            <field name="child_count" widget="statinfo" string="Child Cases"/>
+                        </button>
+
+                    </div>
+
+                    <!-- Forensic Case Alert Banner -->
+                    <div class="alert alert-info o_forensic_banner" role="alert">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong class="me-3">📝 INTERNAL COMS REFERENCE -</strong>
+                                <field name="internal_coms_ref" class="fw-bold" readonly="1"/>
+                            </div>
+                            <div class="col-md-6" invisible="not assignment_type_ids">
+                                <strong class="me-3">🏷️ CASE ASSIGNMENT TYPE -</strong>
+                                <field name="assignment_type_ids" widget="many2many_tags" readonly="1"
+                                       options="{'no_open': True, 'no_edit': True, 'no_create': True}" class="fw-bold"/>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Case Title Section -->
+                    <div class="oe_title">
+                        <label for="name" string="Case Title" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" class="text-break" placeholder="Enter case title..." readonly="not can_edit"
+                                   />
+                        </h1>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <group>
+                                <field name="allegation_source_id" required="1" readonly="not can_edit or create_investigation_count"
+                                       options="{'no_open': True, 'no_edit': True, 'no_create': True}"/>
+                                <field name="allegation_nature_id" required="1" readonly="not can_edit or create_investigation_count"
+                                       options="{'no_open': True, 'no_edit': True, 'no_create': True}"/>
+                                <field name="partner_id" string="Complainant" required="1" readonly="not can_edit or create_investigation_count"
+                                       options="{'no_quick_create': True
+                                           }"
+                                       context="{'default_is_complainant': True,'form_view_ref': 'in2it_forensic_services.view_partner_form_case_custom'}"/>
+                                <field name="email_from" readonly="not can_edit"/>
+                                <field name="phone" readonly="not can_edit"/>
+                                <field name="offence_date_from" widget="daterange" readonly="not can_edit"
+                                       options="{'end_date_field': 'offence_date_to'}"/>
+                                <field name="offence_date_to" invisible="1" />
+                                <field name="is_stage_case_intake" invisible="1" />
+                                <field name="is_stage_under_review" invisible="1" />
+                                <field name="is_stage_reviewed" invisible="1" />
+                                <field name="review_officer" invisible="1" />
+                                <field name="all_assignment_created" invisible="1"/>
+                                <field name="can_edit" invisible="1"/>
+                            </group>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <group>
+                                <field name="directorate_id" required="1" readonly="not can_edit or create_investigation_count"
+                                       options="{'no_create': true, 'no_edit': true, 'no_open': true}"/>
+
+                                <field name="department_id"
+                                       options="{'no_create': true, 'no_edit': true, 'no_open': true}"
+                                       required="1" 
+                                       domain="[('directorate_ids', 'in', directorate_id)]"
+                                       readonly="not can_edit or create_investigation_count"/>
+                                <field name="tag_ids" widget="many2many_tags" domain="[('is_fixed_tag','=', False)]"
+                                       required="1" readonly="not can_edit"
+                                       options="{'color_field': 'color', 'no_create': True, 'no_edit': True, 'no_open': True}"/>
+                                <field name="parent_lead_id" options="{'no_create': true, 'no_edit': true}"
+                                       readonly="not can_edit"
+                                       context="{'form_view_ref': 'in2it_forensic_services.view_crm_lead_forensic_form_custom'}"/>
+                                <field name="create_date" string="Reporting Date" readonly="1"/>
+                                <field name="review_note" string="Comment" readonly="1"/>
+                                <field name="review_state" invisible="1"/>
+
+
+                            </group>
+                        </div>
+                    </div>
+
+                    <group string="Witnesses">
+                        <field name="witness_ids" nolabel="1" readonly="not can_edit">
+                            <list editable="bottom">
+                                <field name="name" required="True"/>
+                                <field name="phone" optional="show"/>
+                                <field name="email" optional="show"/>
+                            </list>
+
+                        </field>
+                    </group>
+
+                    <group string="Suspects">
+                        <field name="suspect_ids" nolabel="1" readonly="not can_edit">
+                            <list editable="bottom">
+                                <field name="name" required="True"/>
+                                <field name="phone" optional="show"/>
+                                <field name="email" optional="show"/>
+                                <field name="company_name" optional="show"/>
+                                <field name="type" widget="radio" options="{'horizontal': true}" nolabel="0"
+                                       optional="show"/>
+                                <field name="vendor_emp" optional="show"/>
+                            </list>
+                        </field>
+                    </group>
+
+                    <notebook>
+                        <!-- ===== Summary & DOCUMENTATION TAB ===== -->
+                        <page string="📝 Allegation Description" name="allegation_desc">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <group name="allegation_desc" class="o_forensic_group">
+                                        <field name="allegation_description"
+                                               widget="html" nolabel="1" 
+                                               options="{'collaborative': true, 'resizable': true, 'codeview': false}"
+                                               placeholder="Provide detailed description of the allegation..."
+                                               readonly="not can_edit"/>
+                                    </group>
+                                </div>
+                            </div>
+                        </page>
+
+
+                        <page string="ℹ️ Additional Details" name="additional_details">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <group name="additional_details" class="o_forensic_group">
+                                        <field name="additional_details"
+                                               widget="html" nolabel="1" 
+                                               options="{'collaborative': true, 'resizable': true, 'codeview': false}"
+                                               placeholder="Provide additional details (if any)"
+                                               readonly="not can_edit"/>
+
+                                    </group>
+                                </div>
+                            </div>
+                        </page>
+
+                        <!-- ===== Evidence TAB ===== -->
+                        <page string="🔎 Evidence" name="evidence">
+                            <div class="row">
+                                <group string="Physical Items Received">
+                                    <field name="physical_item_ids" nolabel="1" readonly="not can_edit">
+                                        <list>
+                                            <field name="id" optional="hide"/>
+                                            <field name="item_title" required="1"/>
+                                            <field name="item_category" optional="show" required="1"/>
+                                            <field name="quantity" optional="show" required="1"/>
+                                            <field name="uom_id" optional="show" required="1"
+                                                   options="{'no_edit': True, 'no_create': True}"/>
+                                            <field name="create_date" optional="hide"
+                                                   string="Date &amp; Time Received"/>
+                                            <field name="source" optional="hide"/>
+                                            <field name="recovery_location" optional="show" required="1"/>
+                                            <field name="associated_with" optional="hide" required="1"/>
+                                            <field name="storage_location" optional="show" required="1"/>
+                                            <field name="current_custodian" optional="hide"/>
+                                            <field name="status" optional="show" required="1"/>
+                                            <field name="last_movement_date" optional="hide" force_save="1"/>
+                                        </list>
+                                        <form>
+                                            <group>
+                                                <group>
+                                                    <field name="item_title"/>
+                                                    <field name="item_category"/>
+                                                    <field name="quantity"/>
+                                                    <field name="uom_id"
+                                                           options="{'no_edit': True, 'no_create': True}"/>
+                                                    <field name="source"/>
+                                                    <field name="create_date" string="Date &amp; Time Received"/>
+                                                </group>
+                                                <group>
+                                                    <field name="recovery_location"/>
+                                                    <field name="associated_with"/>
+                                                    <field name="storage_location"/>
+                                                    <field name="current_custodian"/>
+                                                    <field name="status"/>
+                                                    <field name="last_movement_date"/>
+                                                </group>
+                                            </group>
+                                        </form>
+                                    </field>
+                                </group>
+                            </div>
+                        </page>
+
+
+                        <page string="📁 Documentation" name="evidence_docs_line">
+                            <field name="document_line_ids">
+                                <list>
+                                    <field name="description"/>
+                                    <field name="document_type_id"/>
+                                    <field name="file"/>
+                                    <field name="uploaded_date"/>
+                                    <field name="uploaded_by" options="{'no_open':True  }"/>
+                                    <field name="document_stores"/>
+                                    <field name="document_stores_location"/>
+                                </list>
+                                <form>
+                                    <sheet>
+                                        <group>
+                                            <group>
+                                                <field name="file" filename="file_name" widget="binary"/>
+                                                <field name="file_name" invisible="1"/>
+                                                <field name="document_type_id" options="{'no_create':True, 'no_edit':True, 'no_open':True}"/>
+                                                <field name="document_stores"/>
+                                                <field name="document_stores_location" invisible="not document_stores"/>
+                                            </group>
+                                            <group>
+                                                <field name="description"/>
+                                                <field name="uploaded_by" options="{'no_open':True}"/>
+                                                <field name="uploaded_date"/>
+                                            </group>
+                                        </group>
+                                    </sheet>
+                                </form>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <!-- Chatter Section -->
+                <chatter/>
+
+            </form>
+        </field>
+    </record>
+
+
+    <record id="view_crm_lead_forensic_list_custom" model="ir.ui.view">
+        <field name="name">crm.lead.forensic.list.custom</field>
+        <field name="model">crm.lead</field>
+        <field name="arch" type="xml">
+            <list string="Case Management" sample="1" duplicate="false">
+                <field name="internal_coms_ref"/>
+                <field name="name" string="Case Title" optional="hide"/>
+                <field name="partner_id" optional="hide" string="Complainant"/>
+                <field name="directorate_id" optional="show"/>
+                <field name="department_id" optional="show"/>
+                <field name="com_stage_id" string="Stage" optional="show"/>
+                <field name="active" string="Status" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_crm_lead_forensic_activity_custom" model="ir.ui.view">
+        <field name="name">crm.lead.forensic.activity.custom</field>
+        <field name="model">crm.lead</field>
+        <field name="arch" type="xml">
+            <activity string="Case Management">
+                <templates>
+                    <div t-name="activity-box">
+                        <div class="d-flex justify-content-between align-items-center w-100 px-3 py-2">
+                            <div class="d-flex align-items-center">
+                                <div class="o_text_block o_text_bold" style="font-size: xx-large;">
+                                    <field name="name" display="full"/>
+                                </div>
+                            </div>
+                            <div class="d-flex flex-column align-items-center">
+                                <span class="text-uppercase o_text_bold">Stage</span>
+                                <span class="badge rounded-pill bg-secondary mt-1 px-3 py-1" style="font-size:0.95rem;">
+                                    <field name="com_stage_id"/>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </templates>
+            </activity>
+        </field>
+    </record>
+
+    <record id="crm_lead_forensic_search_view" model="ir.ui.view">
+        <field name="name">crm.lead.forensic.search</field>
+        <field name="model">crm.lead</field>
+        <field name="arch" type="xml">
+
+            <search string="Forensic Lead Search">
+
+                <!-- QUICK SEARCH FIELDS           -->
+                <field name="internal_coms_ref"/>
+                <field name="name" string="Case Name"/>
+                <field name="partner_id"/>
+                <field name="directorate_id"/>
+                <field name="department_id"/>
+                <field name="com_stage_id"/>
+
+                <!-- FILTERS SECTION               -->
+                <filter name="active_filter"
+                        string="Active"
+                        domain="[('active', '=', True)]"
+                        help="Show only active cases"/>
+
+                <filter name="inactive_filter"
+                        string="Inactive"
+                        domain="[('active', '=', False)]"
+                        help="Show archived / inactive cases"/>
+
+<!--                <filter name="under_review_filter"-->
+<!--                        string="Reviewed"-->
+<!--                        domain="[('is_stage_reviewed', '=', True)]"/>-->
+
+<!--                <filter name="not_under_review_filter"-->
+<!--                        string="Not Reviewed"-->
+<!--                        domain="[('is_stage_reviewed', '=', False)]"/>-->
+
+                <!-- GROUP BY SECTION             -->
+                <group expand="0" string="Group By">
+
+                    <filter name="group_by_com_stage"
+                            string="By Stage"
+                            context="{'group_by':'com_stage_id'}"/>
+
+                    <filter name="group_by_department"
+                            string="By Department"
+                            context="{'group_by':'department_id'}"/>
+
+                    <filter name="group_by_directorate"
+                            string="By Directorate"
+                            context="{'group_by':'directorate_id'}"/>
+
+                    <filter string="Assignment Type" name="assignment_type_ids" date="create_date" context="{'group_by':'directorate_id'}"/>
+                    <filter string="Creation Date" name="creation_date" date="create_date" context="{'group_by':'directorate_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- crm.lead kanban view -->
+    <record id="view_crm_lead_forensic_kanban_custom" model="ir.ui.view">
+        <field name="name">case.intake.crm.lead.view.kanban</field>
+        <field name="model">crm.lead</field>
+        <field name="arch" type="xml">
+            <kanban highlight_color="color" default_group_by="com_stage_id" class="o_kanban_small_column o_opportunity_kanban" records_draggable="false"
+                    groups_draggable="false" archivable="false" sample="1" js_class="crm_kanban" group_create="false">
+                    <field name="com_stage_id" options="{'group_by_tooltip': {'description': 'Description'}}"/>
+                    <field name="probability"/>
+                    <field name="active"/>
+                    <field name="company_currency"/>
+                    <field name="recurring_revenue_monthly"/>
+                    <field name="team_id"/>
+                    <!-- <progressbar field="activity_state" colors="{&quot;planned&quot;: &quot;success&quot;, &quot;today&quot;: &quot;warning&quot;, &quot;overdue&quot;: &quot;danger&quot;}" sum_field="expected_revenue" recurring_revenue_sum_field="recurring_revenue_monthly" help="This bar allows to filter the opportunities based on scheduled activities."/> -->
+                    <templates>
+                        <t t-name="menu">
+                            <!-- <t t-if="widget.editable"><a role="menuitem" type="open" class="dropdown-item">Edit</a></t> -->
+                            <!-- <t t-if="widget.deletable"><a role="menuitem" type="delete" class="dropdown-item">Delete</a></t> -->
+                            <field name="color" widget="kanban_color_picker"/>
+                        </t>
+                        <t t-name="card">
+                            <t t-set="lost_ribbon" t-value="!record.active.raw_value and record.probability and record.probability.raw_value == 0"/>
+                            <widget name="web_ribbon" title="lost" bg_color="text-bg-danger" invisible="probability &gt; 0 or active"/>
+                            <field class="fw-bold fs-5" name="name"/>
+                            <div>
+                                <t t-if="record.expected_revenue.raw_value">
+                                    <field name="expected_revenue" widget="monetary" options="{'currency_field': 'company_currency'}"/>
+                                    <span t-if="record.recurring_revenue and record.recurring_revenue.raw_value" groups="crm.group_use_recurring_revenues"> + </span>
+                                </t>
+                                <t t-if="record.recurring_revenue and record.recurring_revenue.raw_value">
+                                    <field class="me-1" name="recurring_revenue" widget="monetary" options="{'currency_field': 'company_currency'}" groups="crm.group_use_recurring_revenues"/>
+                                    <field name="recurring_plan" groups="crm.group_use_recurring_revenues"/>
+                                </t>
+                            </div>
+                            <field name="partner_id" class="text-truncate"/>
+                            <span>Directorate - <field name="directorate_id" class="text-truncate"/></span>
+                            <span>Department - <field name="department_id" class="text-truncate"/></span>
+
+
+                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                            <field name="lead_properties" widget="properties"/>
+                            <footer class="pt-1">
+                                <div class="d-flex mt-auto align-items-center">
+                                    <field name="priority" widget="priority" groups="base.group_user" class="me-2"/>
+                                    <field name="activity_ids" widget="kanban_activity"/>
+                                </div>
+                                <field name="user_id" widget="many2one_avatar_user" domain="[('share', '=', False)]" class="ms-auto"/>
+                            </footer>
+                        </t>
+                    </templates>
+                </kanban>
+        </field>
+    </record>
+
+    <!-- Graph -->
+    <record id="view_crm_lead_forensic_graph_custom" model="ir.ui.view">
+            <field name="name">case.intake.lead.graph.view</field>
+            <field name="model">crm.lead</field>
+            <field name="arch" type="xml">
+                <graph string="Opportunities" sample="1">
+                    <field name="com_stage_id"/>
+                    <field name="recurring_revenue" invisible="1"/>
+                    <field name="automated_probability" invisible="1"/>
+                    <field name="message_bounce" invisible="1"/>
+                    <field name="color" invisible="1"/>
+                    <field name="day_open" invisible="1"/>
+                    <field name="day_close" invisible="1"/>
+                    <field name="days_to_convert" invisible="1"/>
+                    <field name="days_exceeding_closing" invisible="1"/>
+                    <field name="recurring_revenue_monthly" invisible="1"/>
+                    <field name="date_deadline" invisible="1"/>
+                    <field name="probability" invisible="1"/>
+                    <field name="recurring_revenue_monthly_prorated" invisible="1"/>
+                    <field name="prorated_revenue" invisible="1"/>
+                    <field name="expected_revenue" invisible="1"/>
+                    <field name="recurring_revenue_prorated" invisible="1"/>
+                    <field name="allegation_source_id"/>
+                    <field name="partner_id"/>
+                    <field name="directorate_id"/>
+                    <field name="department_id"/>
+                    <field name="tag_ids"/>
+                </graph>
+            </field>
+        </record>
+
+
+
+    <!-- pivot view -->
+    <record id="view_crm_lead_forensic_pivot_custom" model="ir.ui.view">
+        <field name="name">case.intake.crm.lead.view.pivot</field>
+        <field name="model">crm.lead</field>
+        <field name="arch" type="xml">
+            <pivot string="Case Intake Analysis" sample="1">
+                <field name="create_date" interval="month" type="row"/>
+                <field name="com_stage_id" type="col"/>
+                <field name="tag_ids" type="col"/>
+
+                <field name="expected_revenue" type="measure"  invisible="1"/>
+                <field name="color" invisible="1"/>
+                <field name="automated_probability" invisible="1"/>
+                <field name="message_bounce" invisible="1"/>
+                <field name="probability" invisible="1"/>
+                <field name="recurring_revenue_monthly" type="measure" groups="!crm.group_use_recurring_revenues" invisible="1"/>
+                <field name="recurring_revenue_monthly_prorated" groups="!crm.group_use_recurring_revenues" invisible="1"/>
+                <field name="recurring_revenue" groups="!crm.group_use_recurring_revenues" invisible="1"/>
+                <field name="recurring_revenue_prorated" groups="!crm.group_use_recurring_revenues" invisible="1"/>
+
+                <field name="day_open" invisible="1"/>
+                <field name="day_close" invisible="1"/>
+                <field name="days_to_convert" invisible="1"/>
+                <field name="days_exceeding_closing" invisible="1"/>
+                <field name="prorated_revenue" invisible="1"/>
+
+            </pivot>
+        </field>
+    </record>
+
+
+    <!--Case Intake Action-->
+
+    <record id="action_crm_lead_forensic" model="ir.actions.act_window">
+        <field name="name">Case Intake</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">list,form,kanban,graph,pivot,activity</field>
+        <field name="search_view_id" ref="crm_lead_forensic_search_view"/>
+        <field name="view_ids" eval="[
+        (5, 0, 0),
+        (0, 0, {'view_mode': 'list', 'view_id': ref('view_crm_lead_forensic_list_custom')}),
+        (0, 0, {'view_mode': 'form', 'view_id': ref('view_crm_lead_forensic_form_custom')}),
+        (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_crm_lead_forensic_kanban_custom')}),
+        (0, 0, {'view_mode': 'graph', 'view_id': ref('view_crm_lead_forensic_graph_custom')}),
+        (0, 0, {'view_mode': 'pivot', 'view_id': ref('view_crm_lead_forensic_pivot_custom')}),
+        (0, 0, {'view_mode': 'activity', 'view_id': ref('view_crm_lead_forensic_activity_custom')}),
+    ]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first case!
+            </p>
+            <p>
+                Start managing investigations with our comprehensive case intake system.
+            </p>
+        </field>
+    </record>
+
+
+    <!--    Action Under Review comment to remove menu case classification-->
+    <!-- <record id="action_forensic_case_review" model="ir.actions.act_window">
+        <field name="name">Case Classification</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="crm_lead_forensic_search_view"/>
+        <field name="view_ids" eval="[
+        (5, 0, 0),
+        (0, 0, {'view_mode': 'list', 'view_id': ref('view_crm_lead_forensic_list_custom')}),
+        (0, 0, {'view_mode': 'form', 'view_id': ref('view_crm_lead_forensic_form_custom')})
+        ]"/>
+        <field name="domain">[('is_stage_reviewed', '=', True)]</field>
+        <field name="context">{'create': False, 'under_review_menu': True}</field>
+    </record> -->
+
+    <!--    Inherit res.partner view-->
+
+    <record id="view_res_partner_form_inherit_case_mgt" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.suspect</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//notebook/page[@name='contact_addresses']" position="before">
+                <page string="Case Information" name="case_info" autofocus="autofocus">
+                    <group string="Forensic Case Information" name="suspect_info_group">
+                        <field name="is_anonymous" widget="boolean_toggle"/>
+                        <field name="is_complainant" widget="boolean_toggle"/>
+                    </group>
+                    <group string="Associated Cases as Complainant">
+                        <field name="complainant_case_ids" nolabel="1" readonly="0" mode="list"
+                               context="{'default_view_mode': 'list','list_view_ref': 'in2it_forensic_services.view_crm_lead_forensic_list_custom'}">
+                            <list string="Case Management">
+                                <field name="internal_coms_ref"/>
+                                <field name="name" string="Case Title" optional="hide"/>
+                                <field name="assignment_type_ids" widget="many2many_tags" optional="hide"/>
+                                <field name="directorate_id" optional="show"/>
+                                <field name="department_id" optional="show"/>
+                                <field name="active" optional="hide"/>
+                            </list>
+                        </field>
+                    </group>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="view_partner_form_case_custom" model="ir.ui.view">
+        <field name="name">res.partner.form.case.custom</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="email"/>
+                        <field name="phone"/>
+                    </group>
+<!--                    <notebook>-->
+<!--                        <page string="Case Information" name="case_info" autofocus="autofocus">-->
+<!--                            <group string="Forensic Case Information" name="suspect_info_group">-->
+<!--                                <field name="is_anonymous" widget="boolean_toggle"/>-->
+<!--                                <field name="is_complainant" widget="boolean_toggle"/>-->
+<!--                            </group>-->
+<!--                            <group string="Associated Cases as Complainant">-->
+<!--                                <field name="complainant_case_ids" nolabel="1" readonly="0" mode="list"-->
+<!--                                       context="{'default_view_mode': 'list','list_view_ref': 'in2it_forensic_services.view_crm_lead_forensic_list_custom'}">-->
+<!--                                    <list string="Case Management">-->
+<!--                                        <field name="internal_coms_ref"/>-->
+<!--                                        <field name="name" string="Case Title" optional="hide"/>-->
+<!--                                        <field name="assignment_type_ids" widget="many2many_tags" optional="hide"/>-->
+<!--                                        <field name="directorate_id" optional="show"/>-->
+<!--                                        <field name="department_id" optional="show"/>-->
+<!--                                        <field name="active" optional="hide"/>-->
+<!--                                    </list>-->
+<!--                                </field>-->
+<!--                            </group>-->
+<!--                        </page>-->
+<!--                    </notebook>-->
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+</odoo>

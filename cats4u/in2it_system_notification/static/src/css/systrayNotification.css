@@ -1,0 +1,6 @@
+/* Remove padding from the dropdown menu */
+.o-dropdown--menu, 
+.dropdown-menu, 
+.o_systray_dropdown_menu {
+    padding: 0 !important;
+}

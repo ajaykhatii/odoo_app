@@ -1,0 +1,40 @@
+<odoo>
+    <record id="view_schedule_of_complaints_display_wizard_form" model="ir.ui.view">
+        <field name="name">schedule.of.complaints.display.form</field>
+        <field name="model">schedule.of.complaints.display</field>
+        <field name="arch" type="xml">
+            <form string="Schedule Of Complaints Display">
+                <group>
+                    <group>
+                        <field name="parent_case_id" invisible="1"/>
+                        <field name="case_ref_number" readonly="1"/>
+                        <field name="allegation_source_id" options="{'no_open': True}"/>
+                        <field name="internal_coms_ref" readonly="1"/>
+                        <field name="create_date" readonly="1"/>
+                        <field name="review_note" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="allegation_nature_id" options="{'no_open': True}"/>
+                        <field name="name" readonly="1"/>
+                        <field name="directorate_id" options="{'no_open': True}"/>
+                        <field name="department_id" options="{'no_open': True}"/>
+                        <field name="assignment_type_id" readonly="1" options="{'no_open': True}"/>
+                    </group>
+
+                    <notebook>
+                        <page string="📝 Brief Description of Matter(As Reported)">
+                            <field name="allegation_description" readonly="1"/>
+                        </page>
+                    </notebook>
+                    <group>
+                    </group>
+                </group>
+
+                <footer>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                    <button string="Download" name="download_schedule_of_complaints" type="object" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

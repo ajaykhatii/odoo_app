@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+        <data>
+            <!-- Add you code here -->
+             <!-- investigation.vendor.line form view -->
+            <record id="investigation_vendor_line_view_form_tor" model="ir.ui.view">
+                <field name="name">investigation.vendor.line.view.form</field>
+                <field name="model">investigation.vendor.line</field>
+                <field name="arch" type="xml">
+                    <form string="" edit="0" delete="1">
+                    <header>
+                        <field name="status" widget="statusbar" options="{'clickable':False}"/>
+                    </header>
+                        <sheet>
+                            <group>
+                                <group>
+                                    <field name="partner_id" 
+                                        domain="[('is_vendor', '=', True),('vendor_status','=','active')]"
+                                        options="{'no_open': True}"
+                                        readonly="status != 'new'"/>
+                                    <field name="phone"/>
+                                    <field name="mobile"/>
+                                    <field name="email"/>
+                                </group>
+                                <group>
+                                    <field name="token" invisible="1"/>
+                                    <field name="expiration_date"/>
+                                    <field name="action_date"/>
+                                    <field name="token_duration" invisible="1"/>
+                                </group>
+                            </group>
+                        </sheet>
+                        <chatter/>
+                    </form>
+                </field>
+            </record>
+
+            <!-- investigation.vendor.line list view -->
+            <record id="investigation_vendor_line_view_form" model="ir.ui.view">
+                <field name="name">investigation.vendor.line.view.form</field>
+                <field name="model">investigation.vendor.line</field>
+                <field name="arch" type="xml">
+                    <list delete="1">
+                        <field name="partner_id" 
+                            domain="[('is_vendor', '=', True),('vendor_status','=','active')]"
+                            readonly="status != 'new'"/>
+                        <field name="phone"/>
+                        <field name="mobile"/>
+                        <field name="email"/>
+                        <field name="token" column_invisible="1"/>
+                        <field name="status"/>
+                        <field name="expiration_date"/>
+                        <field name="action_date"/>
+                    </list>
+                </field>
+            </record>
+
+
+        </data>
+</odoo>

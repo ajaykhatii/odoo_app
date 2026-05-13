@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="my_module.SystrayIcon" owl="1">
+    <Dropdown position="'bottom-end'"
+              state="dropdown"
+              menuClass="'o_systray_dropdown_menu'">
+
+        <!-- Toggler (FIRST CHILD = automatically toggler in Odoo 18) -->
+        <button class="o_notification_systray_item">
+            <i class="fa fa-bell fa-lg"
+               role="img"
+               aria-label="Notifications"
+               aria-live="polite"/>
+            <span t-if="systemService.count > 0"
+                  class="o-mail-MessagingMenu-counter badge rounded-pill">
+                <t t-esc="systemService.count"/>
+            </span>
+        </button>
+
+        <!-- Dropdown Content -->
+        <t t-set-slot="content">
+            <div t-att-class="`${discussSystray.contentClass} o-mail-ActivityMenu`">
+
+            <!-- <div class="dropdown-menu-content" -->
+
+                <div class="p-3 border-bottom fw-bold text-center bg-light sticky-top">
+                    Notifications
+                </div>
+                <div t-if="systemService.notifications.length === 0" class="o-mail-ActivityMenu-empty align-items-center text-muted p-2 opacity-50 d-flex justify-content-center">
+                    <div class="p-4 text-center text-muted">
+                        <i class="fa fa-check-circle-o fa-2x mb-2 opacity-50"/>
+                        <br/>
+                        No new notifications
+                    </div>
+                </div>
+
+                    <div class="d-flex flex-column list-group list-group-flush" name="activityGroups">
+
+                        <t t-foreach="systemService.notifications"
+                           t-as="notif"
+                           t-key="notif.id">
+                            <div class="o-mail-ActivityGroup list-group-item list-group-item-action d-flex p-2 gap-2 cursor-pointer" 
+                                t-att-class="notif.state === 'unread' ? 'bg-200' : ''"
+                                t-on-click="() => this.openNotification(notif)">
+
+                     
+
+                                <!-- Avatar -->
+                                <img class="o_avatar o_user_avatar rounded"
+                                     alt="User"
+                                     t-att-src="`/web/image?model=res.partner&amp;id=${Array.isArray(notif.partner_id) ? notif.partner_id[0] : (notif.partner_id || 2)}&amp;field=avatar_128`"/>
+
+                                <!-- Message -->
+                                <div class="flex-grow-1 overflow-hidden">
+                                    <div t-att-class="notif.state === 'unread' ? 'fw-bold text-dark small' : 'text-muted small'"
+                                         style="white-space: normal; word-break: break-word;">
+                                        <t t-esc="notif.message"/>
+                                    </div>
+                                </div>
+
+                                <!-- Delete -->
+                                <t t-if="notif.state === 'read'">
+                                    <i class="fa fa-times text-danger ms-auto"
+                                       style="cursor:pointer"
+                                       t-on-click.stop="(ev) => this.deleteNotification(ev, notif)"/>
+                                </t>
+                            </div>
+
+                        </t>
+                    </div>
+
+            </div>
+        </t>
+
+    </Dropdown>
+</t>
+
+</templates>

@@ -1,0 +1,1726 @@
+<odoo>
+    <template id="portal_breadcrumbs_cases"
+        inherit_id="portal.portal_breadcrumbs"
+        name="Portal Breadcrumbs: Cases to Authorise"
+        priority="30">
+
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <!-- Parent level breadcrumb item -->
+            <li t-if="page_name == 'case' or case_record"
+                t-attf-class="breadcrumb-item #{'active ' if not case_record else ''}">
+                <a t-if="case_record"
+                    t-attf-href="/my/authorise/case">
+                    Cases to Review
+                </a>
+                <t t-else="">Cases to Review</t>
+            </li>
+            <li t-if="case_record" class="breadcrumb-item active">
+                <!-- <span t-field="case_record.type_name"/> -->
+                <t t-out="case_record.case_ref_number" />
+            </li>
+            <li t-if="recommendation_sudo" class="breadcrumb-item active">
+                <t t-out="recommendation_sudo.category_id.name"/>
+            </li>
+
+
+            <li t-if="project_sudo" class="breadcrumb-item active">
+                <t t-out="project_sudo.name"/>
+            </li>
+
+            <!-- <li t-if="page_name in 'ed_projects' or project_sudo"
+                t-attf-class="breadcrumb-item #{'active ' if not project_sudo else ''}">
+                <a t-if="project_sudo"
+                    t-attf-href="'/ed/projects/<int:project_id>' + ">
+                    Cases to Review
+                </a>
+                <t t-else="">Cases to Review</t>
+            </li> -->
+
+          
+
+            
+        </xpath>
+    </template>
+
+    <template id="portal_my_home_forensic_approval" name="Overdue cases" customize_show="True"
+        inherit_id="portal.portal_my_home" priority="15">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
+            <t t-set="portal_alert_category_enable" t-value="True" />
+        </xpath>
+        <div id="portal_alert_category" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="bg_color" t-value="'alert alert-primary align-items-center'" />
+                <t t-set="placeholder_count" t-value="'case_count'" />
+                <t t-set="title">Cases for Examination and Recommendation</t>
+                <t t-set="url" t-value="'/my/authorise/case'" />
+                <t t-set="text">Follow, view or review your case</t>
+                <t t-set="show_count" t-value="True" />
+
+            </t>
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="bg_color" t-value="'alert alert-primary align-items-center'" />
+                <t t-set="placeholder_count" t-value="'case_count'" />
+                <t t-set="title">TORs To Review</t>
+                <t t-set="url" t-value="'/my/pending/casetor'" />
+                <t t-set="text">Follow, view or review your investigation tor</t>
+                <t t-set="show_count" t-value="True" />
+            </t>
+        </div>
+    </template>
+
+
+    <template id="portal_my_authorise_cases" name="Cases to Authorize Final UI">
+
+        <t t-call="portal.portal_layout">
+            <div style="background:#f5f6f8; min-height:100vh; padding:20px;">
+
+                <!-- HEADER -->
+                <div
+                    style="background: #effafd; border:1px solid #e0e0e0; border-radius:6px; padding:15px 20px; margin-bottom:15px;">
+                    <div style="display:flex; align-items:center;">
+                        <img t-att-src="'/web/image/res.users/%s/avatar_128' % request.env.user.id"
+                            style="width:55px;height:55px;border-radius:50%; margin-right:15px;" />
+                        <div>
+                            <div style="font-weight:600; font-size:16px;">
+                                <t t-esc="request.env.user.partner_id.name" />
+                            </div>
+                            <div style="font-size:13px; color:#6c757d;">
+                                Executive Director
+                            </div>
+                            <div style="font-size:14px; color:#6c757d; margin-top:5px;">
+                                <span style="margin-right:20px;">
+                                    <strong>✉ <t t-esc="request.env.user.email" /></strong>
+                                </span>
+                                <span style="margin-right:20px;">
+                                    <strong> ✉ <t t-esc="request.env.user.partner_id.email" />
+                                    </strong>
+                                </span>
+                                <span>
+                                    <strong> ☎ <t t-esc="request.env.user.partner_id.phone" />
+                                    </strong>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB NAVIGATION -->
+                <!-- TAB NAVIGATION -->
+                <ul class="nav nav-tabs" style="margin-bottom:15px;">
+
+                    <!-- NODAL USER -->
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#examTab"
+                            style="font-size:13px; padding:6px 14px;">
+                            Examination
+                        </a>
+                    </li>
+
+                    <!-- ED USER -->
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#recTab"
+                            style="font-size:13px; padding:6px 14px;">
+                            Recommendations
+                        </a>
+                    </li>
+
+                </ul>
+
+
+                <!-- TAB CONTENT -->
+                <div class="tab-content"
+                    style="background:#fff; border:1px solid #e0e0e0; border-radius:6px; padding:10px;">
+
+                    <!-- ===================== -->
+                    <!-- EXAMINATION TAB (NODAL) -->
+                    <!-- ===================== -->
+                    <div class="tab-pane fade show active" id="examTab">
+
+                        <div style="margin-bottom:10px;">
+                            <div style="font-weight:600;">All Cases to Review</div>
+                            <div style="font-size:12px; color:#6c757d;">
+                                Follow, View and Review your Cases
+                            </div>
+                        </div>
+
+                        <div t-if="not cases"
+                            style="background:#fff3cd; padding:10px; border-radius:5px;">
+                            No cases available.
+                        </div>
+
+                        <div t-if="cases">
+                            <table style="width:100%; font-size:13px; border-collapse:collapse;">
+                                <thead style="background:#f8f9fa;">
+                                    <tr>
+                                        <th style="padding:10px;">CASE</th>
+                                        <th style="padding:10px;">STAGE</th>
+                                        <th style="padding:10px;">DIRECTORATE</th>
+                                        <th style="padding:10px;">DEPARTMENT</th>
+                                        <th style="padding:10px;">CASE AGE</th>
+                                        <th style="padding:10px;">STATUS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="cases" t-as="case">
+                                        <tr style="border-top:1px solid #eee;">
+                                            <td style="padding:10px;">
+                                                <a t-att-href="case.get_portal_url()">
+                                                    <t t-esc="case.case_ref_number" />
+                                                </a>
+                                            </td>
+                                            <td style="padding:10px;">Assigned to Directorate</td>
+                                            <td style="padding:10px;">
+                                                <t t-esc="case.directorate_id.name" />
+                                            </td>
+                                            <td style="padding:10px;">
+                                                <t t-esc="case.department_id.name" />
+                                            </td>
+                                            <td style="padding:10px;">
+                                                <t t-esc="case.case_age" />
+                                            </td>
+                                            <td style="padding:10px;">
+                                                <span
+                                                    style="background:#e6f4ea; color:#2e7d32; padding:4px 10px; border-radius:20px; font-size:12px;">
+                                                    ✔ <t t-esc="case.stage_id.name" />
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+                    <!-- ===================== -->
+                    <!-- RECOMMENDATION TAB (ED) -->
+                    <!-- ===================== -->
+                    <div class="tab-pane fade show" id="recTab">
+
+                        <div style="margin-bottom:10px;">
+                            <div style="font-weight:600;">Case Investigation</div>
+                            <div style="font-size:12px; color:#6c757d;">
+                            All cases to review
+                            </div>
+                        </div>
+
+                        <div t-if="not unique_projects"
+                            style="background:#e7f3ff; padding:10px; border-radius:5px;">
+                            No recommendations available.
+                        </div>
+
+                        <div t-if="unique_projects">
+                            <table style="width:100%; font-size:13px; border-collapse:collapse;">
+                                <thead style="background:#f8f9fa;">
+                                    <tr>
+                                        <th style="padding:10px;">Case Investigation</th>
+                                        <th style="padding:10px;">Case Id</th>
+                                        <th style="padding:10px;">Directorate</th>
+                                        <th style="padding:10px;">Department</th>
+                                        <th style="padding:10px;">Stage</th>
+                                        <th style="padding:10px;">Priority</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="unique_projects" t-as="project">
+                                        <tr style="border-top:1px solid #eee;">
+                                            <td style="padding:10px;">
+                                                <a t-att-href="project.get_portal_url()">
+                                                    <t t-esc="project.name"/>
+                                                </a>
+                                            </td>
+                                            <td style="padding:10px;">
+                                                <t t-esc="project.case_id.internal_coms_ref"/>
+                                            </td>
+                                            <td style="padding:10px;">
+                                                <t t-esc="project.directorate_id.name"/>
+                                            </td>
+                                            <td style="padding:10px;">
+                                                <t t-esc="project.department_id.name"/>
+                                            </td>
+
+                                            <td style="padding:10px;">
+                                                <span class="badge badge bg-primary p-1 fs-6">
+                                                    <t t-esc="project.stage_id.name"/>
+                                                </span>
+                                            </td>
+                                            <td style="padding:10px;">
+                                                <span t-attf-class="badge p-1 fs-6 
+                                                    #{'bg-success' if project.priority == 'low' else 
+                                                    'bg-warning' if project.priority == 'medium' else 
+                                                    'bg-danger' if project.priority == 'high' else ''}">
+                                                    <span t-field="project.priority"/>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div><!--
+                /tab-content -->
+
+            </div> <!--
+            /page wrapper -->
+        </t>
+    </template>
+
+    <!-- Recommendatin success msg -->
+    <template id="portal_success_msg" name="Submit Message" inherit_id="portal.portal_sidebar"
+          primary="True">
+        <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
+            <section class="bg-light">
+                <div class="d-flex justify-content-center align-items-center" style="height: 50vh !important;">
+                    <div class="col-md-4">
+                        <div class="card  bg-white shadow ps-3 pt-3 pb-3">
+                            <div class="text-center d-flex ps-4 pt-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="text-primary bi bi-check-circle" width="75" height="75"
+                                    fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                                    <path
+                                        d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z" />
+                                </svg>
+                                <div class="d-flex justify-content-center align-items-center text-center text-primary pt-3 ps-3">
+                                    <h3>Submission Successful</h3>
+                                </div>
+                            </div>
+                            <div class="text-center text-primary pb-2">
+                                <p class="m-0"><span t-esc="msg"></span></p>
+                            </div>
+                            <div class="text-center text-primary">
+                                <a href="/my/home"  type="button" class="btn btn-primary">
+                                    Home
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </xpath>
+    </template>
+
+
+    <!-- ============================== ED Project ========================== -->
+    <template id="ed_portal_projects" name="Project" inherit_id="portal.portal_sidebar" primary="True">
+
+        <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
+            <div class="row o_portal_case_sidebar">
+                <!-- ================= MAIN CONTENT ================= -->
+                <div class="col-12 p-4" style="border: 1px solid #cbc6c6;
+                        background: #f5f6f8;
+                        border-radius: 5px;
+                        "> 
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <div class="row">
+                        <div class="col h3"><td class="p-1"><span t-field="project_sudo.name"/></td></div> 
+                        <div class="col p-3">
+                            <div class="col o-steps ps-5 d-flex justify-content-end">
+                                <div class="badge bg-primary text-white fs-6 p-1 px-2">
+                                <span t-field="project_sudo.stage_id.name"/>
+                            </div>
+                        </div>
+                        <hr/>
+                    </div>
+
+                    <div class="row px-3">
+                        <div class="col p-3" style="background:white; border-radius:3px;">
+                            <table class="table-light w-100">
+                                <tr>
+                                    <td class="p-1"><b>Case Id : </b></td>
+                                    <td class="p-1"><span t-field="project_sudo.case_id.internal_coms_ref"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-1"><b>Case Titile : </b></td>
+                                    <td class="p-1"><span t-field="project_sudo.case_id.name"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-1"><b>Priority : </b></td>
+                                    <td class="p-1"><span t-field="project_sudo.priority"/></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="col p-3" style="background:white; border-radius:3px;">
+                            <table class="table-light w-100">
+                                <tr>
+                                    <td class="p-1"><b>Directorate: </b></td>
+                                    <td class="p-1"><span t-field="project_sudo.directorate_id.name"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-1"><b>Department: </b></td>
+                                    <td class="p-1"><span t-field="project_sudo.department_id.name"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-1"><b>Nature of Allegations : </b></td>
+                                    <td class="p-1"><span t-field="project_sudo.allegation_nature_id.name"/></td>
+                                </tr>
+                            </table>
+                        </div>                        
+                    </div>
+                    <br/>
+                    <br/>
+                    <style>
+                        .nav-tabs .nav-link {
+                            border: 1px solid transparent;
+                            color: #495057;
+                            font-weight: 500;
+                        }
+
+                        .nav-tabs .nav-link.active {
+                            background-color: #fff;
+                            border-color: #dee2e6 #dee2e6 #fff;
+                            font-weight: 600;
+                        }
+
+                        .tab-content {
+                            border: 1px solid #dee2e6;
+                            border-top: none;
+                        }
+                    </style>
+
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link active fs-5"
+                            id="recommendation-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#recommendation"
+                            role="tab"
+                            href="#">
+                                Recommendation
+                            </a>
+                        </li>
+
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link fs-5"
+                            id="exhibit-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#exhibit"
+                            role="tab"
+                            href="#">
+                                Exhibits
+                            </a>
+                        </li>
+
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link fs-5"
+                            id="annexure-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#annexure"
+                            role="tab"
+                            href="#">
+                                Annexure
+                            </a>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content border border-top-0 p-3 bg-white">
+                        <div class="tab-pane fade show active" id="recommendation" role="tabpanel">
+                           <table style="width:100%; font-size:13px; border-collapse:collapse;">
+                                <thead style="background:#f8f9fa;">
+                                    <tr>
+                                        <td class="p-1"><b>Name </b></td>
+                                        <th style="padding:10px; width:20%">Category</th>
+                                        <th style="padding:10px;">Description</th>
+                                        <th style="padding:10px; width:10%">Recom. Status</th>
+                                        <th style="padding:10px; width:10%">Action Status</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="recom_cases" t-as="case">
+                                        <tr style="padding:10px;">
+                                            <td class="p-1"><span t-field="case.name"/></td>
+                                            <td style="padding:10px;">
+                                                <a t-att-href="case.get_portal_url()">
+                                                   <t t-esc="case.category_id.name" />
+                                                </a>
+                                            </td>
+                                           
+                                            <td style="padding:10px;">
+                                                <t t-esc="case.category_description"/>
+                                            </td>
+
+                                            <td style="padding:10px;">
+                                                <span t-att-class="
+                                                    'badge ' + 
+                                                    ('bg-secondary' if case.status == 'draft' else
+                                                    'bg-warning' if case.status == 'in_progress' else
+                                                    'bg-success' if case.status == 'completed' else
+                                                    'bg-light')">
+                                                    <t t-esc="case.status"/>
+                                                </span>
+                                            </td>
+                                            <td style="padding:10px;">
+                                                <t t-foreach="case.ed_action_line_ids" t-as="recom_action">
+                                                    <t t-if="recom_action.user_id.id == uid and recom_action.action == 'action'">
+                                                        <div class="d-inline-block">
+                                                            <div t-att-class="
+                                                                    'fw-bold text-center bg-white border ' +
+                                                                    (
+                                                                        'text-success border-success' if recom_action.status == 'completed'
+                                                                        else 'text-warning border-warning' if recom_action.status == 'disputed'
+                                                                        else 'text-secondary border-secondary'
+                                                                    )
+                                                                "
+                                                                style="border-radius:12px; min-width:91px;">
+                                                                <span t-field="recom_action.status"/>
+                                                            </div>
+                                                        </div>
+                                                    </t>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Exhibits -->
+                        <div class="tab-pane fade" id="exhibit" role="tabpanel">
+                            <div class="row py-3" style="background: white;border-radius: 3px;">
+                                <table style="width:100%; font-size:13px; border-collapse:collapse;">
+                                    <thead style="background:#f8f9fa;">
+                                        <tr>
+                                            <th style="padding:10px;">Item Title</th>
+                                            <th style="padding:10px;">Item Category</th>
+                                            <th style="padding:10px;">Quantity</th>
+                                            <th style="padding:10px;">UOM</th>
+                                            <th style="padding:10px;">Recovery Location</th>
+                                            <th style="padding:10px;">Storage Location</th>
+                                            <th style="padding:10px;">Status</th>
+                                            <th style="padding:10px;width: 20%;">Attachment</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="project_sudo.physical_item_ids" t-as="exhibit">
+                                            <t t-if="exhibit.is_exhibit">
+                                                <tr style="border-top:1px solid #eee; cursor:pointer;"
+                                                    data-bs-toggle="modal"
+                                                    t-att-data-bs-target="'#exhibitModal_%s' % exhibit.id">
+                                                    <td style="padding:10px;"><span t-field="exhibit.item_title"/></td>
+                                                    <td style="padding:10px;"><span t-field="exhibit.item_category"/></td>
+                                                    <td style="padding:10px;"><span t-field="exhibit.quantity"/></td>
+                                                    <td style="padding:10px;"><span t-field="exhibit.uom_id.name"/></td>
+                                                    <td style="padding:10px;"><span t-field="exhibit.recovery_location"/></td>
+                                                    <td style="padding:10px;"><span t-field="exhibit.storage_location"/></td>
+                                                    <td style="padding:10px;"><span t-field="exhibit.status"/></td>
+                                                    <td style="padding:10px;">
+                                                        <div class="row">
+                                                            <t t-foreach="exhibit.attachment_ids" t-as="att">
+                                                                <div class="col-12">
+                                                                    <a t-att-href="'/web/content/%s?download=true' % att.id" class="btn btn-sm btn-link w-100">
+                                                                        <div class="row border border-primary bg-light w-100">
+                                                                            <div class="col-2 py-2">
+                                                                                    <i class="fa fa-file fa-2x"/> 
+                                                                            </div>
+                                                                            <div class="col pt-1 text-start">
+                                                                                <!-- filename -->
+                                                                                <div style="font-size:10px; word-break: break-all;">
+                                                                                    <t t-esc="att.name"/>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </a>
+                                                                
+                                                                </div>
+                                                            </t>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                                <!-- Modal -->
+                                                <div class="modal fade"  t-att-id="'exhibitModal_%s' % exhibit.id" tabindex="-1">
+
+                                                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">
+                                                                    Exhibits : <span t-field="exhibit.item_title"/>
+                                                                </h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal"/>
+                                                            </div>
+
+                                                            <div class="modal-body">
+                                                                <div class="row ps-3">
+                                                                    <div class="col-3 p-1 fw-bolder">Item Title</div>
+                                                                    <div class="col-3 p-1"><span t-field="exhibit.item_title"/></div>
+                                                                    <div class="col-3 p-1 fw-bolder">Recovery Location</div>
+                                                                    <div class="col-3 p-1"><span t-field="exhibit.recovery_location"/></div>
+                                                                    <div class="col-3 p-1 fw-bolder">Item Category</div>
+                                                                    <div class="col-3 p-1"><span t-field="exhibit.item_category"/></div>
+                                                                    <div class="col-3 p-1 fw-bolder">Associated With</div>
+                                                                    <div class="col-3 p-1"><span t-field="exhibit.associated_with"/></div>
+                                                                    <div class="col-3 p-1 fw-bolder">Quantity</div>
+                                                                    <div class="col-3 p-1"><span t-field="exhibit.quantity"/></div>
+                                                                    <div class="col-3 p-1 fw-bolder">Storage Location</div>
+                                                                    <div class="col-3 p-1"><span t-field="exhibit.recovery_location"/></div>
+                                                                    <div class="col-3 p-1 fw-bolder">Unit of Measure</div>
+                                                                    <div class="col-3 p-1"><span t-field="exhibit.uom_id.name"/></div>
+                                                                    <div class="col-3 p-1 fw-bolder">Current Custodian</div>
+                                                                    <div class="col-3 p-1"><span t-field="exhibit.current_custodian.name"/></div>
+                                                                    <div class="col-3 p-1 fw-bolder">Source</div>
+                                                                    <div class="col-3 p-1"><span t-field="exhibit.source"/></div>
+                                                                    <div class="col-3 p-1 fw-bolder">Status</div>
+                                                                    <div class="col-3 p-1"><span t-field="exhibit.status"/></div>
+                                                                    <div class="col-3 p-1 fw-bolder">Last Movement Date</div>
+                                                                    <div class="col-3 p-1"><span t-field="exhibit.last_movement_date"/></div>
+                                                                    <div class="col-3 p-1 fw-bolder">Date &amp; Time Received</div>
+                                                                    <div class="col-3 p-1"><span t-field="exhibit.create_date"/></div>
+                                                                </div>
+                                                                <div class="row ps-3 pt-1">
+                                                                    <div class="col-3 p-1 fw-bolder">Attachment</div>
+                                                                    <t t-foreach="exhibit.attachment_ids" t-as="att">
+                                                                        <div class="col-3 p-1">
+                                                                            <div class="col-12">
+                                                                                <a t-att-href="'/web/content/%s?download=true' % att.id" class="btn btn-sm btn-link w-100">
+                                                                                    <div class="row border border-primary bg-light w-100">
+                                                                                        <div class="col-2 py-2">
+                                                                                                <i class="fa fa-file fa-2x"/> 
+                                                                                        </div>
+                                                                                        <div class="col pt-1 text-start">
+                                                                                            <!-- filename -->
+                                                                                            <div style="font-size:10px; word-break: break-all;">
+                                                                                                <t t-esc="att.name"/>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </a>
+                                                                            </div>
+                                                                        </div>
+                                                                    </t>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="modal-footer justify-content-start">
+                                                                <button type="button"
+                                                                        class="btn btn-primary text-white"
+                                                                        data-bs-dismiss="modal">
+                                                                    Close
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                            <!-- Annexure -->
+                        <div class="tab-pane fade" id="annexure" role="tabpanel">
+                            <div class="row py-3" style="background: white;border-radius: 3px;">
+                                <table style="width:100%; font-size:13px; border-collapse:collapse;">
+                                    <thead style="background:#f8f9fa;">
+                                        <tr>
+                                            <th style="padding:10px;">Sr No.</th>
+                                            <th style="padding:10px;">Description</th>
+                                            <th style="padding:10px;">Document Type</th>
+                                            <th style="padding:10px; width:20%">File</th>
+                                            <th style="padding:10px;">Uploaded By</th>
+                                            <th style="padding:10px;">Uploaded Date</th>
+                                            <th style="padding:10px;">Document Stores</th>
+                                            <th style="padding:10px;">Document Store Location</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="project_sudo.document_line_ids" t-as="annexure">
+                                            <t t-if="annexure.is_annexure">
+
+                                                <tr style="border-top:1px solid #eee; cursor:pointer;"
+                                                    data-bs-toggle="modal"
+                                                    t-att-data-bs-target="'#annexureModal_%s' % annexure.id">
+                                                    <td style="padding:10px;"><span t-field="annexure.serial_no" /></td>
+                                                    <td style="padding:10px;"><span t-field="annexure.description"/></td>
+                                                    <td style="padding:10px;"><span t-field="annexure.document_type_id.name"/></td>
+                                                    <td style="padding:10px;">
+                                                        <div class="col-12">
+                                                            <a t-if="annexure.file" t-att-href="'/web/content/%s/file?download=true' % annexure.id" class="btn btn-sm btn-link w-100">
+                                                                <div class="row border border-primary bg-light w-100">
+                                                                    <div class="col-2 py-2"><i class="fa fa-file fa-2x"/> </div>
+                                                                    <div class="col pt-1 text-start">
+                                                                        <div style="font-size:10px; word-break: break-all;">
+                                                                            <span t-field="annexure.file_name"/>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </a>
+                                                        </div>
+                                                    </td>
+                                                    <td style="padding:10px;"><span t-field="annexure.uploaded_by.name"/></td>
+                                                    <td style="padding:10px;"><span t-field="annexure.uploaded_date"/></td>
+                                                    <td style="padding:10px;"><span t-field="annexure.document_stores"/></td>
+                                                    <td style="padding:10px;"><span t-field="annexure.document_stores_location"/></td>
+                                                </tr>
+
+                                                <!-- Modal -->
+                                                <div class="modal fade" t-att-id="'annexureModal_%s' % annexure.id" tabindex="-1">
+
+                                                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                                                        <div class="modal-content">
+
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">
+                                                                    Annexure : <span t-field="annexure.serial_no"/>
+                                                                </h5>
+                                                                <button type="button" class="btn-close"
+                                                                        data-bs-dismiss="modal"/>
+                                                            </div>
+
+                                                            <div class="modal-body">
+                                                                <div class="row ps-3">
+                                                                    <div class="col-3 p-1 fw-bolder">Serial No.</div>
+                                                                    <div class="col-3 p-1"><span t-field="annexure.serial_no"/></div>
+                                                                    <div class="col-3 p-1 fw-bolder">Description</div>
+                                                                    <div class="col-3 p-1"><span t-field="annexure.description"/></div>
+                                                                    <div class="col-3 p-1 fw-bolder">Document Type</div>
+                                                                    <div class="col-3 p-1"><span t-field="annexure.document_type_id.name"/></div>
+                                                                    <div class="col-3 p-1 fw-bolder">Obtained By</div>
+                                                                    <div class="col-3 p-1"><span t-field="annexure.obtained_by"/></div>
+                                                                    <div class="col-3 p-1 fw-bolder">Obtained From</div>
+                                                                    <div class="col-3 p-1"><span t-field="annexure.obtained_from.name"/></div>
+                                                                    <div class="col-3 p-1 fw-bolder">Obtained Date</div>
+                                                                    <div class="col-3 p-1"><span t-field="annexure.obtained_from"/></div>
+                                                                    <div class="col-3 p-1 fw-bolder">Document Stores</div>
+                                                                    <div class="col-3 p-1"><span t-field="annexure.document_stores"/></div>
+                                                                    <div class="col-3 p-1 fw-bolder">Document Stores Location</div>
+                                                                    <div class="col-3 p-1"><span t-field="annexure.document_stores_location"/></div>
+                                                                    <div class="col-3 p-1 fw-bolder">Uploaded By</div>
+                                                                    <div class="col-3 p-1"><span t-field="annexure.uploaded_by.name"/></div>
+                                                                    <div class="col-3 p-1 fw-bolder">Uploaded Date</div>
+                                                                    <div class="col-3 p-1"><span t-field="annexure.uploaded_date"/></div>
+                                                                </div>
+                                                                <div class="row pt-1 ps-3">
+                                                                    <div class="col-3 p-1 fw-bolder">Attachment</div>
+                                                                        <div class="col-3 p-1">
+                                                                            <div class="col-12">
+                                                                                <a t-att-href="'/web/content/%s?download=true' % annexure.id" class="btn btn-sm btn-link w-100">
+                                                                                    <div class="row border border-primary bg-light w-100">
+                                                                                        <div class="col-2 py-2">
+                                                                                                <i class="fa fa-file fa-2x"/> 
+                                                                                        </div>
+                                                                                        <div class="col pt-1 text-start">
+                                                                                            <!-- filename -->
+                                                                                            <div style="font-size:10px; word-break: break-all;">
+                                                                                                <span t-field="annexure.file_name"/>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </a>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer justify-content-start">
+                                                                    <button type="button"
+                                                                            class="btn btn-primary text-white"
+                                                                            data-bs-dismiss="modal">
+                                                                        Close
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                            </t>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div id="case_record_communication">
+                        <h3>Communication history</h3>
+                        <t t-call="portal.message_thread"/>
+                    </div>
+
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+
+                            const field = document.getElementById("updateRemarkField");
+                            const btn = document.getElementById("updateBtn");
+
+                            if (!field || !btn) return;
+
+                            function toggle() {
+                                btn.disabled = field.value.trim() === "";
+                            }
+
+                            field.addEventListener("input", toggle);
+
+                        });
+
+
+                    </script>
+                </div>               
+            </div>
+            </div>
+        </xpath>
+    </template>
+
+    <!-- =============== MY Recommendation ==================== -->
+    <template id="investigation_recommendation_form_view"
+          name="Investigation Recommendation Portal View"
+          inherit_id="portal.portal_sidebar"
+          primary="True">
+
+        <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
+            <div class="row o_portal_case_sidebar">
+                <!-- ================= MAIN CONTENT ================= -->
+                <div class="col-12 p-4" style="border: 1px solid #cbc6c6;
+                        background: #f5f6f8;
+                        border-radius: 5px;
+                        "> 
+                    <form t-att-action="'/my/recommendations/%s' % recommendation_sudo.id" method="POST" novalidate="1" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <t t-foreach="recommendation_sudo.ed_action_line_ids" t-as="recom_action">
+                            <t t-if="recom_action.user_id.id == uid">
+                                <div class="row">
+                                    <div class="col h3">Recommendation - <span t-field="recommendation_sudo.name"/></div> 
+                                        <div class="row p-3">
+                                            <div class="col d-flex justify-content-start gap-3">
+                                                <div>
+                                                    <t t-if="recom_action.status == 'pending' and recom_action.action == 'action'">
+                                                        <button type="button"
+                                                            class="btn btn-primary fw-bold"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#sendForFeedbackReview"
+                                                            name="action">
+                                                                Submit Feedback
+                                                        </button>
+                                                    </t>
+                                                </div>
+                                            </div>
+
+                                            <t t-if="recom_action.action == 'action'">
+                                                <div class="col o-steps ps-5 d-flex justify-content-end">
+                                                    <div t-att-class="
+                                                            'border w-25 fw-bold text-center bg-white ' +
+                                                            (
+                                                                'text-success border-success' if recom_action.status == 'completed'
+                                                                else 'text-warning border-warning' if recom_action.status == 'disputed'
+                                                                else 'text-secondary border-secondary'
+                                                            )
+                                                        "
+                                                        style="border-radius:12px; height:1.5rem;">
+                                                        <span t-field="recom_action.status"/>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    <hr/>
+                                </div>
+                            </t>
+                        </t>
+
+                        <div class="row px-3">
+                            <div class="col p-3" style="background:white; border-radius:3px;">
+                                <table class="table-light w-100">
+                                    <tr>
+                                        <td class="p-1"><b>Category : </b></td>
+                                        <td class="p-1"><span t-field="recommendation_sudo.category_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-1 align-top" style="width:6rem;"><b>Description : </b></td>
+                                        <td class="p-1"><span t-field="recommendation_sudo.category_description"/></td>
+                                    </tr>
+                                    
+                                </table>
+                            </div>
+
+                            <div class="col p-3" style="background:white; border-radius:3px;">
+                                <table class="table-light w-100">
+                                    <tr>
+                                        <td class="p-1"><b>Investigantion Id: </b></td>
+                                        <td class="p-1"><span t-field="recommendation_sudo.project_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-1"><b>Case Id: </b></td>
+                                        <td class="p-1"><span t-field="recommendation_sudo.case_id.internal_coms_ref"/></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="p-1"><b>Assign By : </b></td>
+                                        <td class="p-1"><span t-field="recommendation_sudo.assign_by.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-1" style="width:21%"><b>Assignment Date : </b></td>
+                                        <td class="p-1"><span t-field="recommendation_sudo.assignment_date"/></td>
+                                    </tr>
+
+                                </table>
+                            </div>                        
+                        </div>
+                        <br/>
+                        <br/>
+                        <style>
+                            .nav-tabs .nav-link {
+                                border: 1px solid transparent;
+                                color: #495057;
+                                font-weight: 500;
+                            }
+
+                            .nav-tabs .nav-link.active {
+                                background-color: #fff;
+                                border-color: #dee2e6 #dee2e6 #fff;
+                                font-weight: 600;
+                            }
+
+                            .tab-content {
+                                border: 1px solid #dee2e6;
+                                border-top: none;
+                            }
+                        </style>
+
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link active fs-5"
+                                id="feedback-tab"
+                                data-bs-toggle="tab"
+                                data-bs-target="#feedback"
+                                role="tab"
+                                href="#">
+                                    Feedback Review
+                                </a>
+                            </li>
+                        </ul>
+                        
+                        <div class="tab-content border border-top-0 p-3 bg-white">
+                            <div class="tab-pane fade show active" id="feedback" role="tabpanel">
+                                <t t-foreach="recommendation_sudo.ed_action_line_ids" t-as="recom_action">
+                                    <t t-if="recom_action.user_id.id == uid">
+                                        <div class="py-3 ps-2" style="background: white;border-radius: 3px;">
+                                            <div class=""><p><b>Action Date : </b> <span t-field="recom_action.action_date"/></p></div>
+                                            <div class=""><p><b>Action By : </b> <span t-field="recom_action.user_id.name"/></p></div>
+                                            <div class=""><p><b>Remarks : </b> <span t-field="recom_action.remark"/></p></div>
+                                            <div class="d-flex flex-wrap">
+                                                <b>Attachments: &#160;&#160;</b>
+                                                <div class="row w-100">
+                                                    <t t-foreach="recom_action.attachment_ids" t-as="att">
+                                                        <div class="col-3">
+                                                            <a t-att-href="'/web/content/%s?download=true' % att.id" class="btn btn-sm btn-link w-100">
+                                                                <div class="row border border-primary bg-light w-100">
+                                                                    <div class="col-2 py-2">
+                                                                        <i class="fa fa-file fa-3x"/> 
+                                                                    </div>
+                                                                    <div class="col pt-2 text-start">
+                                                                        <div style="font-size:12px; word-break: break-all;">
+                                                                            <t t-esc="att.name"/>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </a>
+                                                        </div>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </t>
+                            </div>
+                        </div>
+                        <hr/>
+                        <div id="case_record_communication">
+                            <h3>Communication history</h3>
+                            <t t-call="portal.message_thread"/>
+                        </div>
+
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function () {
+
+                                const field = document.getElementById("updateRemarkField");
+                                const attachment = document.getElementById("attachmentInput");
+                                const status = document.querySelector('select[name="status"]');
+                                const btn = document.getElementById("updateBtn");
+
+                                if (!field || !attachment || !status || !btn) return;
+
+                                function toggle() {
+                                    const hasRemark = field.value.trim() !== "";
+                                    const hasAttachment = attachment.files.length > 0;
+                                    const hasStatus = status.value.trim() !== "";
+
+                                    // Enable button only when all 3 fields are filled
+                                    btn.disabled = !(hasRemark &amp;&amp; hasAttachment &amp;&amp; hasStatus);
+                                }
+
+                                field.addEventListener("input", toggle);
+                                attachment.addEventListener("change", toggle);
+                                status.addEventListener("change", toggle);
+
+                                // Initial check on page load
+                                toggle();
+                            });
+                        </script>
+
+                        <!-- Model for tor Send for update -->
+                        <div class="modal fade" id="sendForFeedbackReview" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <!-- Header -->
+                                    <t t-if="recommendation_sudo.status == 'in_progress'">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Submit Feedback</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>                                    
+                                    </t>
+
+                                    <!-- Body -->
+                                    <div class="modal-body">
+                                        <label class="form-label fw-bold">Enter Remark</label>
+                                        <br/>
+                                        <small class="text-danger">Please enter remark before proceeding.</small>
+                                        <textarea id="updateRemarkField"
+                                                class="form-control"
+                                                name="remarks"
+                                                rows="4"
+                                                placeholder="Write your remark here..."></textarea>
+
+                                        <div class="mb-3 pt-3">
+                                            <div class="mb-3">
+                                                <label class="pb-2"><b>Upload Attachments</b></label>
+                                                <br/>
+                                                <small class="text-danger">Please upload attachment before proceeding.</small>
+
+                                                <input type="file"
+                                                    id="attachmentInput"
+                                                    name="attachment_ids"
+                                                    multiple="mutiple"
+                                                    class="form-control"/>
+
+                                                <div id="selectedFiles" class="mt-2"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3 pt-3">
+                                            <select class="form-select" aria-label="Default select example" name="status">
+                                                <option value="disputed">Disputed</option>
+                                                <option value="completed">Completed</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Footer -->
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary"
+                                                data-bs-dismiss="modal">
+                                            Cancel
+                                        </button>
+
+                                        <button id="updateBtn" name="action" type="submit" class="btn btn-primary" value="submit_feedback" disabled="1">
+                                            Submit Feedback
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>               
+            </div>
+        </xpath>
+    </template>
+
+
+
+
+
+    <template id="portal_case_detail" name="Portal Case Detail">
+        <t t-call="portal.portal_layout">
+
+            <div class="o_portal_wrap">
+                <div role="dialog" class="modal fade" id="modalaccept"
+                    name="case_modal_sign_and_pay">
+                    <div class="modal-dialog">
+                        <form id="accept" method="POST" t-att-data-order-id="case_record.id"
+                            t-att-data-token="case_record.access_token"
+                            class="js_accept_json modal-content js_website_submit_form">
+                            <input type="hidden" name="csrf_token"
+                                t-att-value="request.csrf_token()" />
+                            <header class="modal-header">
+                                <h4 class="modal-title">Validate Case</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </header>
+                            <main class="modal-body" id="sign-dialog">
+                                <span> By signing, you confirm acceptance on behalf of <b
+                                        t-esc="request.env.user.partner_id.name" /> for the <b
+                                        data-id="case_reference"
+                                        t-field="case_record.case_ref_number" /> case. </span>
+                                <t t-call="portal.signature_form">
+                                    <t t-set="call_url"
+                                        t-value="case_record.get_portal_url(suffix='/accept')" />
+                                    <!-- <t t-set="default_name" t-value="partner.name or
+                                    partner.commercial_partner_id.name"/> -->
+                                </t>
+                            </main>
+                        </form>
+                    </div>
+                </div>
+                <!-- modal relative to the action reject -->
+                <div role="dialog" class="modal fade" id="modaldecline">
+                    <div class="modal-dialog">
+                        <form id="decline" method="POST"
+                            t-attf-action="/my/cases/#{case_record.id}/decline?access_token=#{case_record.access_token}"
+                            class="modal-content">
+                            <input type="hidden" name="csrf_token"
+                                t-att-value="request.csrf_token()" />
+                            <header class="modal-header">
+                                <h4 class="modal-title">Reject This Case</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </header>
+                            <main class="modal-body">
+                                <p>
+                                    Tell us why you are refusing this case, this will help us
+                                    improve our services.
+                                </p>
+                                <textarea rows="4" name="decline_message" required=""
+                                    placeholder="Your feedback..." class="form-control" />
+                            </main>
+                            <footer class="modal-footer">
+                                <button type="submit" t-att-id="case_record.id"
+                                    class="btn btn-danger">
+                                    <i class="fa fa-times"></i> Reject </button>
+                                <button type="button" class="btn btn-primary"
+                                    data-bs-dismiss="modal">
+                                    Cancel
+                                </button>
+                            </footer>
+                        </form>
+                    </div>
+                </div>
+
+                <div t-if="request.params.get('message') == 'sign_ok'"
+                    class="alert alert-success alert-dismissible d-print-none" role="status">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                        aria-label="Close"></button>
+                        <strong>Thank You!</strong><br /> Your case has
+                    been authorised. </div>
+                <div t-if="case_record.stage_id.name == 'Rejected'"
+                    class="alert alert-danger alert-dismissible d-print-none" role="alert">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                        aria-label="close"></button>
+                    <strong>This case has been rejected.</strong>
+                    <a role="button" href="#discussion"><i class="fa fa-comment" /> Contact us to
+                        get a new quotation.</a>
+                </div>
+
+                <div class="container shadow-box mb-2"
+                    style="box-shadow: 0 4px 8px rgba(0,0,0,0.2); padding: 20px; border-radius: 8px; background-color: #fff;">
+
+                    <!-- Title -->
+                    <h2 class="mt-3">
+                        <t t-out="case_record.case_ref_number" />
+                    </h2>
+
+                    <!-- HTML content -->
+                    <div class="mt-4">
+                        <t t-out="case_record.auth_html_content" />
+                    </div>
+
+
+                </div>
+
+                <div
+                    t-if="case_record.stage_id.name != 'Authorized' and case_record.stage_id.name != 'Rejected'"
+                    class="d-flex justify-content-center gap-1 d-print-none"
+                    name="assignment_type_actions">
+
+                    <div class="col-sm-auto mt8">
+                        <a role="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#modalaccept" href="#"><i class="fa fa-check" /> Accept
+                            &amp; Sign</a>
+                    </div>
+
+                    <div class="col-sm-auto mt8">
+                        <a role="button" class="btn btn-danger" data-bs-toggle="modal"
+                            data-bs-target="#modaldecline" href="#">
+                            <i class="fa fa-times" /> Reject</a>
+                    </div>
+
+                </div>
+                <hr />
+            </div>
+        </t>
+    </template>
+
+    <template id="case_record_portal_template"
+        name="Case Record Portal View"
+        inherit_id="portal.portal_sidebar"
+        primary="True">
+
+        <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
+
+            <div class="row o_portal_case_sidebar">
+                <!-- ================= SIDEBAR ================= -->
+                <t t-call="portal.portal_record_sidebar">
+                    <t t-set="classes" t-value="'col-lg-4 col-xxl-3 d-print-none'" />
+
+                    <t t-set="title">
+                        <h4 class="mb-0 text-break"> Case Ref:<br></br>
+                            <span
+                                style="color: rgb(203, 174, 238);"
+                                t-field="case_record.case_ref_number" />
+                        </h4>
+                    </t>
+
+                    <t t-set="entries">
+                        <div class="d-flex flex-column gap-3 mt-3">
+
+                            <!-- Case Status -->
+                            <div>
+                                <small class="text-muted">Case Status</small>
+                                <br></br>
+                                <span
+                                    t-att-class="
+                                    'badge ' +
+                                    ('bg-success' if case_record.stage_id.name == 'Authorized' else 'bg-secondary')
+                                ">
+                                    <t t-esc="'Active'" />
+                                </span>
+                            </div>
+
+                            <!-- Authorization -->
+                            <div>
+                                <small class="text-muted">Authorization</small>
+                                <br />
+                                <span t-if="case_record" class="badge bg-success">
+                                    Authorized
+                                </span>
+                                <span t-else="" class="badge bg-danger">
+                                    Unauthorized
+                                </span>
+                            </div>
+
+                        </div>
+                    </t>
+                </t>
+
+                <!-- ================= MAIN CONTENT ================= -->
+                <!-- ================= MAIN CONTENT ================= -->
+                <div class="col-12 col-lg-8 col-xxl-9 mt-4 mt-lg-0">
+
+                    <div class="accordion" id="caseAccordion">
+
+                        <!-- ================= SUMMARY CARD ================= -->
+                        <div class="accordion-item"
+                            style="border-radius: 0.375rem; border: 1px solid #d7dbdf; margin-bottom: 0.5rem; background: #f7f9fc;">
+                            <h2 class="accordion-header" id="headingSummary">
+                                <button class="accordion-button" type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#collapseSummary" aria-expanded="true"
+                                    aria-controls="collapseSummary">
+                                    Schedule of Complains
+                                </button>
+                            </h2>
+                            <div id="collapseSummary" class="accordion-collapse collapse show"
+                                aria-labelledby="headingSummary" data-bs-parent="#caseAccordion">
+                                <div class="accordion-body" style="background: #fff9f9;">
+
+                                    <div
+                                        class="alert alert-warning border-start border-4 border-danger mb-4">
+                                        <strong class="text-danger d-block mb-1">
+                                            <i class="fa fa-user-secret me-1" /> Subject (Title) </strong>
+                                        <p class="mb-0 fw-semibold fs-6"
+                                            t-field="case_record.parent_case_id.name" />
+                                    </div>
+
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <strong>Case Ref Number</strong>
+                                            <p
+                                                t-field="case_record.case_ref_number" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <strong>Case Ref Number</strong>
+                                            <p
+                                                t-field="case_record.assignment_type_id.name" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <strong>Source of Complaint</strong>
+                                            <p
+                                                t-field="case_record.parent_case_id.allegation_source_id.name" />
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <strong>External / Hotline Ref</strong>
+                                            <p t-field="case_record.parent_case_ref" />
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <strong>Date Reported to Forensic Services</strong>
+                                            <p t-field="case_record.reporting_date" />
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <strong>Nature of Complaint</strong>
+                                            <p t-field="case_record.allegation_nature_id.name" />
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <strong>Department</strong>
+                                            <p t-field="case_record.department_id.name" />
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <strong>Directorate</strong>
+                                            <p t-field="case_record.directorate_id.name" />
+                                        </div>
+                                        <div class="col-md-12">
+                                            <strong>Comment</strong>
+                                            <p t-field="case_record.parent_case_id.review_note" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- =================  Authorisation Letters ================= -->
+                        <div class="accordion-item"
+                            style="border-radius: 0.375rem; border: 1px solid #d7dbdf; margin-bottom: 0.5rem; background: #f7f9fc;">
+                            <h2 class="accordion-header" id="headingLetters">
+                                <button class="accordion-button collapsed" type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#collapseLetters" aria-expanded="false"
+                                    aria-controls="collapseLetters">
+                                    Authorisation Letters
+                                </button>
+                            </h2>
+                            <div id="collapseLetters" class="accordion-collapse collapse"
+                                aria-labelledby="headingLetters" data-bs-parent="#caseAccordion">
+                                <div class="accordion-body" style="background: #fff9f9;">
+
+                                    <div class="attachments_and_desc g-3 mb-3">
+                                        <t t-if="attachments">
+                                            <strong class="d-block mb-2">Authorisation Letter list</strong>
+                                            <div class="d-flex flex-wrap gap-5">
+                                                <t t-foreach="attachments" t-as="attachment">
+                                                    <div
+                                                        class="d-flex align-items-center border rounded p-2 bg-light">
+                                                        <!-- File Icon -->
+                                                        <i class="fa fa-file-pdf-o text-danger me-2"
+                                                            t-if="attachment.mimetype == 'application/pdf'" />
+                                                        <i class="fa fa-file-o text-secondary me-2"
+                                                            t-else="" />
+                                                        <!-- Filename -->
+                                                        <span class="me-2 text-truncate"
+                                                            style="max-width: 220px;"
+                                                            t-esc="attachment.name" />
+                                                        <!-- Download -->
+                                                        <a
+                                                            t-attf-href="{{attachment.get_base_url()}}/web/content/{{attachment.id}}?access_token={{attachment.access_token}}&amp;download=true"
+                                                            t-on-click.stop=""
+                                                            class="btn btn-sm btn-outline-secondary"
+                                                            title="Download">
+                                                            <i class="fa fa-download" />
+                                                        </a>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </t>
+                                        <t t-else="">
+                                            <em class="text-muted">No attachments available.</em>
+                                        </t>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <!--===================Documents==================== -->
+
+                        <div class="accordion-item"
+                            style="border-radius: 0.375rem; border: 1px solid #d7dbdf; margin-bottom: 0.5rem; background: #f7f9fc;">
+                            <h2 class="accordion-header" id="headingLetters">
+                                <button class="accordion-button collapsed" type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#collapseDocuments" aria-expanded="false"
+                                    aria-controls="collapseDocuments">
+                                    Documents
+                                </button>
+                            </h2>
+                            <div id="collapseDocuments" class="accordion-collapse collapse"
+                                aria-labelledby="headingLetters" data-bs-parent="#caseAccordion">
+                                <div class="accordion-body" style="background: #fff9f9;">
+                                    <div class="documents_and_desc g-3 mb-3">
+
+                                        <!-- Header Row -->
+                                        <div
+                                            class="d-flex justify-content-between align-items-center mb-2">
+                                            <strong>Documents list</strong>
+
+                                            <button class="btn btn-outline-secondary btn-sm"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#documentUploadForm"
+                                                style="color: blue; padding: 6px; font-size: 14px;">
+                                                + Add Document
+                                            </button>
+                                        </div>
+
+                                        <!-- Documents -->
+                                        <t t-if="documents">
+                                            <div class="d-flex flex-wrap gap-3">
+                                                <t t-foreach="documents" t-as="doc">
+                                                    <div class="border rounded p-3 bg-light">
+
+                                                        <!-- Title -->
+                                                        <strong> Type: <t
+                                                                t-esc="doc.document_type_id.name or 'Document'" />
+                                                        </strong>
+
+                                                        <!-- Meta Info -->
+                                                        <div class="text-muted small"> Uploaded by: <t
+                                                                t-esc="doc.uploaded_by.name" />
+                                                        </div>
+
+                                                        <div class="text-muted small"> Date: <t
+                                                                t-esc="doc.uploaded_date" />
+                                                        </div>
+
+                                                        <!-- File -->
+                                                        <div class="mt-2 d-flex align-items-center">
+                                                            <i class="fa fa-file me-2" />
+
+                                                            <span class="me-2 text-truncate"
+                                                                style="max-width: 220px;">
+                                                                <t t-esc="doc.file_name" />
+                                                            </span>
+
+                                                            <a
+                                                                t-att-href="'/web/content/forensic.document.line/%s/file?download=1' % doc.id"
+                                                                class="btn btn-sm btn-outline-secondary">
+                                                                <i class="fa fa-download" />
+                                                            </a>
+                                                        </div>
+
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </t>
+
+                                        <t t-else="">
+                                            <em class="text-muted">No documents available.</em>
+                                        </t>
+
+                                        <!-- Collapsible Upload Form -->
+                                        <div id="documentUploadForm" class="collapse mt-3">
+
+                                            <div class="card card-body bg-light">
+
+                                                <form action="/my/upload_document" method="post"
+                                                    enctype="multipart/form-data">
+                                                    <input type="hidden" name="csrf_token"
+                                                        t-att-value="request.csrf_token()" />
+                                                    <input type="hidden" name="case_id"
+                                                        t-att-value="case_record.id" />
+
+                                                    <div class="mb-2">
+                                                        <label>Document Type</label>
+                                                        <select name="document_type_id"
+                                                            class="form-control" required="1">
+                                                            <t t-foreach="document_types"
+                                                                t-as="dtype">
+                                                                <option t-att-value="dtype.id">
+                                                                    <t t-esc="dtype.name" />
+                                                                </option>
+                                                            </t>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="mb-2">
+                                                        <label>Upload File</label>
+                                                        <input type="file" name="file"
+                                                            class="form-control" required="1" />
+                                                    </div>
+
+                                                    <div class="d-flex gap-2">
+                                                        <button type="submit"
+                                                            class="btn btn-primary btn-sm">
+                                                            Upload
+                                                        </button>
+
+                                                        <button type="button"
+                                                            class="btn btn-secondary btn-sm"
+                                                            data-bs-toggle="collapse"
+                                                            data-bs-target="#documentUploadForm">
+                                                            Cancel
+                                                        </button>
+                                                    </div>
+
+                                                </form>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--========================Evidence================== -->
+                        <div class="accordion-item"
+                            style="border-radius: 0.375rem; border: 1px solid #d7dbdf; margin-bottom: 0.5rem; background: #f7f9fc;">
+
+                            <h2 class="accordion-header" id="headingEvidence">
+                                <button class="accordion-button collapsed" type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#collapseEvidence"
+                                    aria-expanded="false"
+                                    aria-controls="collapseEvidence">
+                                    Evidence
+                                </button>
+                            </h2>
+
+                            <div id="collapseEvidence" class="accordion-collapse collapse"
+                                aria-labelledby="headingEvidence" data-bs-parent="#caseAccordion">
+
+                                <div class="accordion-body" style="background: #fff9f9;">
+
+                                    <div class="documents_and_desc g-3 mb-3">
+
+                                        <!-- Header -->
+                                        <div
+                                            class="d-flex justify-content-between align-items-center mb-2">
+                                            <strong>Evidence list</strong>
+
+                                            <button class="btn btn-outline-secondary btn-sm"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#evidenceForm"
+                                                style="color: blue; padding: 6px; font-size: 14px;">
+                                                + Add Evidence
+                                            </button>
+                                        </div>
+
+                                        <!-- Evidence Records -->
+                                        <t t-if="evidence_records">
+                                            <div class="d-flex flex-wrap gap-3">
+                                                <t t-foreach="evidence_records" t-as="item">
+                                                    <div class="border rounded p-3 bg-light">
+
+                                                        <strong> Title: <t t-esc="item.item_title" />
+                                                        </strong>
+
+                                                        <div class="text-muted small"> Category: <t
+                                                                t-esc="dict(item._fields['item_category'].selection).get(item.item_category)" />
+                                                        </div>
+
+                                                        <div class="text-muted small"> Quantity: <t
+                                                                t-esc="item.quantity" />
+                                                        </div>
+
+                                                        <!-- Attachments -->
+                                                        <t t-if="item.attachment_ids">
+                                                            <div class="mt-2">
+                                                                <strong>Attachments:</strong>
+                                                                <ul class="list-unstyled mb-0">
+                                                                    <t
+                                                                        t-foreach="item.attachment_ids"
+                                                                        t-as="att">
+                                                                        <li>
+                                                                            <a
+                                                                                t-attf-href="{{att.get_base_url()}}/web/content/{{att.id}}?access_token={{att.access_token}}&amp;download=true"
+                                                                                target="_blank">
+                                                                                <i
+                                                                                    class="fa fa-paperclip me-1"></i>
+                                                                                <t t-esc="att.name" />
+                                                                            </a>
+                                                                        </li>
+                                                                    </t>
+                                                                </ul>
+                                                            </div>
+                                                        </t>
+
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </t>
+
+                                        <t t-else="">
+                                            <em class="text-muted">No evidence items available.</em>
+                                        </t>
+
+                                        <!-- Collapsible Form -->
+                                        <div id="evidenceForm" class="collapse mt-3">
+                                            <div class="card card-body bg-light">
+
+                                                <form action="/my/add_evidence" method="post"
+                                                    enctype="multipart/form-data">
+                                                    <input type="hidden" name="csrf_token"
+                                                        t-att-value="request.csrf_token()" />
+                                                    <input type="hidden" name="case_id"
+                                                        t-att-value="case_record.id" />
+
+                                                    <!-- Item Title -->
+                                                    <div class="mb-2">
+                                                        <label>Item Title</label>
+                                                        <input type="text" name="item_title"
+                                                            class="form-control" required="1" />
+                                                    </div>
+
+                                                    <!-- Category -->
+                                                    <div class="mb-2">
+                                                        <label>Item Category</label>
+                                                        <select name="item_category"
+                                                            class="form-control" required="1">
+                                                            <option value="electronic">Electronic
+                                                                Device</option>
+                                                            <option value="document">Document</option>
+                                                            <option value="currency">Currency</option>
+                                                            <option value="counterfeit">Counterfeit
+                                                                Goods</option>
+                                                            <option value="storage">Storage Media</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <!-- Quantity -->
+                                                    <div class="mb-2">
+                                                        <label>Quantity</label>
+                                                        <input type="number" step="any"
+                                                            name="quantity"
+                                                            class="form-control" />
+                                                    </div>
+
+                                                    <!-- Attachments -->
+                                                    <div class="mb-2">
+                                                        <label>Attachments</label>
+                                                        <input type="file" name="attachments"
+                                                            class="form-control" multiple="multiple" />
+                                                    </div>
+
+                                                    <!-- Actions -->
+                                                    <div class="d-flex gap-2">
+                                                        <button type="submit"
+                                                            class="btn btn-primary btn-sm">
+                                                            Add
+                                                        </button>
+
+                                                        <button type="button"
+                                                            class="btn btn-secondary btn-sm"
+                                                            data-bs-toggle="collapse"
+                                                            data-bs-target="#evidenceForm">
+                                                            Cancel
+                                                        </button>
+                                                    </div>
+
+                                                </form>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--======================
+                        Nodal Reports================================== -->
+                        <div class="accordion-item"
+                            style="border-radius: 0.375rem; border: 1px solid #d7dbdf; margin-bottom: 0.5rem; background: #f7f9fc;">
+
+                            <h2 class="accordion-header" id="headingFileUpload">
+                                <button class="accordion-button collapsed" type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#collapseFileUpload"
+                                    aria-expanded="false"
+                                    aria-controls="collapseFileUpload">
+                                    Report
+                                </button>
+                            </h2>
+
+                            <div id="collapseFileUpload" class="accordion-collapse collapse"
+                                aria-labelledby="headingFileUpload" data-bs-parent="#caseAccordion">
+
+                                <div class="accordion-body" style="background: #fff9f9;">
+
+                                    <div class="documents_and_desc g-3 mb-3">
+
+                                        <!-- Header -->
+                                        <div
+                                            class="d-flex justify-content-between align-items-center mb-2">
+                                            <strong>Uploaded Report</strong>
+                                        </div>
+
+                                        <!-- Show Uploaded File -->
+                                        <t t-if="case_record.file_data">
+                                            <div class="border rounded p-3 bg-light">
+                                                <i class="fa fa-file me-2"></i>
+                                                <a
+                                                    t-att-href="'/web/content/forensic.case.assignment/%s/file_data?download=1' % case_record.id">
+                                                    <t t-esc="case_record.file_name" />
+                                                </a>
+                                            </div>
+                                        </t>
+                                        <t t-else="">
+                                            <em class="text-muted">No Report uploaded yet.</em>
+                                        </t>
+
+                                        <!-- Collapsible Upload Form -->
+                                        <div class="mt-3">
+                                            <form action="/my/upload_ed_report" method="post"
+                                                enctype="multipart/form-data">
+                                                <input type="hidden" name="csrf_token"
+                                                    t-att-value="request.csrf_token()" />
+                                                <input type="hidden" name="case_id"
+                                                    t-att-value="case_record.id" />
+
+                                                <div class="mb-2">
+                                                    <label>Select File</label>
+                                                    <input type="file" name="file"
+                                                        class="form-control" required="1" />
+                                                </div>
+
+                                                <div class="d-flex gap-2">
+                                                    <button type="submit"
+                                                        class="btn btn-primary btn-sm">Upload</button>
+                                                </div>
+
+                                            </form>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div> <!--
+                    /accordion -->
+
+                </div>
+                <div id="case_record_communication">
+                    <h3>Communication history</h3>
+                    <t t-call="portal.message_thread" />
+                </div>
+
+            </div>
+        </xpath>
+    </template>
+
+    <template id="document_sign_inherit" inherit_id="sign._doc_sign">
+        <xpath expr="//div[hasclass('o_sign_validate_banner') and hasclass('bg-odoo')]"
+            position="replace">
+            <div
+                t-if="current_request_item and current_request_item.state == 'sent' and sign_request.state in ['sent', 'shared']"
+                class="o_sign_validate_banner bg-odoo">
+                <button type="button" class="btn btn-primary o_validate_button">Authorize</button>
+            </div>
+        </xpath>
+    </template>
+
+
+
+    <!-- ========================hide connection and security========================== -->
+    <template id="hide_portal_common_category" inherit_id="portal.portal_my_home">
+        <xpath expr="//div[@id='portal_common_category']" position="attributes">
+            <attribute name="t-if">False</attribute>
+        </xpath>
+    </template>
+
+</odoo>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="0">
+    <!-- Standard Task Category -->
+    <record id="planning" model="standard.task.category">
+        <field name="name">Planning</field>
+    </record>
+    
+    <record id="legal_framework" model="standard.task.category">
+        <field name="name">Legal Framework</field>
+    </record>
+
+    <record id="corporate_and_open_source_intelligence" model="standard.task.category">
+        <field name="name">Corporate and Open-Source Intelligence</field>
+    </record>
+
+    <record id="information_landscape" model="standard.task.category">
+        <field name="name">Information Landscape</field>
+    </record>
+
+    <record id="forensic_data_analytics" model="standard.task.category">
+        <field name="name">Forensic Data analytics</field>
+    </record>
+
+    <record id="forensic_collection_and_imaging" model="standard.task.category">
+        <field name="name">Forensic collection and imaging</field>
+    </record>
+
+    <record id="interviews_consultations" model="standard.task.category">
+        <field name="name">Interviews/Consultations</field>
+    </record>
+
+    <record id="reporting" model="standard.task.category">
+        <field name="name">Reporting</field>
+    </record>
+
+</odoo>

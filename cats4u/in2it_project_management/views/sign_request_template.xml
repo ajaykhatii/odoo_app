@@ -1,0 +1,10 @@
+<odoo>
+    <template id="custom_sign_doc_sign" inherit_id="sign.doc_sign">
+
+        <!-- Remove Refuse Button (desktop) -->
+        <xpath expr="//button[contains(@class, 'o_sign_refuse_document_button')]" position="replace">
+            <!-- Empty = removed -->
+        </xpath>
+
+    </template>
+</odoo>

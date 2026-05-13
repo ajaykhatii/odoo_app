@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- wizard of request.access.digital.wizard-->
+        <record id="overarching_wizard_form_view" model="ir.ui.view">
+            <field name="name">overarching.wizard.form.view</field>
+            <field name="model">overarching.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Generate Overarching Memo">
+                    <sheet>
+                        <notebook>
+                            <page string="City Manager">
+                                <group>
+                                    <field name="user_id" 
+                                    options="{'no_open': True, 'no_create': True, 'no_edit': True}" 
+                                    required="1" 
+                                    placeholder="Add contacts to notify..."
+                                    domain="[('id','in',context.get('users',[]))]"/>
+                                    <field name="cm_subject" decoration-bf="1"/>
+                                    <field name="cm_auth_body" widget="html"/>
+                                </group>
+                            </page>
+                            <page string="Executive Directorate">
+                                <group>
+                                    <field name="subject" decoration-bf="1"/>
+                                    <field name="auth_body" widget="html"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <footer>
+                        <button name="action_confirm" string="Confirm" type="object" class="btn-primary" data-hotkey="q"/>
+                        <button special="cancel" string="Cancel" class="btn btn-danger"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

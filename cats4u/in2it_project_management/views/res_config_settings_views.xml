@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.in2it.vendor</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="70"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="In2it Vendor" string="Vendor TOR Link Expiry" name="in2it_project_management">
+                    <block title="Vendor" name="employees_setting_container">
+                        <setting id="presence_control_setting" title="token_expiration_duration" string="Vendor TOR Approval form expire token">
+                            <div class="content-group" name="token_expiration_duration">
+                                <small class="text-muted">
+                                    Specify how many hours the vendor onboarding link remains active. After expiry, the link will no longer work.
+                                </small>
+                                <div class="d-flex align-items-center mb-2">
+                                    <field name="token_expire_duration" class="oe_inline" />
+                                    <label class="me-2" for="token_expire_duration">Token Expiration Duration (in hours)</label>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="in2it_project_management_config_settings_action" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module' : 'in2it_project_management', 'bin_size': False}</field>
+    </record>
+
+</odoo>

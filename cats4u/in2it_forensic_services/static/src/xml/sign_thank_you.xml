@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-inherit="sign.ThankYouDialog" t-inherit-mode="extension">
+
+        <xpath expr="//t[@t-foreach='state.buttons']" position="replace"/>
+
+        <xpath expr="//t[@t-set-slot='footer']" position="inside">
+            <button class="btn btn-secondary me-auto"
+                    t-on-click="() => this.props.close()">
+                Close
+            </button>
+        </xpath>
+
+    </t>
+
+</templates>

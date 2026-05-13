@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="assignment_type_forensic" model="forensic.assignment.type">
+            <field name="complete_name">Forensic</field>
+            <field name="is_authorize">False</field>
+            <field name="name">FOR</field>
+        </record>
+
+        <record id="assignment_type_dfo" model="forensic.assignment.type">
+            <field name="complete_name">DFO</field>
+            <field name="is_authorize">False</field>
+            <field name="name">DFO</field>
+        </record>
+
+        <record id="assignment_type_lsa" model="forensic.assignment.type">
+            <field name="complete_name">Lifestyle Assessment</field>
+            <field name="is_authorize">False</field>
+            <field name="name">LSA</field>
+        </record>
+
+        <record id="assignment_type_eth" model="forensic.assignment.type">
+            <field name="complete_name">Ethical or Disciplinary</field>
+            <field name="is_authorize">False</field>
+            <field name="name">ETH</field>
+        </record>
+
+        <record id="assignment_type_spk_rec" model="forensic.assignment.type">
+            <field name="complete_name">Speaker-Record Only</field>
+            <field name="is_authorize">False</field>
+            <field name="name">SPK-REC</field>
+        </record>
+
+        <record id="assignment_type_spk_for" model="forensic.assignment.type">
+            <field name="complete_name">Speaker-Forensic</field>
+            <field name="is_authorize">False</field>
+            <field name="name">SPK-FOR</field>
+        </record>
+
+        <record id="assignment_type_rec" model="forensic.assignment.type">
+            <field name="complete_name">Record Only</field>
+            <field name="is_authorize">False</field>
+            <field name="name">REC</field>
+        </record>
+
+        <record id="assignment_type_line_refferal" model="forensic.assignment.type">
+            <field name="complete_name">Line Refferal</field>
+            <field name="is_authorize">True</field>
+            <field name="name">LIN</field>
+        </record>
+
+        <record id="assignment_type_preliminary" model="forensic.assignment.type">
+            <field name="complete_name">Preliminary</field>
+            <field name="is_authorize">False</field>
+            <field name="name">PRE</field>
+        </record>
+
+    </data>
+</odoo>

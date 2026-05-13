@@ -1,0 +1,331 @@
+<odoo>
+    
+    <record id="case_auth_mail_template" model="mail.template">
+        <field name="name">Case Authorization Mail</field>
+        <field name="model_id" ref="in2it_forensic_services.model_forensic_case_assignment"/>
+        <field name="subject">{{ ctx.get('subject', 'Authorization Letter for Case') }}</field>
+        <field name="auto_delete" eval='True'/>
+        <field name="body_html">
+            <![CDATA[
+                    <p>
+                    <b>Case Reference:</b> <t t-out="object.parent_case_id.internal_coms_ref"/><br/>
+                    <b>Nature of Allegation:</b> <t t-out="object.allegation_nature_id.name"/><br/>
+                    <b>Case Creation Date:</b> <t t-out="format_datetime(object.create_date.strftime('%Y-%m-%d %H:%M:%S'))"/><br/>
+                    <b>Submitted By: </b> <t t-out="user.name"/> <br/>
+
+                    </p>
+
+                    <p>
+                    Kindly review the case and record your authorization decision at your earliest convenience.
+                    </p>
+
+
+                    <hr/>
+
+                    <p style="font-size:12px;color:#666;">
+                    <b>Confidentiality Notice:</b><br/>
+                    This communication contains information intended solely for official City of Cape Town business and must be handled in accordance with the City’s confidentiality and records management policies.
+                    </p>
+                ]]>
+        </field>
+    </record>
+
+    <record id="email_template_case_submitted_for_review" model="mail.template">
+            <field name="name">Case Submitted for SFO and Fo for Review</field>
+            <field name="model_id" ref="in2it_forensic_services.model_crm_lead"/>
+            <field name="subject">Case ID '{{ object.internal_coms_ref }}' Submitted for Review - Action Required </field>
+            <field name="email_to">{{ object.get_relevent_stakeholder_for_submit() }}</field>
+            <field name="body_html">
+                <![CDATA[
+                    <p>
+                        A new case has been submitted by the Specialist Clerk for your review. 
+                    </p>
+                    <p>
+                        Kindly log into the Case Management System to review the case and provide your observations.
+                    </p>
+
+                    <p>
+                    <b>Case Reference:</b> <t t-out="object.internal_coms_ref"/><br/>
+                    <b>Submitted By: </b> Specialist Clerk <br/>
+                    <b>Submission Date:</b> <t t-out="format_datetime(time.strftime('%Y-%m-%d %H:%M:%S'))"/><br/>
+                    </p>
+
+                    <hr/>
+
+                    <p style="font-size:12px;color:#666;">
+                    <b>Confidentiality Notice:</b><br/>
+                    This communication contains information intended solely for official
+                    City of Cape Town business and must be handled in accordance with the
+                    City's confidentiality and records management policies.
+                    </p>
+                ]]>
+            </field>
+        <field name="auto_delete" eval="False"/>
+    </record>
+
+    <record id="email_template_case_submitted_for_udate" model="mail.template">
+            <field name="name">Case Submitted for SC to Update</field>
+            <field name="model_id" ref="in2it_forensic_services.model_crm_lead"/>
+            <field name="subject">Case ID '{{ object.internal_coms_ref }}' Returned for Update – Review Completed by SFO &amp; FO</field>
+            <field name="email_to">{{ ctx.get('email_to') }}</field>
+            <field name="body_html">
+                <![CDATA[
+                    <p>
+                        The case reviewed by SFO & FO has been submitted back to you for further updates and necessary modifications. 
+                        Please log into the Case Management System to review the comments and take appropriate action.
+                    </p>
+
+                    <p>
+                    <b>Case Reference:</b> <t t-out="object.internal_coms_ref"/><br/>
+                    <b>Reviewed By: </b> SFO & FO <br/>
+                    <b>Review Date:</b> <t t-out="format_datetime(time.strftime('%Y-%m-%d %H:%M:%S'))"/><br/>
+                    </p>
+
+            
+
+                    <hr/>
+                    <p style="font-size:12px;color:#666;">
+                    <b>Confidentiality Notice:</b><br/>
+                    <b>This communication contains information intended solely for official City of Cape Town business and must be handled in accordance with the City’s confidentiality and records management policies. 
+                    </p>
+                ]]>
+            </field>
+        <field name="auto_delete" eval="False"/>
+    </record> 
+
+    <record id="email_template_case_submitted_for_review_after_update" model="mail.template">
+            <field name="name">Case Submitted for SFO and FO to review update</field>
+            <field name="model_id" ref="in2it_forensic_services.model_crm_lead"/>
+            <field name="subject">Case Resubmitted for Review – Updated by Specialist Clerk</field>
+            <field name="email_to">{{ object.get_relevent_stakeholder_for_submit() }}</field>
+            <field name="body_html">
+                <![CDATA[
+                    <p>
+                        The case has been updated by the Specialist Clerk and resubmitted for your review. 
+                        Kindly log into the Case Management System to review the revised details and proceed with the next steps.
+                    </p>
+
+                    <p>
+                    <b>Case Reference:</b> <t t-out="object.internal_coms_ref"/><br/>
+                    <b>Resubmission Date:</b> <t t-out="format_datetime(time.strftime('%Y-%m-%d %H:%M:%S'))"/><br/>
+                    </p>
+
+                    <hr/>
+
+                    <p style="font-size:12px;color:#666;">
+                    <b>Confidentiality Notice:</b><br/>
+                    <b>This communication contains information intended solely for official City of Cape Town business and must be handled in accordance with the City’s confidentiality and records management policies.
+                    </p>
+                ]]>
+            </field>
+        <field name="auto_delete" eval="False"/>
+    </record>
+
+    <record id="email_template_case_reviewed_submitted_to_chief_and_manager" model="mail.template">
+            <field name="name">Case Submitted for Chief and City Manager Review</field>
+            <field name="model_id" ref="in2it_forensic_services.model_crm_lead"/>
+            <field name="subject">Case ID {{ object.internal_coms_ref }} Submitted for Recommendation Committee Review &amp; Approval</field>
+            <field name="email_to">{{ object.get_relevent_members()}}</field>
+            <field name="body_html">
+                <![CDATA[
+                    <p>
+                    A case has been submitted for your review and approval by the SFO & FO team.
+                    The case details are as follows:
+                    </p>
+
+                    <p>
+                    <b>Case ID:</b> <t t-out="object.internal_coms_ref"/><br/>
+                    <b>Nature of Allegation:</b> <t t-out="object.allegation_nature_id.name"/><br/>
+                    <b>Case Creation Date:</b> <t t-out="format_datetime(object.create_date.strftime('%Y-%m-%d %H:%M:%S'))"/><br/>
+                    </p>
+
+                    <p>
+                    Kindly review the case in the next Recommendation committee and
+                    record your recommendation or approval.
+                    </p>
+
+                    <hr/>
+
+                    <p style="font-size:12px;color:#666;">
+                    <b>Confidentiality Notice:</b><br/>
+                    This communication contains information intended solely for official City of Cape Town business and must be handled in accordance with the City’s confidentiality and records management policies.
+                    </p>
+                ]]>
+            </field>
+        <field name="auto_delete" eval="False"/>
+    </record>
+
+    <record id="email_template_case_type_authorized" model="mail.template">
+            <field name="name">Case Type Authorized</field>
+            <field name="model_id" ref="in2it_forensic_services.model_forensic_case_assignment"/>
+            <field name="subject">Case Authorized by City Manager - {{ object.case_ref_number }}</field>
+            <field name="email_to">{{ object.get_relevent_users() }}</field>
+            <field name="body_html">
+                <![CDATA[
+                    <p>
+                    The following case has been reviewed and authorized by the City Manager and may now proceed for further processing: 
+                    </p>
+
+                    <p>
+                    <b>Case ID:</b> <t t-out="object.case_ref_number"/><br/>
+                    <b>Case Type:</b> <t t-out="object.assignment_type_id.name"/><br/>
+                    <b>Nature of Allegation:</b> <t t-out="object.allegation_nature_id.name"/><br/>
+                    <b>Authorization Date: </b> <t t-out="format_datetime(time.strftime('%Y-%m-%d %H:%M:%S'))"/><br/>
+
+                    </p>
+
+                    <p>
+                    Please proceed with the next stages as per the defined workflow.
+                    </p>
+
+
+                    <hr/>
+
+                    <p style="font-size:12px;color:#666;">
+                    <b>Confidentiality Notice:</b><br/>
+                    This communication contains information intended solely for official City of Cape Town business and must be handled in accordance with the City’s confidentiality and records management policies.   
+                    </p>
+                ]]>
+            </field>
+        <field name="auto_delete" eval="False"/>
+    </record> 
+
+    <record id="email_template_case_type_unauthorized" model="mail.template">
+            <field name="name">Case Type Unauthorized</field>
+            <field name="model_id" ref="in2it_forensic_services.model_forensic_case_assignment"/>
+            <field name="subject">Case not Authorized by City Manager - {{ object.parent_case_id.internal_coms_ref }}</field>
+            <field name="email_to">{{ object.related_stakeholder_team()}}</field>
+            <field name="body_html">
+                <![CDATA[
+                    <p>
+                    The following case has been reviewed and marked as Not Authorized by the City Manager: 
+                    </p>
+
+                    <p>
+                    <b>Case ID:</b> <t t-out="object.case_ref_number"/><br/>
+                    <b>Case Type:</b> <t t-out="object.assignment_type_id.name"/><br/>
+                    <b>Nature of Allegation:</b> <t t-out="object.allegation_nature_id.name"/><br/>
+                    <b>Decision Date:</b> <t t-out="format_datetime(time.strftime('%Y-%m-%d %H:%M:%S'))"/><br/>
+                    <!-- <b>Remarks:</b> <t t-out="object."/><br/> -->
+                    
+                    </p>
+
+                    <p>
+                    Please review the comments and take further action as per the defined process. 
+                    </p>
+
+
+                    <hr/>
+
+                    <p style="font-size:12px;color:#666;">
+                    <b>Confidentiality Notice:</b><br/>
+                    This communication contains information intended solely for official City of Cape Town business and must be handled in accordance with the City’s confidentiality and records management policies.   
+                    </p>
+                ]]>
+            </field>
+        <field name="auto_delete" eval="False"/>
+    </record>
+
+
+    <record id="email_template_rec_case_type_not_authorized" model="mail.template">
+            <field name="name">Rec Case Type not Authorized</field>
+            <field name="model_id" ref="in2it_forensic_services.model_forensic_case_assignment"/>
+            <field name="subject">REC Case Not Authorized &amp; Moved to Line Referral – {{ object.parent_case_id.internal_coms_ref }}</field>
+            <field name="email_to">{{ object.related_stakeholder_team()}}</field>
+            <field name="body_html">
+                <![CDATA[
+                    <p>
+                    The following REC case has been reviewed by the City Manager and marked as Not Authorized due to jurisdictional constraints. The case has accordingly been placed under the Line Referral schedule for appropriate handling.  
+                    </p>
+                    
+                    <b><p>Case Details: </p></b>
+                    <p>
+                    <b>Case ID:</b> <t t-out="object.case_ref_number"/><br/>
+                    <b>Case Type:</b> <t t-out="object.assignment_type_id.name"/><br/>
+                    <b>Nature of Allegation:</b> <t t-out="object.allegation_nature_id.name"/><br/>
+                    <b>Case Creation Date:</b> <t t-out="format_datetime(object.create_date.strftime('%Y-%m-%d %H:%M:%S'))"/><br/>
+                    <b>Decision Date:</b> <t t-out="format_datetime(time.strftime('%Y-%m-%d %H:%M:%S'))"/><br/>
+                    <b>Remarks:</b> Out of Jurisdiction – Moved to Line Referral <br/>
+                    
+                    </p>
+
+                    <p>
+                    Kindly review the case and initiate further action as per the defined governance process. 
+                    </p>
+
+
+                    <hr/>
+
+                    <p style="font-size:12px;color:#666;">
+                    <b>Confidentiality Notice:</b><br/>
+                    This communication contains information intended solely for official City of Cape Town business and must be handled in accordance with the City’s confidentiality and records management policies.    
+                    </p>
+                ]]>
+            </field>
+        <field name="auto_delete" eval="False"/>
+    </record>
+    
+    <record id="email_template_case_allocation_notification_directorate" model="mail.template">
+            <field name="name">Case Allocation Notification Directorate</field>
+            <field name="model_id" ref="in2it_forensic_services.model_forensic_case_assignment"/>
+            <field name="subject">Case Allocated to You – {{ object.case_ref_number }}</field>
+            <field name="email_to">{{ctx.get('email_to')}}</field>
+            <field name="body_html">
+                <![CDATA[
+                    <p>
+                    A Line Referral case has been assigned to you for further investigation and necessary action.   
+                    </p>
+
+                    <p>
+                        <b>Case ID:</b> <t t-out="object.case_ref_number"/><br/>
+                        <b>Assigned Directorate:</b> <t t-out="object.directorate_id.name"/><br/>
+                        <b>Nature of Allegation:</b> <t t-out="object.allegation_nature_id.name"/><br/>
+                        <b>Case Creation Date:</b> <t t-out="format_datetime(object.create_date.strftime('%Y-%m-%d %H:%M:%S'))"/><br/>
+                        <b>Assignment Date:</b> <t t-out="format_datetime(time.strftime('%Y-%m-%d %H:%M:%S'))"/><br/>
+                    </p>
+
+                    <p>
+                    Kindly acknowledge receipt and initiate the required action as per established procedures.
+                    </p>
+
+
+                    <hr/>
+
+                    <p style="font-size:12px;color:#666;">
+                        <b>Confidentiality Notice:</b><br/>
+                        This communication contains information intended solely for official City of Cape Town business and must be handled in accordance with the City’s confidentiality and records management policies.    
+                    </p>
+                ]]>
+            </field>
+        <field name="auto_delete" eval="False"/>
+    </record>
+    
+    <record id="email_template_case_allocation_notification_manager" model="mail.template">
+            <field name="name">Case Allocation Notification</field>
+            <field name="model_id" ref="in2it_forensic_services.model_forensic_case_assignment"/>
+            <field name="subject">Case Allocated to You – {{ object.case_ref_number }}</field>
+            <field name="email_to"></field>
+            <field name="body_html">
+                <![CDATA[
+                    <p>
+                    A case has been allocated to you in the Case Management System for review and further action.    
+                    </p>
+                    
+                    <b><p>Case Details: </p></b>
+                    <p>
+                    <b>Case ID:</b> <t t-out="object.case_ref_number"/><br/>
+                    <b>Case Type:</b> <t t-out="object.assignment_type_id.name"/><br/>
+                    <b>Nature of Allegation:</b> <t t-out="object.allegation_nature_id.name"/><br/>
+                    <b>Allocated By:</b> <t t-out="user.name"/><br/>
+                    <b>Allocated Date:</b> <t t-out="format_datetime(time.strftime('%Y-%m-%d %H:%M:%S'))"/><br/>
+                    
+                    </p>
+
+                    <p>
+                    Kindly review the case and initiate the necessary actions in line with the approved procedures and timelines. 
+                    </p>
+                ]]>
+            </field>
+        <field name="auto_delete" eval="False"/>
+    </record> 
+</odoo>

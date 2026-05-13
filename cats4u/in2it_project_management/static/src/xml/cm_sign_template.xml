@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-inherit="sign.SignTemplateControlPanel"
+       t-inherit-mode="extension"
+       owl="1">
+
+            <xpath expr="//button[contains(@class,'o_sign_template_send')]"
+                position="replace"/>
+            <xpath expr="//button[contains(@class,'o_sign_template_sign_now')]"
+                position="replace"/>
+
+            <xpath expr="//button[contains(@class,'o_sign_template_share')]"
+                position="replace"/>
+
+            <xpath expr="//div[contains(@class,'d-flex')]" position="inside">
+                <button type="button" class="btn btn-primary" t-on-click="() => onSendClickMail()">Send</button>
+            </xpath>
+    </t>
+</templates>

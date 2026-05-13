@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+       
+        <!-- vendor onboarding tree view -->
+        <record id="res_partner_view_tree" model="ir.ui.view">
+            <field name="name">res.partner.view.tree</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="email"/>
+                    <field name="mobile"/>
+                    <field name="phone"/>
+                    <field name="spoc_name"/>
+                    <field name="vendor_status"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- vendor onboarding form view -->
+        <record id="res_partner_view_form" model="ir.ui.view">
+            <field name="name">res.partner.view.form</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div class="oe_title mb24">
+                            <field name="user_id" invisible="True"/>
+                            <field name="is_company" invisible="1"/>
+                            <h1>
+                                <field id="company" options="{'line_breaks': False}" widget="text" class="text-break" name="name" default_focus="1" placeholder="e.g. Lumber Inc" invisible="not is_company" required="type == 'contact'"/>
+                                <field id="individual" options="{'line_breaks': False}" widget="text" class="text-break" name="name" default_focus="1" placeholder="e.g. Brandom Freeman" invisible="is_company" required="type == 'contact'"/>
+                            </h1>
+                            <div class="o_row">
+                                <field name="parent_id" widget="res_partner_many2one" placeholder="Company Name..." domain="[('is_company', '=', True)]" context="{'default_is_company': True, 'show_vat': True, 'default_user_id': user_id}" invisible="((is_company and not parent_id) or company_name) and company_name != ''"/>
+                                <field name="company_name" invisible="not company_name or company_name == '' or is_company"/>
+                                <button name="create_company" icon="fa-plus-square" string="Create company" type="object" class="oe_edit_only btn-link" invisible="is_company or company_name == '' or not company_name"/>
+                            </div>
+                        </div>
+                        
+                        <group>
+                            <group>
+                                <span class="o_form_label o_td_label" name="address_name">
+                                    <field name="type" invisible="is_company" readonly="user_ids" required="not is_company" class="fw-bold"/>
+                                    <b invisible="not is_company">Address</b>
+                                </span>
+                                <div class="o_address_format">
+                                    <field name="street" placeholder="Street..." class="o_address_street" readonly="type == 'contact' and parent_id"/>
+                                    <field name="street2" placeholder="Street 2..." class="o_address_street" readonly="type == 'contact' and parent_id"/>
+                                    <field name="city" placeholder="City" class="o_address_city" readonly="type == 'contact' and parent_id"/>
+                                    <field name="state_id" class="o_address_state" placeholder="State" options="{'no_create_edit':True, 'no_open': True, 'no_quick_create': True}" readonly="type == 'contact' and parent_id" context="{'country_id': country_id, 'default_country_id': country_id, 'zip': zip}"/>
+                                    <field name="zip" placeholder="ZIP" class="o_address_zip" readonly="type == 'contact' and parent_id"/>
+                                    <div name="partner_address_country" class="d-flex justify-content-between">
+                                        <field name="country_id" placeholder="Country" class="o_address_country" options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}" readonly="type == 'contact' and parent_id"/>
+                                    </div>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="function" placeholder="e.g. Sales Director" invisible="is_company"/>
+                                <field name="phone" widget="phone"/>
+                                <field name="mobile" widget="phone"/>
+                                <field name="user_ids" invisible="1"/>
+                                <field name="email" widget="email" context="{'gravatar_image': True}" required="1"/>
+                                <field name="title" options="{&quot;no_open&quot;: True}" placeholder="e.g. Mister" invisible="is_company"/>
+                                <field name="active_lang_count" invisible="1"/>
+                                <field name="lang" invisible="active_lang_count &lt;= 1"/>
+                                <field name="spoc_name"/>
+                                <field name="vendor_status"/>
+                                <field name="is_vendor" invisible="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+
+        <!-- vendor onboarding action -->
+        <record id="res_partner_action_supplier" model="ir.actions.act_window">
+            <field name="name">Vendor</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('is_vendor', '=', True)]</field>   
+            <field name="context">{'is_partner_vendor':True, 'res_partner_search_mode': 'supplier', 'default_is_company': True, 'default_supplier_rank': 1, 'default_is_vendor': 1}</field>
+            <field name="view_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('res_partner_view_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('res_partner_view_form')})]"/>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Create a new vendor.
+              </p>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

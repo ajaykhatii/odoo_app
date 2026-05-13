@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="tor_remark_wizard_view_form" model="ir.ui.view">
+            <field name="name">tor.remark.wizard.form</field>
+            <field name="model">tor.remark.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="tor_id" options="{'no_open': True, 'no_create': True, 'no_edit': True}" invisible="1"/>
+                            <field name="remark" required="context.get('is_remark')"/>
+                             <field name="user_id" readonly="1"/>
+                            <field name="date" readonly="1"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="send_tor_for_approval_wizard" string="Send For Approval" type="object" class="btn-primary" data-hotkey="q" invisible="context.get('approve') or context.get('update')"/>
+                        <button name="action_approve_tor_wizard" 
+                            string="Approve" 
+                            type="object" 
+                            class="btn-primary"
+                            ata-hotkey="q" 
+                            invisible="context.get('send_tor') or context.get('update')"
+                            context="{'bypass_pfo_check':True}"
+                        />
+                        
+                        <button name="action_send_for_update" 
+                            string="Send For Update" 
+                            type="object" 
+                            class="btn-primary" 
+                            data-hotkey="q" 
+                            invisible="context.get('send_tor') or context.get('approve')" 
+                            context="{'bypass_pfo_check':True}"
+                            />
+                        <button special="cancel" string="Cancel" class="btn btn-danger"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

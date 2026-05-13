@@ -1,0 +1,178 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        <!-- forensic case assignment type -->
+        <record id="views_forensic_assignment_type_form_inherit" model="ir.ui.view">
+            <field name="name">forensic.case.assignment.type.form.inherit</field>
+            <field name="model">forensic.assignment.type</field>
+            <field name="inherit_id" ref="in2it_forensic_services.view_forensic_assignment_type_form"/>
+            <field name="arch" type="xml">
+                <field name="is_authorize" position="after">
+                    <field name="is_project_create" widget="boolean_toggle"/>
+                </field>
+            </field>
+        </record>
+
+
+        <!-- forensic.case.assignment -->
+        <record id="forensic_case_assignment_view_inherit_form" model="ir.ui.view">
+            <field name="name">forensic.case.assignment.form.inherit</field>
+            <field name="model">forensic.case.assignment</field>
+            <field name="inherit_id" ref="in2it_forensic_services.view_forensic_case_assignment_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet" position="inside">
+                    <group>
+                        <field name="report_submitted_by" invisible="1"/>
+                    </group>
+                    <div class="oe_button_box" name="button_box" invisible="project_count == 0 or context.get('sign_auth')">
+                        <button
+                                type="object"
+                                name="action_open_case_assignment_model"
+                                class="oe_stat_button"
+                                icon="fa-puzzle-piece"
+                                invisible="is_inv_last_stage">
+                            <field name="project_count" widget="statinfo" string="Investigation Plan"/>
+                        </button>
+
+                        <button
+                                type="object"
+                                name="action_open_case_assignment_model"
+                                class="oe_stat_button text-success"
+                                icon="fa-check text-success"
+                                invisible="not is_inv_last_stage">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text text-primary fw-bolder">Investigation</span>
+                                <span class="o_stat_text fw-bolder">Closed</span>
+                            </div>
+                        </button>
+                    </div>
+                </xpath>
+                <xpath expr="//header" position="inside">
+                    <button name="action_show_line_report"
+                        class="btn btn-primary"
+                        type="object"
+                        string="Line Report Review"
+                        groups="in2it_project_management.group_cms_governance"
+                        invisible="not file_data or not assignment_is_lin"/>
+
+                    <button name="action_open_comment_wizard"
+                        class="btn btn-primary"
+                        type="object"
+                        string="Send For Update"
+                        groups="in2it_project_management.group_cms_governance"
+                        invisible="not report_submitted_by or not assignment_is_lin or assignment_stage == 'closed'"/>
+
+                    <button name="action_close_case"
+                        class="btn btn-primary"
+                        type="object"
+                        string="Close"
+                        groups="in2it_project_management.group_cms_governance"
+                        invisible="not report_submitted_by or not file_data or not assignment_is_lin or assignment_stage == 'closed'"/>
+                </xpath>
+
+                <xpath expr="//field[@name='reason']" position="after">
+            
+                        <field name="closure_response" readonly="1" invisible="not assignment_is_lin or assignment_stage != 'closed'"/>
+                        <field name="closure_comment" readonly="1" invisible="not assignment_is_lin or assignment_stage != 'closed'"/>
+
+                </xpath>
+
+                <xpath expr="//page[@name='line_ed_report']" position="inside">
+
+                    <group string="Reports Submitted Till Now">
+                        <field name="report_history_ids" nolabel="1" readonly="1">
+                            <list>
+                                <field name="name"/>
+                                <field name="create_date"/>
+                                <field name="create_uid"/>
+                            </list>
+                        </field>
+                    </group>
+
+                </xpath>
+            </field>
+        </record>
+
+
+        <!-- case intake menu -->
+        <record id="forensic_crm_lead_form_inherit" model="ir.ui.view">
+            <field name="name">forensic.crm.lead.form</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="in2it_forensic_services.view_crm_lead_forensic_form_custom"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet/div[hasclass('oe_button_box')]" position="inside">
+                    <button
+                            type="object"
+                            name="action_open_case_assignment_model"
+                            class="oe_stat_button"
+                            icon="fa-puzzle-piece"
+                            invisible="project_count == create_investigation_count
+                                       or (project_count == create_investigation_count and create_investigation_count > 0)">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_text">Investigation Plan</span>
+                            <span class="o_stat_value">
+                                <field name="project_count"/> / <field name="create_investigation_count"/>
+                            </span>
+                        </div>
+                    </button>
+
+                    <button
+                            type="object"
+                            name="action_open_case_assignment_model"
+                            class="oe_stat_button text-success"
+                            icon="fa-check text-success"
+                            invisible="project_count != create_investigation_count or create_investigation_count == 0">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_text text-primary fw-bolder">Investigation Plan</span>
+                            <span class="o_stat_text fw-bolder">
+                                <field name="project_count"/> / <field name="create_investigation_count"/> Created
+                            </span>
+                        </div>
+                    </button>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_background_database_action" model="ir.ui.view">
+            <field name="name">background.database.list</field>
+            <field name="model">background.database</field>
+            <field name="arch" type="xml">
+                <list editable="top">
+                    <field name="name"/>
+                </list>
+            </field>
+        </record>
+
+
+        <record id="background_database_action" model="ir.actions.act_window">
+            <field name="name">Background Database Action</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">background.database</field>
+            <field name="view_mode">list</field>
+        </record>
+
+        <menuitem id="background_database_menu_act" name="Database" parent="project.menu_project_config" action="background_database_action" sequence="100"/>
+
+
+        <record id="recommendation_category_view_tree" model="ir.ui.view">
+            <field name="name">recommendation.category.tree</field>
+            <field name="model">recommendation.category</field>
+            <field name="arch" type="xml">
+                <list editable="top">
+                    <field name="name"/>
+                </list>
+            </field>
+        </record>
+ 
+ 
+        <record id="action_recommendation_category_menu" model="ir.actions.act_window">
+            <field name="name">Category</field>
+            <field name="res_model">recommendation.category</field>
+            <field name="view_mode">list</field>
+        </record>
+
+        <record id="in2it_forensic_services.menu_case_assignment" model="ir.ui.menu">
+            <field name="groups_id" eval="[(4, ref('group_cms_governance'))]"/>
+        </record>
+    </data>
+</odoo>

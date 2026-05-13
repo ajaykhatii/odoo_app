@@ -1,0 +1,79 @@
+<odoo>
+    <template id="case_request_digital_access_cm_pdf_wrapper">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout_wave">
+                <t t-call-assets="web.report_assets_common" t-js="false"/>
+
+                <div class="page">
+                    <div class="main_content">
+                        <t t-if="env.context.get('is_city_manager')">
+                            <p>
+                                <strong>To:</strong> City Manager
+                            </p>
+                            <p>
+                                <strong>Attention:</strong> <t t-esc="env.context.get('city_manager')"/>
+                            </p>
+                        </t>
+                        <t t-if="env.context.get('is_cdo')">
+                            <p>
+                                <strong>To:</strong> Chief Digital Officer
+                            </p>
+                            <p>
+                                <strong>Attention:</strong> <t t-esc="env.context.get('cdo')"/>
+                            </p>
+                        </t>
+
+                        <p>
+                            <strong><t t-esc="env.context.get('subject')"/></strong>
+                        </p>
+                        <p> 
+                            <t t-out="env.context.get('template_body')"/>
+                        </p>
+                        <p>
+                            Regards,
+                        </p>
+                        
+                        <t t-if="env.context.get('signature_bin')">
+                            <img t-att-src="image_data_uri(env.context.get('signature_bin'))" 
+                                style="max-height:80px; max-width:200px;"/>
+                            <br/>
+                        </t>
+                        <t t-else="">
+                            <br/><br/><br/><br/><br/><br/>
+                        </t>
+
+                        <t t-if="env.context.get('is_city_manager')">
+                            <t t-out="env.context.get('sender_name')"/><br/>
+                            <t t-out="env.context.get('sender_job_position')"/>: Ethics and Forensic Services
+                        </t>
+
+                        <t t-if="env.context.get('is_cdo')">
+                            <table style="width: 100%; border: none; border-collapse: collapse;">
+                                <tr style="border: none;">
+                                    <td style="width: 50%; text-align: left; border: none;">
+                                        <t t-out="env.context.get('sender_name')"/><br/>
+                                        <t t-out="env.context.get('sender_job_position')"/>: Ethics and Forensic Services
+                                    </td>
+                                    <td style="width: 50%; text-align: right; border: none;">
+                                        Chief Digital Officer
+                                    </td>
+                                </tr>
+                            </table>
+                        </t>
+                    </div>
+                </div>
+
+            </t>
+        </t>
+    </template>
+
+    <record id="case_request_digital_access_cm_pdf_report" model="ir.actions.report">
+        <field name="name">City Manager: Digital Access PDF</field>
+        <field name="model">project.project</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">in2it_project_management.case_request_digital_access_cm_pdf_wrapper</field>
+        <field name="print_report_name">"digital_access_letter"</field>
+        <field name="paperformat_id" ref="in2it_forensic_services.in2it_forensic_services_case_auth_paperformat"/>
+    </record>
+
+</odoo>

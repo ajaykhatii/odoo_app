@@ -1,0 +1,458 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+
+    <!-- BreadCrumb -->
+    <template id="portal_breadcrumbs_cases" 
+            inherit_id="portal.portal_breadcrumbs"
+            name="Portal Breadcrumbs: TOR to Approve "
+            priority="30">
+
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <!-- Parent level breadcrumb item -->
+            <li t-if="page_name == 'tor_approval' or tor_record" 
+                t-attf-class="breadcrumb-item #{'active ' if not tor_record else ''}">
+                <a t-if="tor_record" t-attf-href="/my/pending/tor"> TOR to Review</a>
+                <t t-else="">TOR to Review</t>
+            </li>
+            <li t-if="tor_record" class="breadcrumb-item active">
+                <t t-out="tor_record.name"/>
+            </li>
+        </xpath>
+    </template>
+
+    <!-- Main Menu My Page -->
+    <template id="portal_my_home_investigation_tor_pending_approval_" name="Pending TORs" customize_show="True" inherit_id="portal.portal_my_home" priority="50">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
+            <t t-set="portal_alert_category_enable" t-value="True"/>
+        </xpath>
+        <div id="portal_alert_category" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="bg_color" t-value="'alert alert-primary align-items-center'"/>
+                <t t-set="placeholder_count" t-value="'tor_count'"/>
+                <t t-set="title">TOR To Review</t>
+                <t t-set="url" t-value="'/my/pending/tor'"/>
+                <t t-set="text">Follow, view or review your investigation tor</t>
+                <t t-set="show_count" t-value="True"/>
+
+            </t>
+        </div>
+    </template>
+
+    <!-- List view Pending TOR -->
+    <template id="portal_my_pending_tor" name="TOR to Approval">
+        <t t-call="portal.portal_layout">
+        
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Cases</t>
+            </t>
+
+            <!-- Message if no Tors -->
+            <div t-if="not investigation_tor" class="alert alert-warning" role="alert">
+                There are currently no TORs to approval for your account.
+            </div>
+
+            <!-- Table of cases -->
+            <t t-if="investigation_tor" t-call="portal.portal_table">
+                <div class="border border-light">
+                    <table class="table table-striped border border-light">
+                        <thead>
+                            <tr class="active">
+                                <th class="text-center">#</th>
+                                <th class="text-start">Investigation</th>
+                                <th class="text-start">Title</th>
+                                <th class="text-start">Stage</th>
+                                <th class="text-start">Directorate</th>
+                                <th class="text-start">Department</th>
+                            </tr>
+                        </thead>
+                        <t t-set="count" t-value="0"/>
+                        <t t-foreach="investigation_tor" t-as="tor" t-index="i">
+                            <t t-set="count" t-value="count + 1"/>
+                            <tr>
+                                <td class="text-center"><t t-out="count"/></td>
+                                <td class="text-start fw-bolder">
+                                    <a t-att-href="tor.get_portal_url()">
+                                        <t t-out="tor.project_id.name"/>
+                                    </a>
+                                </td>
+                                <td class="text-start">
+                                    <span t-field="tor.project_id.name"/>
+                                </td>
+                                <td class="text-start text-success fw-bolder">
+                                    <span t-field="tor.status"/>
+                                </td>
+                                <td class="text-start">
+                                    <span t-field="tor.project_id.directorate_id"/>
+                                </td>
+                                <td class="text-start">
+                                    <span t-field="tor.project_id.department_id"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <!-- Form view -->
+    <template id="investigation_record_portal_template"
+          name="Investigation Record Portal View"
+          inherit_id="portal.portal_sidebar"
+          primary="True">
+
+        <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
+            <div class="row o_portal_case_sidebar">
+                <!-- ================= MAIN CONTENT ================= -->
+                <div class="col-12 border border-light p-4">
+                    <form t-att-action="'/my/tors/%s' % tor_record.id" method="POST" novalidate="1">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <div class="row">
+                            <div class="col">
+                                <p><b>Case : </b> <span t-field="tor_record.project_id.name"/></p>
+                            </div>
+                            <div class="col d-flex justify-content-end gap-3">
+                                <!-- <button name="Approve" class="btn btn-primary">Approve</button> -->
+                                <div>
+                                    <button type="button"
+                                            class="btn btn-primary fw-bold"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#approveModal"
+                                            name="action">
+                                        Approve
+                                    </button>
+                                </div>
+                                <div>
+                                    <button type="button"
+                                            class="btn btn-primary fw-bold"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#sendForUpdateModal"
+                                            name="action">
+                                        Send For Update
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Details Of Terms Of Refrence</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Pricing Schedule</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">TOR Approval</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="myTabContent">
+
+                            <!-- tab-1 -->
+                            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                <div class="row">
+                                    <div class="col pt-4">
+                                        <div class="accordion" id="torAccordionLeft">
+                                            <!-- Terms of Reference -->
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header">
+                                                    <button name="terms_of_reference"
+                                                            class="accordion-button collapsed"
+                                                            type="button"
+                                                            data-bs-toggle="collapse"
+                                                            data-bs-target="#tor_collapse1">
+                                                        Terms of Reference
+                                                    </button>
+                                                </h2>
+
+                                                <div id="tor_collapse1"
+                                                    class="accordion-collapse collapse">
+
+                                                    <div class="accordion-body">
+                                                        <p t-field="tor_record.terms_of_reference"/>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                            <!-- Engagement Work Programme -->
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header">
+                                                    <button name="engagement_work_programme"
+                                                            class="accordion-button collapsed"
+                                                            type="button"
+                                                            data-bs-toggle="collapse"
+                                                            data-bs-target="#tor_collapse2">
+                                                        Engagement Work Programme
+                                                    </button>
+                                                </h2>
+
+                                                <div id="tor_collapse2"
+                                                    class="accordion-collapse collapse">
+
+                                                    <div class="accordion-body">
+                                                        <p t-field="tor_record.engage_work_programme"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Engagement Time Frame -->
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header">
+                                                    <button name="engagement_time_programme"
+                                                            class="accordion-button collapsed"
+                                                            type="button"
+                                                            data-bs-toggle="collapse"
+                                                            data-bs-target="#tor_collapse3">
+                                                        Engagement Time Frame
+                                                    </button>
+                                                </h2>
+
+                                                <div id="tor_collapse3"
+                                                    class="accordion-collapse collapse">
+
+                                                    <div class="accordion-body">
+                                                        <p t-field="tor_record.engage_time_frame"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>                                       
+                                    </div>
+
+                                    <div class="col pt-4">
+                                        <div class="accordion" id="torAccordionRight">
+                                            <!-- Team Delivering Service -->
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header">
+                                                    <button name="team_delivering_service"
+                                                            class="accordion-button collapsed"
+                                                            type="button"
+                                                            data-bs-toggle="collapse"
+                                                            data-bs-target="#tor_collapse4">
+                                                        Team Delivering Service
+                                                    </button>
+                                                </h2>
+
+                                                <div id="tor_collapse4"
+                                                    class="accordion-collapse collapse">
+                                                    <div class="accordion-body">
+                                                        <p t-field="tor_record.team_delivering_service"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Submission Requirements -->
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header">
+                                                    <button name="submission_requirements"
+                                                            class="accordion-button collapsed"
+                                                            type="button"
+                                                            data-bs-toggle="collapse"
+                                                            data-bs-target="#tor_collapse5">
+                                                        Submission Requirements and Closure Date and Time
+                                                    </button>
+                                                </h2>
+
+                                                <div id="tor_collapse5"
+                                                    class="accordion-collapse collapse">
+
+                                                    <div class="accordion-body">
+                                                        <p t-field="tor_record.submission_req_closure_date_time"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- tab - 2 -->
+                            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <th class="text-center">#</th>
+                                        <!-- <th>Item</th> -->
+                                        <th>Description</th>
+                                        <th>Hourly Rate</th>
+                                        <th>Estimated Hourly</th>
+                                        <th>Total</th>
+                                    </thead>
+                                    <tbody>
+                                        <t t-set="count_b" t-value="0"/>
+                                        <t t-foreach="tor_record.pricing_schedule_ids" t-as="pricing">
+                                        <t t-set="count_b" t-value="count_b + 1"/>
+                                            <tr>
+                                                <td class="text-center"><t t-out="count_b"/></td>
+                                                <!-- <td><span t-field="pricing.item"/></td> -->
+                                                <td><span t-field="pricing.description"/></td>
+                                                <td><span t-field="pricing.hourly_rate"/></td>
+                                                <td><span t-field="pricing.estimated_rate"/></td>
+                                                <td><span t-field="pricing.total"/></td>
+                                            </tr>
+                                        </t>
+                                        <tr>
+                                            <th colspan="3"></th>
+                                            <th>Subtotal</th>
+                                            <th><span t-field="tor_record.price_subtotal1"/></th>
+                                        </tr>
+                                        <t t-foreach="tor_record.pricing_schedule_item_ids" t-as="pricing1">
+                                        
+                                        <t t-set="count_b" t-value="count_b + 1"/>
+                                            <tr>
+                                                <td class="text-center"><t t-out="count_b"/></td>
+                                                <!-- <td><span t-field="pricing1.item"/></td> -->
+                                                <td><span t-field="pricing1.description"/></td>
+                                                <td><span t-field="pricing1.hourly_rate"/></td>
+                                                <td><span t-field="pricing1.estimated_rate"/></td>
+                                                <td><span t-field="pricing1.total"/></td>
+                                            </tr>
+                                        </t>
+                                        <tr>
+                                            <th colspan="3"></th>
+                                            <th>SUB-TOTAL</th>
+                                            <th><span t-field="tor_record.price_subtotal"/></th>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="3"></th>
+                                            <th>VAT (15%)</th>
+                                            <th><span t-field="tor_record.vat_amount"/></th>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3"></td>
+                                            <th>TOTAL PRICE (INCLUDING VAT)</th>
+                                            <th><span t-field="tor_record.total_amount"/></th>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- tab - 3  -->
+                            <div class="tab-pane fade py-3" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                                <table class="table table-striped border border-light">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">#</th>
+                                            <th>User By</th>
+                                            <th>Sent To</th>
+                                            <th>Date</th>
+                                            <th>Remarks</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-set="count_a" t-value="0"/>
+                                        <t t-foreach="tor_record.tor_line_ids" t-as="line">
+                                        <t t-set="count_a" t-value="count_a + 1"/>
+                                            <tr>
+                                                <td class="text-center"><t t-out="count_a"/></td>
+                                                <td><span t-field="line.sender_id"/></td>
+                                                <td><span t-field="line.recipient_id"/></td>
+                                                <td><span t-field="line.sent_date"/></td>
+                                                <td><span t-field="line.remark"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <hr/>
+                        <div id="case_record_communication">
+                            <h3>Communication history</h3>
+                            <t t-call="portal.message_thread"/>
+                        </div>
+
+                        <!-- Model for tor approval -->
+                        <div class="modal fade" id="approveModal" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Approval Remark</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        <label class="form-label">Enter Remark</label>
+                                        <textarea id="remarkField" class="form-control" name="remark"
+                                                rows="4"
+                                                placeholder="Write your remark here..."></textarea>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">
+                                            Cancel
+                                        </button>
+
+                                        <button name="action" type="submit"
+                                                class="btn btn-primary"
+                                                value="accept">
+                                            Approve
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function () {
+
+                                const field = document.getElementById("updateRemarkField");
+                                const btn = document.getElementById("updateBtn");
+
+                                if (!field || !btn) return;
+
+                                function toggle() {
+                                    btn.disabled = field.value.trim() === "";
+                                }
+
+                                field.addEventListener("input", toggle);
+
+                            });
+                        </script>
+
+                        <!-- Model for tor Send for update -->
+                        <div class="modal fade" id="sendForUpdateModal" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+
+                                    <!-- Header -->
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Send For Update Remark</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+
+                                    <!-- Body -->
+                                    <div class="modal-body">
+                                        <label class="form-label fw-bold">Enter Remark</label>
+                                        <br/>
+                                        <small class="text-danger">Please enter remark before proceeding.</small>
+                                       <textarea id="updateRemarkField"
+                                            class="form-control"
+                                            name="update_remark"
+                                            rows="4"
+                                            placeholder="Write your remark here..."></textarea>
+                                    </div>
+
+                                    <!-- Footer -->
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">
+                                            Cancel
+                                        </button>
+
+                                        <button id="updateBtn" name="action" type="submit" class="btn btn-primary" value="send_for_update" disabled="1">
+                                            Send For Update
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>               
+            </div>
+        </xpath>
+    </template>
+</odoo>

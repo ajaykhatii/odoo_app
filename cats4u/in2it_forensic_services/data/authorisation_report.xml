@@ -1,0 +1,268 @@
+<odoo>
+
+    <!-- paperformat true -->
+    <record id="in2it_forensic_services_case_auth_paperformat" model="report.paperformat">
+            <field name="name">In2it A4 - statement</field>
+            <field name="default" eval="True" />
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">70</field>
+            <field name="margin_bottom">40</field>
+            <field name="margin_left">0</field>
+            <field name="margin_right">0</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">70</field>
+            <field name="dpi">90</field>
+            <field name="css_margins" eval="True" />
+        </record>
+
+    <!-- Inherit Web Template -->
+    <template id="external_layout_wave_custom_header" inherit_id="web.external_layout_wave">
+        <xpath expr="/t/div[1]" position="before">
+            <t t-set="company" t-value="env.company"/>
+        </xpath>
+
+        <xpath expr="/t/div[1]" position="replace">
+
+            <div t-attf-class="header o_company_#{company.id}_layout {{report_type != 'pdf' and 'h-0'}}">
+            <svg xmlns="http://www.w3.org/2000/svg" t-attf-class="{{report_type == 'pdf' and 'position-fixed' or 'position-absolute'}} start-0 top-0 w-100 z-n1" preserveAspectRatio="none" t-att-height="header_shape_height" viewBox="0 0 1000 240" fill="none">
+                    <path d="M1000 230.734C937.384 240.621 803.83 250.266 562.185 220.602C311.343 189.809 104.626 201.375 0 211.598V0.5H1000V230.734Z" t-att-fill="company.primary_color" fill-opacity=".1"/>
+                </svg>
+                <div class="row w-100">
+
+                    <div class="col-6">
+                        <div style="padding-top:1rem;">
+                            <img t-if="company.logo"
+                                t-att-src="'/web/image/res.company/%s/logo' % company.id"
+                                style="max-height:120px"
+                                alt="Company Logo"/>
+                        </div>
+                    </div>
+
+                    <div class="col-6 text-end" style="font-family: 'Questrial', sans-serif;">
+                        <ul class="list-unstyled" name="company_address_list">
+                            <li t-if="company.is_company_details_empty"><span t-field="company.partner_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'>
+                                <div class="d-flex flex-column align-items-center justify-content-center border-1 rounded p-4 h-100 w-100 bg-light opacity-75 text-muted text-center">
+                                    <strong>Company address block</strong>
+                                    <div>Contains the company address.</div>
+                                </div>
+                            </span></li>
+                            <li t-else="">
+                                <span t-field="company.company_details">
+                                    <div class="d-flex flex-column align-items-center justify-content-center border-1 rounded p-4 h-100 w-100 bg-light opacity-75 text-muted text-center">
+                                        <strong>Company details block</strong>
+                                        <div>Contains the company details.</div>
+                                    </div>
+                                </span>
+                            </li>
+                        </ul>
+                        <t t-if="env.context.get('show_case_details')">
+                            <ul class="list-unstyled" name="partner_details_list">
+                                <li><b><t t-out="env.context.get('name')"/></b></li>
+                                <li><t t-out="env.context.get('job_position')"/></li>
+                                <li><b>Ethics and Forensic Services</b></li>
+                                 <li>
+                                     <b>T</b>:
+                                     <t t-if="env.context.get('phone')">
+                                         <t t-out="env.context.get('phone')"/>
+                                     </t>
+                                     <t t-else="">____________</t>
+
+                                     <b>M</b>:
+                                     <t t-if="env.context.get('mobile')">
+                                         <t t-out="env.context.get('mobile')"/>
+                                     </t>
+                                     <t t-else="">____________</t>
+                                 </li>
+                                <li><b>E</b>: <t t-out="env.context.get('email')"/></li>
+                            </ul>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="case_auth_pdf_wrapper">
+        <t t-call="web.html_container">
+
+            <t t-call="web.external_layout_wave">
+                <t t-call-assets="web.report_assets_common" t-js="false"/>
+                <style>
+                    .th2{
+                        color:white;
+                        background-color:black;
+                        border: 1px solid white;
+                        padding:2px;
+                        font-size:11px;
+                    }
+                    .td3{
+                        padding:2px;
+                        border:1px solid white;
+                        font-size:11px;
+                    }
+                    .table_content table {
+                        table-layout: fixed;
+                        width: 100%;
+                    }
+                    .table_content th, 
+                    .table_content td {
+                        word-wrap: break-word;
+                        white-space: normal !important;
+                    }
+                </style>
+ 
+                <div class="page">
+                    <div class="main_content">
+                        <p><strong>To:</strong> The <t t-esc="env.context.get('signer_position')"/><br/>
+                        <strong>Attention:</strong> <t t-esc="env.context.get('signer_name')"/></p>
+                        <strong><t t-esc="env.context.get('subject')"/></strong>
+                        <t t-out="docs[0].auth_html_content"/>
+                        
+                        <t t-if="docs[0].auth_signature">
+                        
+                            <div class="sign_img offset-0">
+                                <img t-att-src="image_data_uri(docs[0].auth_signature)" style="max-height: 4cm; max-width: 8cm;"/>
+                            </div>
+                        </t>
+                        <br/>
+
+                        <t t-if="env.context.get('signature_bin')">
+                            <img t-att-src="image_data_uri(env.context.get('signature_bin'))" 
+                                style="max-height:80px; max-width:200px;"/>
+                        </t>
+                        <div class="chief_info" t-if="env.context.get('signature_bin')">
+                            _____________________<br/>
+                            <strong>Chief: Ethics and Forensic Services</strong>
+                        </div>
+
+                    </div>
+                    <div style="page-break-before: always;"></div>
+                    
+                    <t t-if="env.context.get('signer_position')">
+                    
+                        <div class="signature_and_comment">
+                        <div>
+                                <strong><label><t t-esc="env.context.get('signer_position')"/> Signature:</label></strong>
+                                <div style="width: 200px; height: 80px;"></div>
+                            </div>
+                            <br/>
+                            <div>
+                                <strong><label style="display: block; margin-bottom: 0.5rem;">Comment:</label></strong>
+                                <div style="width: 500px; height: 100px;"></div>
+                            </div>
+
+                        </div>
+                        
+                    </t>
+                    
+                    <div style="page-break-before: always;"></div>
+                    <t t-if="env.context.get('show_case_details')">
+                        <div>
+
+                            <h2 class="text-center mb16">
+                                Schedule of Complaint
+                            </h2>
+                        
+                            <table class="table table-sm table-bordered">
+                                <tbody>
+
+                                    <tr>
+                                        <th width="30%">Ref.</th>
+                                        <td width="70%">
+                                            <t t-out="docs[0].case_ref_number"/>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Source (If Any)</th>
+                                        <td>
+                                            <t t-out="docs[0].parent_case_id.allegation_source_id.name"/>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Reference (If Any)</th>
+                                        <td>
+                                            <t t-out="docs[0].parent_case_ref"/>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Date Reported To Forensic Services</th>
+                                        <td>
+                                            <t t-out="docs[0].reporting_date.strftime('%Y-%m-%d %H:%M:%S') if docs[0].reporting_date else ''"/>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Nature of Complaints</th>
+                                        <td>
+                                            <t t-out="docs[0].allegation_nature_id.name"/>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Subject</th>
+                                        <td>
+                                            <t t-out="docs[0].parent_case_id.name"/>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Directorate</th>
+                                        <td>
+                                            <t t-out="docs[0].directorate_id.name"/>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Department</th>
+                                        <td>
+                                            <t t-out="docs[0].department_id.name"/>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+
+
+                            <div class="mt24">
+
+                                <h4 class="mb8">
+                                    Brief Description of Matter
+                                </h4>
+
+                                <div class="o_boxed">
+                                    <t t-if="docs[0].parent_case_id.allegation_description">
+                                        <t t-out="docs[0].parent_case_id.allegation_description"/>
+                                    </t>
+
+                                    <t t-if="not docs[0].parent_case_id.allegation_description">
+                                        <span class="text-muted">
+                                            No description provided.
+                                        </span>
+                                    </t>
+                                </div>
+
+                            </div>
+                        </div>
+                    </t>
+      
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <record id="case_auth_pdf_report" model="ir.actions.report">
+        <field name="name">Authorization PDF</field>
+        <field name="model">forensic.case.assignment</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">in2it_forensic_services.case_auth_pdf_wrapper</field>
+        <field name="print_report_name">"authorization_letter"</field>
+        <field name="paperformat_id" ref="in2it_forensic_services.in2it_forensic_services_case_auth_paperformat"/>
+    </record>
+
+</odoo>

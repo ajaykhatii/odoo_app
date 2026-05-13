@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="sign.item.role" id="sign_item_role_city_manager">
+        <field name="name">City Manager</field>
+        <field name="color" eval="4"/>
+    </record>
+
+    <record model="sign.item.role" id="sign_item_role_executive_directorate">
+        <field name="name">Executive Directorate</field>
+        <field name="color" eval="5"/>
+    </record>
+
+    <record model="sign.item.role" id="sign_item_role_chief_digital_officer">
+        <field name="name">Chief Digital Officer</field>
+        <field name="color" eval="6"/>
+    </record>
+</odoo>

@@ -1,0 +1,113 @@
+<odoo>
+    <data>
+        <record id="team_change_request_tree" model="ir.ui.view">
+            <field name="name">investigation.team.change.request.tree</field>
+            <field name="model">team.change.request</field>
+            <field name="arch" type="xml">
+                <list create="0" duplicate="0">
+                    <field name="team_id"/>
+                    <field name="change_type"/>
+                    <field name="team_line_id"/>
+                    <field name="member_ids" widget="many2many_tags"/>
+                    <field name="approver_id"/>
+                    <field name="state"/>
+                    <button
+                        name="action_approve_team_change"
+                        type="object"
+                        class="btn-primary"
+                        string="Approve"
+                        invisible="state != 'pending' or not is_approver"
+                        />
+                    <button
+                        name="action_reject_team_change"
+                        type="object"
+                        class="btn-primary"
+                        string="Reject"
+                        invisible="state != 'pending' or not is_approver"
+                        />
+                </list>
+            </field>
+        </record>
+
+        <record id="search_view_team_change_request" model="ir.ui.view">
+            <field name="name">team.change.request.search</field>
+            <field name="model">team.change.request</field>
+            <field name="arch" type="xml">
+                <search string="Team Change Request Search">
+                    <field name="approver_id"/>
+                    <field name="state"/>
+                    <!-- Filter for Pending -->
+                    <filter name="pending" string="Pending" domain="[('state','=','pending')]"/>
+                    <!-- Optional: other filters -->
+                    <filter name="completed" string="Completed" domain="[('state','=','approved')]"/>
+                    <filter name="rejected" string="Rejected" domain="[('state','=','rejected')]"/>
+                    <group string="Group By">
+                        <filter name="group_by_project"
+                                string="Investigation"
+                                context="{'group_by':'team_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!--Pop up View-->
+        <record id="team_change_request_wizard_view_form" model="ir.ui.view">
+            <field name="name">investigation.team.change.request.wizard.form</field>
+            <field name="model">team.change.request</field>
+            <field name="arch" type="xml">
+                <form create="0" duplicate="0">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="change_type" required="1" widget="radio" options="{'horizontal':True}"/>
+                                <field name="team_line_id" options="{'no_open':True, 'no_create':True}" required="1"
+                                    domain="[('id','in', context.get('team_line_ids'))]"/>
+                                <field name="member_ids" widget="many2many_tags" domain="[('id', 'in', team_member_ids)]"
+                                       options="{'no_open':True, 'no_create':True}" required="change_type == 'member'"
+                                        invisible="change_type != 'member'"/>
+                                <field name="team_member_ids" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="team_id" invisible="0"/>
+                                <field name="approver_id" invisible="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+ 
+        <record id="action_investigation_team_change_request" model="ir.actions.act_window">
+            <field name="name">Team Change Request</field>
+            <field name="res_model">team.change.request</field>
+            <field name="view_mode">list</field>
+            <field name="view_id" ref="team_change_request_tree"/>
+            <field name="context">{'search_default_pending': 1,
+                                   'search_default_group_by_project':1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    There are no team change request.
+                </p>
+            </field>
+        </record>
+
+        <record id="team_change_server_action" model="ir.actions.server">
+          <field name="name">Team Change Request</field>
+          <field name="model_id" ref="in2it_project_management.model_team_change_request"/>
+          <field name="binding_model_id" ref="in2it_project_management.model_team_change_request"/>
+          <field name="state">code</field>
+          <field name="code">action = model.get_team_change_request()</field>
+        </record>
+
+        <menuitem
+                id="team_change_approval_menu"
+                name="Team Change Request"
+                parent="project.menu_main_pm"
+                action="team_change_server_action"
+                sequence="6"
+                groups="project.group_project_user,project.group_project_manager,base.group_system,in2it_forensic_services.group_fcm_admin"/>
+    
+    </data>
+</odoo>
+ 

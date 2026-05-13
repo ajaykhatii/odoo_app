@@ -1,0 +1,118 @@
+<odoo>
+
+    <template id="city_manager_approval_letter">
+        <div style="font-family: Arial; font-size: 15px; line-height: 1.5;">
+
+            <p>
+                The City Manager in accordance with the System of Delegations of the CCT, 
+                Section 9(1) of the City Manager’s delegated authority, authorised an investigation
+                into allegations of Unauthorised, Irregular or Fruitless and Wasteful (UIFW)
+                expenditure and the mismanagement of funds.
+            </p>
+
+            <p>
+                To further the investigation, it is required to obtain access to the available email
+                and OneDrive accounts for the following staff member:
+            </p>
+
+            <ul>
+                <t t-foreach="suspect_ids" t-as="supect">
+                    <li><t t-out="supect.name"/> for the period <t t-out="date_from"/> to <t t-out="date_to"/></li>
+                </t>
+            </ul>
+
+            <p>
+                It should be noted that EFS’ search criteria are limited to the email accounts of the
+                staff member listed above and to determining whether:
+            </p>
+
+            <ul>
+                <li><t t-esc="allegation_nature_id"/></li>
+            </ul>
+
+            <p>
+                EFS’s search criteria will include, <i>inter alia</i>, the following terms, and/or variations 
+                thereof:
+            </p>
+
+            <p>
+                EFS will utilise both the Microsoft Purview eDiscovery, as well as the Discovery 
+                Accelerator platforms to apply the above searches and review the electronically 
+                stored information that falls within the specified search criteria, in accordance with
+                the authorisation granted.
+            </p>
+            
+            <p>
+                In terms of the System of Delegations, approved by Council on 30 July 2025 (item 
+                C26/07/25), Part 28: (B) Section 25(10)(b), the City Manager in the performance of 
+                his functions and, <i>“Subject to any relevant legislation, have access to, to copy 
+                and/or to seize any register, file, document, account, minute and/or other records, 
+                whether physical or electronic, of the City and/or any such register, file, document 
+                and/or record which may be maintained by any employee, in relation to the 
+                performance of his/her official functions.”</i>
+            </p>
+            
+            <p>
+                Under cover of this memorandum, please find for your review and signature a 
+                memorandum addressed to Mr Andre Stelzner, Chief Digital Officer: Information 
+                Systems and Technology, for his information and necessary action.
+            </p>
+
+            <p>
+                Feel free to contact me with any related comments/ queries.
+            </p>
+
+        </div>
+    </template>
+
+
+
+
+    <template id="chief_digital_officer_approval_letter">
+        <div style="font-family: Arial; font-size: 15px; line-height: 1.5;">
+            
+            <p>
+                I, the City Manager, in accordance with the System of Delegations of the CCT, 
+                Section 9(1) of the City Manager’s delegated authority, authorised an investigation 
+                into allegations of Unauthorised, Irregular or Fruitless and Wasteful (UIFW) 
+                expenditure and the mismanagement of funds.
+            </p>
+
+            <p>
+                To further the investigation, it is required to obtain access to the available email 
+                and OneDrive accounts for the following staff member:
+            </p>
+
+            <ul>
+                <t t-foreach="suspect_ids" t-as="supect">
+                    <li><t t-out="supect.name"/> for the period <t t-out="date_from"/> to <t t-out="date_to"/></li>
+                </t>
+            </ul>
+
+            <p>
+                In terms of the System of Delegations, approved by Council on 30 July 2025 (item 
+                C26/07/25), Part 28: (B) Section 25(10)(b), the City Manager in the performance of 
+                his functions and, <i>“Subject to any relevant legislation, have access to, to copy 
+                and/or to seize any register, file, document, account, minute and/or other records, 
+                whether physical <strong>or electronic</strong>, of the City and/or any such register, file, 
+                document and/or record which may be maintained by any employee, in relation to 
+                the performance of his/her official functions”.</i>
+            </p>
+
+            <p>
+                EFS will utilise both the Microsoft Purview eDiscovery as well as the Discovery 
+                Accelerator platforms to apply the above searches and review the electronically 
+                stored information that falls within the specified search criteria, in accordance with 
+                the authorisation granted.
+            </p>
+
+            <p>
+                You are accordingly hereby authorised to provide the requested information to 
+                Mr Investigator Name, Senior Forensic Officer, Ethics and Forensic Services, Office 
+                of the City Manager.
+            </p>
+
+        </div>
+    </template>
+
+</odoo>

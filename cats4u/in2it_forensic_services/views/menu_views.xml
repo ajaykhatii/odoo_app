@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="crm.crm_menu_root" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+
+    <record id="mail.menu_root_discuss" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+
+    <record id="calendar.mail_menu_calendar" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+
+    <record id="contacts.menu_contacts" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+
+    <record id="spreadsheet_dashboard.spreadsheet_dashboard_menu_root" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+
+    <record id="sign.menu_document" model="ir.ui.menu">
+        <field name="active" eval="True"/>
+    </record>
+
+    <record id="utm.menu_link_tracker_root" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+
+
+    <menuitem
+            id="case_management_main_menu"
+            name="Case Management"
+            web_icon="in2it_forensic_services,static/description/icon.png"
+            sequence="10"/>
+
+    <menuitem
+            id="case_intake_menu"
+            name="Case Intake"
+            parent="case_management_main_menu"
+            action="action_crm_lead_forensic"
+            groups="group_fcm_case_fo_access,group_fcm_case_sfo_access,group_fcm_review_access,group_fcm_case_chief_access,group_fcm_admin,base.group_system"
+            sequence="10"/>
+
+    <!-- <menuitem id="menu_case_Review"
+              name="Case Classification"
+              parent="case_management_main_menu"
+              action="action_forensic_case_review"
+              sequence="15"
+              groups="group_fcm_recom_committee,group_fcm_admin,base.group_system"/> -->
+
+    <menuitem id="menu_case_assignment"
+              name="Case Assignment"
+              parent="case_management_main_menu"
+              action="action_forensic_case_assignment"
+              groups="group_fcm_review_access,group_fcm_admin,base.group_system"
+              sequence="20"/>
+
+
+    <menuitem id="menu_case_authorization"
+              name="Case Authorization"
+              parent="case_management_main_menu"
+              action="in2it_forensic_services.action_filtered_case_authorization"
+              groups="group_fcm_city_manager,group_fcm_case_chief_access,group_fcm_admin,base.group_system"
+              sequence="25"/>
+
+
+    <!--    Config menu-->
+    <menuitem
+            id="case_config_menu"
+            name="Configuration"
+            parent="case_management_main_menu"
+            groups="group_fcm_admin,base.group_system"
+            sequence="50"/>
+
+    <menuitem
+            id="crm_settings_menu"
+            name="Settings"
+            parent="case_config_menu"
+            action="crm.crm_config_settings_action"
+            sequence="10"/>
+
+    <menuitem id="menu_forensic_directorate"
+              name="Directorate"
+              parent="case_config_menu"
+              action="action_forensic_directorate"
+              sequence="20"/>
+
+    <menuitem id="menu_forensic_department"
+              name="Department"
+              parent="case_config_menu"
+              action="action_forensic_department"
+              sequence="25"/>
+
+    <menuitem id="menu_allegation_source"
+              name="Complaint Sources"
+              parent="case_config_menu"
+              action="action_forensic_allegation_source"
+              sequence="30"/>
+
+
+    <menuitem id="menu_forensic_assignment_stage"
+              name="Stages"
+              parent="case_config_menu"
+              action="action_forensic_assignment_stage"
+              sequence="40"/>
+
+    <menuitem id="menu_forensic_assignment_type"
+              name="Case Types"
+              parent="case_config_menu"
+              action="action_forensic_assignment_type"
+              sequence="50"/>
+
+    <menuitem
+            id="menu_crm_lead_categ"
+            name="Tags"
+            action="sales_team.sales_team_crm_tag_action"
+            parent="case_config_menu"
+            sequence="60"/>
+
+    <menuitem
+            id="menu_crm_lost_reason"
+            name="Lost Reasons"
+            parent="case_config_menu"
+            action="crm.crm_lost_reason_action"
+            sequence="70"/>
+
+    <menuitem id="menu_forensic_allegation_nature"
+              name="Nature of Allegations"
+              parent="case_config_menu"
+              action="action_forensic_allegation_nature"
+              sequence="80"/>
+
+
+    <menuitem 
+            id="vendor_onboarding_menu" 
+            name="Vendor" 
+            parent="case_config_menu"
+            action="res_partner_action_supplier"
+            sequence="100"/>
+
+
+    <menuitem 
+            id="cms_team_group_menu" 
+            name="Teams" 
+            parent="case_config_menu"
+            action="cms_team_group_action"
+            sequence="90"/>
+
+    <menuitem id="menu_act_forensic_document_type" 
+            name="Document Type"
+            parent="case_config_menu" 
+            action="forensic_document_type_action" 
+            sequence="101"/>
+
+        <!-- Directorate OFficer Menu -->
+    <menuitem id="menu_directorate_officers"
+              name="Portal(ED/Nodal/CDO)"
+              parent="base.menu_users"
+              action="action_directorate_level_office_users"
+              sequence="100"/>
+
+
+</odoo>
