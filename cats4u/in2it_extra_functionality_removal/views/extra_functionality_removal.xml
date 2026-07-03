@@ -62,12 +62,12 @@
     </record>
 
 
-    <record id="hr.menu_hr_root" model="ir.ui.menu">
+    <!-- <record id="hr.menu_hr_root" model="ir.ui.menu">
         <field name="groups_id" eval="[(6, 0, [
             ref('in2it_forensic_services.group_fcm_admin'),
             ref('base.group_system')
         ])]"/>
-    </record>
+    </record> -->
 
 
     <record id="base.menu_management" model="ir.ui.menu">
@@ -93,4 +93,3 @@
 <!--    </record>-->
 
 </odoo>
-
