@@ -3,7 +3,7 @@ name: Deploy Odoo
 on:
   push:
     branches:
-      - main
+      - docker-setup
 
 jobs:
   deploy:
