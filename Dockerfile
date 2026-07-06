@@ -1,30 +1,12 @@
-FROM odoo:18
+FROM odoo:18.0
 
-# Copy addons
-COPY ./cats4u /mnt/extra-addons
-COPY ./src/odoo_18_e /mnt/enterprise
-
-# Switch to root for package installations
 USER root
 
-# Upgrade pip
-# RUN pip install --no-cache-dir --upgrade pip --break-system-packages
+RUN mkdir -p /mnt/extra-addons /mnt/enterprise
+COPY ./cats4u /mnt/extra-addons
+COPY ./src/odoo_18_e /mnt/enterprise
+RUN chown -R odoo:odoo /mnt/extra-addons /mnt/enterprise
 
-# Install Python dependencies
-RUN pip install --break-system-packages phonenumbers
-   
-
-# Copy config
-COPY ./config/odoo.conf /etc/odoo/odoo.conf
-
-# Fix permissions
-RUN chmod -R 777 /mnt/extra-addons/ && \
-    chmod -R 777 /mnt/enterprise/
-
-# Switch back to Odoo user
 USER odoo
 
-EXPOSE 8069 8071
-
-
-#This is for custom plugins
+EXPOSE 8069
