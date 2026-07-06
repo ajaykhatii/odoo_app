@@ -22,6 +22,6 @@ jobs:
             fi
 
             cd /home/ubuntu/odoo_app
-            git pull origin main
+            git pull origin docker-setup
             docker compose down
             docker compose up -d --build
